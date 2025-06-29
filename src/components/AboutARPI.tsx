@@ -359,7 +359,7 @@ const AboutARPI = () => {
                 >
                   {/* Partner Logo */}
                   <div className="w-24 h-24 bg-gradient-to-br from-slate-600 to-slate-700 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                    <partners[currentPartner].logo className="w-12 h-12 text-white" />
+                    {React.createElement(partners[currentPartner].logo, { className: "w-12 h-12 text-white" })}
                   </div>
                   
                   {/* Partner Name */}
