@@ -166,6 +166,7 @@ const AboutARPI = () => {
     }
   ];
 
+  // FIXED: Corrected navigation logic
   const nextMilestone = () => {
     setSelectedMilestone((prev) => (prev + 1) % milestones.length);
   };
@@ -176,15 +177,15 @@ const AboutARPI = () => {
 
   return (
     <section id="about-arpi-section" className="relative py-32 overflow-hidden">
-      {/* Enhanced Background with Depth */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-gray-50"></div>
+      {/* FIXED: Cleaner Background with ARPI Brand Colors */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-white to-cyan-50/20"></div>
       
-      {/* Multiple Layer Grid Pattern */}
+      {/* Subtle Grid Pattern with ARPI Colors */}
       <div className="absolute inset-0 opacity-[0.02]">
         <motion.div 
           className="absolute inset-0" 
           style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.3) 1px, transparent 0)`,
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.3) 1px, transparent 0)`,
             backgroundSize: '40px 40px'
           }}
           animate={{
@@ -198,13 +199,13 @@ const AboutARPI = () => {
         />
       </div>
 
-      {/* Enhanced Floating Elements with More Depth */}
+      {/* Enhanced Floating Elements with ARPI Brand Colors */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div 
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-100/30 to-purple-100/30 rounded-full blur-3xl"
+          className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-100/20 to-cyan-100/20 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
+            opacity: [0.2, 0.3, 0.2],
             x: [0, 50, 0],
             y: [0, -30, 0]
           }}
@@ -215,10 +216,10 @@ const AboutARPI = () => {
           }}
         />
         <motion.div 
-          className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-br from-rose-100/30 to-pink-100/30 rounded-full blur-3xl"
+          className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-br from-cyan-100/20 to-blue-100/20 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.1, 1],
-            opacity: [0.3, 0.4, 0.3],
+            opacity: [0.2, 0.3, 0.2],
             x: [0, -40, 0],
             y: [0, 40, 0]
           }}
@@ -229,24 +230,10 @@ const AboutARPI = () => {
             delay: 2
           }}
         />
-        <motion.div 
-          className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-to-br from-emerald-100/20 to-teal-100/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.2, 0.4, 0.2],
-            rotate: [0, 180, 360]
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 4
-          }}
-        />
       </div>
       
       <div className="relative z-10 max-w-7xl mx-auto px-6">
-        {/* Enhanced Section Header */}
+        {/* Enhanced Section Header with ARPI Brand Colors */}
         <motion.div 
           className="text-center mb-20"
           initial={{ opacity: 0, y: 30 }}
@@ -255,16 +242,16 @@ const AboutARPI = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <motion.div 
-            className="inline-flex items-center space-x-3 bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-full px-6 py-3 mb-8 shadow-sm"
+            className="inline-flex items-center space-x-3 bg-white/80 backdrop-blur-sm border border-blue-200/50 rounded-full px-6 py-3 mb-8 shadow-sm"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.2 }}
           >
-            <Building2 className="w-4 h-4 text-slate-600" />
-            <span className="text-sm font-medium text-slate-700">About the Company</span>
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <Building2 className="w-4 h-4 text-blue-600" />
+            <span className="text-sm font-medium text-blue-700">About the Company</span>
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
           </motion.div>
           
-          {/* Enhanced ARPI Logo */}
+          {/* Enhanced ARPI Logo with Brand Colors */}
           <motion.div 
             className="mb-8"
             initial={{ opacity: 0, scale: 0.8, rotateY: -180 }}
@@ -273,9 +260,13 @@ const AboutARPI = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <motion.div 
-              className="w-24 h-24 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 rounded-3xl flex items-center justify-center mx-auto shadow-lg mb-6 relative overflow-hidden group"
+              className="w-24 h-24 bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-600 rounded-3xl flex items-center justify-center mx-auto shadow-lg mb-6 relative overflow-hidden group"
               whileHover={{ scale: 1.1, rotate: 5 }}
               transition={{ duration: 0.3 }}
+              style={{
+                background: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 50%, #0EA5E9 100%)',
+                boxShadow: '0 10px 30px rgba(59, 130, 246, 0.3)'
+              }}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
               <span className="text-3xl font-bold text-white relative z-10">ARPI</span>
@@ -292,7 +283,7 @@ const AboutARPI = () => {
             <span className="block text-slate-900 mb-2">
               ARPI Inc.
             </span>
-            <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
               Advancing Healthcare AI
             </span>
           </motion.h2>
@@ -310,7 +301,7 @@ const AboutARPI = () => {
           </motion.p>
         </motion.div>
 
-        {/* Enhanced Products Section */}
+        {/* Enhanced Products Section with ARPI Brand Colors */}
         <motion.div 
           className="mb-20"
           variants={containerVariants}
@@ -320,7 +311,7 @@ const AboutARPI = () => {
         >
           <motion.div className="text-center mb-12" variants={itemVariants}>
             <h3 className="text-3xl font-bold text-slate-900 mb-4 flex items-center justify-center">
-              <Sparkles className="w-8 h-8 mr-3 text-purple-600" />
+              <Sparkles className="w-8 h-8 mr-3 text-blue-600" />
               Our Products
             </h3>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
@@ -400,7 +391,7 @@ const AboutARPI = () => {
           </div>
         </motion.div>
 
-        {/* COMPLETELY REDESIGNED Premium Journey Map Section */}
+        {/* COMPLETELY REDESIGNED Premium Journey Map Section with ARPI Brand Colors */}
         <motion.div 
           className="mb-20"
           variants={containerVariants}
@@ -410,18 +401,18 @@ const AboutARPI = () => {
         >
           <motion.div className="text-center mb-16" variants={itemVariants}>
             <motion.div 
-              className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-50 to-purple-50 backdrop-blur-sm border border-blue-200/50 rounded-full px-6 py-3 mb-8 shadow-sm"
+              className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-50/80 to-cyan-50/80 backdrop-blur-sm border border-blue-200/50 rounded-full px-6 py-3 mb-8 shadow-sm"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
             >
               <Compass className="w-4 h-4 text-blue-600" />
               <span className="text-sm font-medium text-blue-700">Company Timeline</span>
-              <Navigation className="w-4 h-4 text-purple-600" />
+              <Navigation className="w-4 h-4 text-cyan-600" />
             </motion.div>
             
             <h3 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
               <span className="block text-slate-900 mb-2">Our Journey</span>
-              <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
                 Through Innovation
               </span>
             </h3>
@@ -431,17 +422,17 @@ const AboutARPI = () => {
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Premium Interactive Journey Map */}
+            {/* FIXED: Premium Interactive Journey Map with Better Background */}
             <motion.div 
-              className="relative bg-gradient-to-br from-white/60 via-white/40 to-white/20 backdrop-blur-3xl border border-white/30 rounded-3xl p-10 shadow-[0_25px_80px_rgba(0,0,0,0.12)] overflow-hidden group"
+              className="relative bg-white/80 backdrop-blur-2xl border border-blue-200/30 rounded-3xl p-10 shadow-[0_25px_80px_rgba(59,130,246,0.12)] overflow-hidden group"
               initial={{ opacity: 0, x: -50, rotateY: -15 }}
               whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 1, ease: "easeOut" }}
               style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.2) 100%)',
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.7) 100%)',
                 backdropFilter: 'blur(20px)',
-                boxShadow: '0 25px 80px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.6)'
+                boxShadow: '0 25px 80px rgba(59,130,246,0.12), inset 0 1px 0 rgba(255,255,255,0.8)'
               }}
             >
               {/* Premium Glassy Effect */}
@@ -459,19 +450,19 @@ const AboutARPI = () => {
                     Journey Map
                   </h4>
                   <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full animate-pulse"></div>
                     <span className="text-sm font-medium text-slate-600">Interactive</span>
                   </div>
                 </div>
                 
-                {/* Enhanced Interactive SVG Path with Premium Design */}
-                <div className="relative h-96 bg-gradient-to-br from-slate-50/80 via-white/60 to-slate-100/40 rounded-2xl overflow-hidden border border-white/50 shadow-inner">
-                  {/* Animated Background Pattern */}
-                  <div className="absolute inset-0 opacity-5">
+                {/* FIXED: Enhanced Interactive SVG Path with Cleaner Background */}
+                <div className="relative h-96 bg-gradient-to-br from-blue-50/60 via-white/80 to-cyan-50/40 rounded-2xl overflow-hidden border border-blue-100/50 shadow-inner">
+                  {/* Subtle Background Pattern */}
+                  <div className="absolute inset-0 opacity-3">
                     <motion.div 
                       className="absolute inset-0" 
                       style={{
-                        backgroundImage: `radial-gradient(circle at 2px 2px, rgba(59, 130, 246, 0.4) 1px, transparent 0)`,
+                        backgroundImage: `radial-gradient(circle at 2px 2px, rgba(59, 130, 246, 0.2) 1px, transparent 0)`,
                         backgroundSize: '30px 30px'
                       }}
                       animate={{
@@ -613,11 +604,11 @@ const AboutARPI = () => {
                   ))}
                 </div>
                 
-                {/* Premium Navigation Controls */}
+                {/* FIXED: Premium Navigation Controls with Better Colors */}
                 <div className="flex items-center justify-between mt-8">
                   <motion.button
                     onClick={prevMilestone}
-                    className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-slate-100/80 to-slate-200/60 backdrop-blur-sm hover:from-slate-200/80 hover:to-slate-300/60 rounded-2xl transition-all duration-300 border border-white/50 shadow-lg"
+                    className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-100/80 to-blue-200/60 backdrop-blur-sm hover:from-blue-200/80 hover:to-blue-300/60 text-blue-700 hover:text-blue-800 rounded-2xl transition-all duration-300 border border-blue-200/50 shadow-lg"
                     whileHover={{ scale: 1.05, x: -2 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -643,7 +634,7 @@ const AboutARPI = () => {
                   
                   <motion.button
                     onClick={nextMilestone}
-                    className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-slate-100/80 to-slate-200/60 backdrop-blur-sm hover:from-slate-200/80 hover:to-slate-300/60 rounded-2xl transition-all duration-300 border border-white/50 shadow-lg"
+                    className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-100/80 to-blue-200/60 backdrop-blur-sm hover:from-blue-200/80 hover:to-blue-300/60 text-blue-700 hover:text-blue-800 rounded-2xl transition-all duration-300 border border-blue-200/50 shadow-lg"
                     whileHover={{ scale: 1.05, x: 2 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -668,11 +659,11 @@ const AboutARPI = () => {
                   animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
                   exit={{ opacity: 0, y: -30, scale: 0.95, rotateX: 10 }}
                   transition={{ duration: 0.6, ease: "easeOut" }}
-                  className="relative bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-3xl border border-white/40 rounded-3xl p-10 shadow-[0_30px_90px_rgba(0,0,0,0.15)] overflow-hidden group"
+                  className="relative bg-gradient-to-br from-white/90 via-white/70 to-white/50 backdrop-blur-3xl border border-white/50 rounded-3xl p-10 shadow-[0_30px_90px_rgba(0,0,0,0.15)] overflow-hidden group"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.3) 100%)',
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.6) 100%)',
                     backdropFilter: 'blur(25px)',
-                    boxShadow: '0 30px 90px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8)'
+                    boxShadow: '0 30px 90px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.9)'
                   }}
                 >
                   {/* Premium Glassy Effect */}
@@ -706,7 +697,7 @@ const AboutARPI = () => {
                             {milestones[selectedMilestone].year}
                           </motion.span>
                           <motion.span 
-                            className="text-sm font-bold text-white bg-gradient-to-r from-slate-600 to-slate-700 px-3 py-1.5 rounded-full shadow-lg"
+                            className="text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-blue-700 px-3 py-1.5 rounded-full shadow-lg"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.2, duration: 0.4 }}
@@ -715,7 +706,7 @@ const AboutARPI = () => {
                           </motion.span>
                         </div>
                         <motion.div 
-                          className="text-sm text-slate-600 font-medium bg-slate-100/60 backdrop-blur-sm px-3 py-1 rounded-full border border-slate-200/50"
+                          className="text-sm text-blue-700 font-medium bg-blue-100/60 backdrop-blur-sm px-3 py-1 rounded-full border border-blue-200/50"
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.3, duration: 0.4 }}
@@ -773,7 +764,7 @@ const AboutARPI = () => {
           </div>
         </motion.div>
 
-        {/* Enhanced Partners Section */}
+        {/* Enhanced Partners Section with ARPI Brand Colors */}
         <motion.div
           className="mb-20"
           initial={{ opacity: 0, y: 30 }}
