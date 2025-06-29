@@ -1,15 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Disable SWC and use Babel instead for WebContainer compatibility
-  swcMinify: false,
-  compiler: {
-    // Disable SWC compiler
-    removeConsole: false,
-  },
   experimental: {
-    optimizePackageImports: ['lucide-react', 'framer-motion'],
-    // Force Babel usage
-    forceSwcTransforms: false
+    optimizePackageImports: ['lucide-react', 'framer-motion']
   },
   images: {
     domains: ['images.pexels.com'],
