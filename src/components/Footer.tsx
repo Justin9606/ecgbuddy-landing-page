@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Mail, Phone, MapPin, Github, Twitter, Linkedin, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Heart, Mail, Phone, MapPin, Github, Twitter, Linkedin, ArrowUpRight, Sparkles, Building2 } from 'lucide-react';
 
 const Footer = () => {
   const scrollToSection = (sectionId: string) => {
@@ -75,16 +75,16 @@ const Footer = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 mb-16">
-          {/* Brand Section */}
+          {/* Brand Section - Updated to ARPI Inc. */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-3 mb-8 group cursor-pointer">
               <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-red-400 via-red-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/25 group-hover:shadow-red-500/40 transition-all duration-300 group-hover:scale-110">
-                  <Heart className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-500/25 group-hover:shadow-slate-500/40 transition-all duration-300 group-hover:scale-110">
+                  <Building2 className="w-6 h-6 text-white" />
                 </div>
-                <div className="absolute -inset-1 bg-gradient-to-br from-red-400 via-red-500 to-pink-600 rounded-2xl opacity-20 blur group-hover:opacity-30 transition-opacity duration-300"></div>
+                <div className="absolute -inset-1 bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 rounded-2xl opacity-20 blur group-hover:opacity-30 transition-opacity duration-300"></div>
               </div>
-              <span className="text-3xl font-bold text-white">ECG Buddy</span>
+              <span className="text-3xl font-bold text-white">ARPI Inc.</span>
             </div>
             
             <p className="text-slate-300 text-lg leading-relaxed mb-8 max-w-md">
