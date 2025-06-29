@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Play, Heart, Zap, Shield, Sparkles, Activity, Brain, Users, Award, TrendingUp, Target, Clock, BarChart3, CheckCircle, Star } from 'lucide-react';

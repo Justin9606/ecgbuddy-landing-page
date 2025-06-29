@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Smartphone, Download, QrCode, Apple, Play, Monitor, ArrowRight, Sparkles, CheckCircle, Star, Target } from 'lucide-react';

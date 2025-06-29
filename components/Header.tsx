@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, Heart, Globe, ChevronDown, ArrowUpRight, User, Zap, Shield, Brain, Activity, Sparkles, Play, FileText, Users, BookOpen, Headphones, HelpCircle, Building2 } from 'lucide-react';
 
