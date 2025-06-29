@@ -1,12 +1,14 @@
 "use client";
 
-import Header from "@/components/Header";
-import Hero from "@/components/Hero";
-import Features from "@/components/Features";
-import MobileDownload from "@/components/MobileDownload";
-import FAQ from "@/components/FAQ";
-import AboutARPI from "@/components/AboutARPI";
-import Footer from "@/components/Footer";
+import {
+  Header,
+  Footer,
+  Hero,
+  Features,
+  MobileDownload,
+  FAQ,
+  AboutARPI,
+} from "@/components";
 
 export default function HomePage() {
   return (
