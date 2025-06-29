@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Building2, Heart, Users, Award, MapPin, Mail, Phone, Globe, Linkedin, Twitter, Github, Sparkles, Target, TrendingUp, Shield, Brain, Activity, CheckCircle, ArrowUpRight, Star, Calendar, Zap, ChevronLeft, ChevronRight, Compass, Navigation } from 'lucide-react';
+import { Building2, Heart, Users, Award, MapPin, Mail, Phone, Globe, Linkedin, Twitter, Github, Sparkles, Target, TrendingUp, Shield, Brain, Activity, CheckCircle, ArrowUpRight, Star, Calendar, Zap, ChevronLeft, ChevronRight, Compass, Navigation, Rocket } from 'lucide-react';
 
 const AboutARPI = () => {
   const [selectedMilestone, setSelectedMilestone] = useState(0);
@@ -62,10 +62,26 @@ const AboutARPI = () => {
 
   const milestones = [
     {
+      year: '2025',
+      title: 'Global Leadership',
+      description: 'Expanding to 25+ countries with 15,000+ users. Launching CardioInsight Pro and establishing strategic partnerships across Asia-Pacific region',
+      icon: Rocket,
+      color: 'orange',
+      bgColor: 'bg-orange-500',
+      lightColor: 'bg-orange-100',
+      textColor: 'text-orange-600',
+      borderColor: 'border-orange-200',
+      shadowColor: 'shadow-orange-500/25',
+      glowColor: 'shadow-orange-500/40',
+      metrics: ['25+ Countries', '15K+ Users', 'APAC Expansion'],
+      achievement: 'Current Progress',
+      position: { x: 85, y: 10 },
+      pathColor: '#F97316'
+    },
+    {
       year: '2024',
-      quarter: 'Q4',
       title: 'Global Expansion',
-      description: 'ECG Buddy reaches 10,000+ healthcare professionals across 15 countries with 99.2% accuracy rate',
+      description: 'ECG Buddy reaches 10,000+ healthcare professionals across 15 countries with 99.2% accuracy rate and FDA breakthrough approval',
       icon: Target,
       color: 'red',
       bgColor: 'bg-red-500',
@@ -74,32 +90,13 @@ const AboutARPI = () => {
       borderColor: 'border-red-200',
       shadowColor: 'shadow-red-500/25',
       glowColor: 'shadow-red-500/40',
-      metrics: ['10K+ Users', '15 Countries', '99.2% Accuracy'],
+      metrics: ['10K+ Users', '15 Countries', 'FDA 510(k)'],
       achievement: 'Major Milestone',
-      position: { x: 85, y: 15 },
+      position: { x: 65, y: 35 },
       pathColor: '#EF4444'
     },
     {
-      year: '2024',
-      quarter: 'Q2',
-      title: 'FDA Breakthrough',
-      description: 'Received FDA 510(k) clearance for AI-powered ECG analysis, becoming first Korean company in this category',
-      icon: Award,
-      color: 'emerald',
-      bgColor: 'bg-emerald-500',
-      lightColor: 'bg-emerald-100',
-      textColor: 'text-emerald-600',
-      borderColor: 'border-emerald-200',
-      shadowColor: 'shadow-emerald-500/25',
-      glowColor: 'shadow-emerald-500/40',
-      metrics: ['FDA 510(k)', 'First in Korea', 'Class II Device'],
-      achievement: 'Regulatory Approval',
-      position: { x: 65, y: 45 },
-      pathColor: '#10B981'
-    },
-    {
       year: '2023',
-      quarter: 'Q3',
       title: 'Series A Success',
       description: 'Raised $15M Series A led by top-tier VCs to accelerate AI healthcare development and global expansion',
       icon: TrendingUp,
@@ -117,7 +114,6 @@ const AboutARPI = () => {
     },
     {
       year: '2021',
-      quarter: 'Q1',
       title: 'ARPI Founded',
       description: 'Company established with mission to revolutionize healthcare through artificial intelligence and machine learning',
       icon: Building2,
@@ -479,7 +475,7 @@ const AboutARPI = () => {
                   <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                     {/* Enhanced Animated Path with Gradient */}
                     <motion.path
-                      d="M 15,85 Q 25,45 35,65 Q 55,25 65,45 Q 75,15 85,15"
+                      d="M 15,85 Q 25,45 35,65 Q 55,25 65,35 Q 75,10 85,10"
                       stroke="url(#premiumGradient)"
                       strokeWidth="0.8"
                       fill="none"
@@ -492,7 +488,7 @@ const AboutARPI = () => {
                     
                     {/* Glowing Path Effect */}
                     <motion.path
-                      d="M 15,85 Q 25,45 35,65 Q 55,25 65,45 Q 75,15 85,15"
+                      d="M 15,85 Q 25,45 35,65 Q 55,25 65,35 Q 75,10 85,10"
                       stroke="url(#glowGradient)"
                       strokeWidth="2"
                       fill="none"
@@ -507,17 +503,15 @@ const AboutARPI = () => {
                     <defs>
                       <linearGradient id="premiumGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" stopColor="#8B5CF6" />
-                        <stop offset="25%" stopColor="#3B82F6" />
-                        <stop offset="50%" stopColor="#10B981" />
-                        <stop offset="75%" stopColor="#F59E0B" />
-                        <stop offset="100%" stopColor="#EF4444" />
+                        <stop offset="33%" stopColor="#3B82F6" />
+                        <stop offset="66%" stopColor="#EF4444" />
+                        <stop offset="100%" stopColor="#F97316" />
                       </linearGradient>
                       <linearGradient id="glowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.6" />
-                        <stop offset="25%" stopColor="#3B82F6" stopOpacity="0.6" />
-                        <stop offset="50%" stopColor="#10B981" stopOpacity="0.6" />
-                        <stop offset="75%" stopColor="#F59E0B" stopOpacity="0.6" />
-                        <stop offset="100%" stopColor="#EF4444" stopOpacity="0.6" />
+                        <stop offset="33%" stopColor="#3B82F6" stopOpacity="0.6" />
+                        <stop offset="66%" stopColor="#EF4444" stopOpacity="0.6" />
+                        <stop offset="100%" stopColor="#F97316" stopOpacity="0.6" />
                       </linearGradient>
                     </defs>
                   </svg>
@@ -695,14 +689,6 @@ const AboutARPI = () => {
                             transition={{ duration: 0.4, type: "spring" }}
                           >
                             {milestones[selectedMilestone].year}
-                          </motion.span>
-                          <motion.span 
-                            className="text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-blue-700 px-3 py-1.5 rounded-full shadow-lg"
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.2, duration: 0.4 }}
-                          >
-                            {milestones[selectedMilestone].quarter}
                           </motion.span>
                         </div>
                         <motion.div 
