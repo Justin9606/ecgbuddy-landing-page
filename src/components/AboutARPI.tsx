@@ -887,7 +887,7 @@ const AboutARPI = () => {
             <motion.div
               className="flex space-x-6"
               animate={{
-                x: isCarouselPaused ? 0 : [0, -100 * (partners.length / 2) + '%']
+                x: isCarouselPaused ? 0 : [0, `-${100 * (partners.length / 2)}%`]
               }}
               transition={{
                 x: {
