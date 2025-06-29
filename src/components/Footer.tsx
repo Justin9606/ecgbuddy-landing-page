@@ -1,7 +1,17 @@
 import React from 'react';
-import { Heart, Mail, Phone, MapPin, Github, Twitter, Linkedin, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Heart, Mail, Phone, MapPin, Github, Twitter, Linkedin, ArrowUpRight, Sparkles, Building2 } from 'lucide-react';
 
 const Footer = () => {
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   const footerSections = [
     {
       title: 'Product',
@@ -33,7 +43,12 @@ const Footer = () => {
     {
       title: 'Company',
       links: [
-        { name: 'About ARPI', href: '#about', description: 'Our mission' },
+        { 
+          name: 'About ARPI', 
+          href: '#about-arpi-section', 
+          description: 'Our mission',
+          onClick: () => scrollToSection('about-arpi-section')
+        },
         { name: 'Careers', href: '#careers', description: 'Join our team' },
         { name: 'Press Kit', href: '#press', description: 'Media resources' },
         { name: 'Blog', href: 'https://ecgbuddy.tistory.com', description: 'Latest insights', external: true }
@@ -60,16 +75,16 @@ const Footer = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 mb-16">
-          {/* Brand Section */}
+          {/* Brand Section - Updated to ARPI Inc. */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-3 mb-8 group cursor-pointer">
               <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-red-400 via-red-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/25 group-hover:shadow-red-500/40 transition-all duration-300 group-hover:scale-110">
-                  <Heart className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-500/25 group-hover:shadow-slate-500/40 transition-all duration-300 group-hover:scale-110">
+                  <Building2 className="w-6 h-6 text-white" />
                 </div>
-                <div className="absolute -inset-1 bg-gradient-to-br from-red-400 via-red-500 to-pink-600 rounded-2xl opacity-20 blur group-hover:opacity-30 transition-opacity duration-300"></div>
+                <div className="absolute -inset-1 bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 rounded-2xl opacity-20 blur group-hover:opacity-30 transition-opacity duration-300"></div>
               </div>
-              <span className="text-3xl font-bold text-white">ECG Buddy</span>
+              <span className="text-3xl font-bold text-white">ARPI Inc.</span>
             </div>
             
             <p className="text-slate-300 text-lg leading-relaxed mb-8 max-w-md">
@@ -108,22 +123,39 @@ const Footer = () => {
               <ul className="space-y-4">
                 {section.links.map((link, linkIndex) => (
                   <li key={linkIndex}>
-                    <a
-                      href={link.href}
-                      target={link.external ? '_blank' : undefined}
-                      rel={link.external ? 'noopener noreferrer' : undefined}
-                      className="group flex items-start justify-between text-slate-400 hover:text-red-400 transition-all duration-300"
-                    >
-                      <div>
-                        <div className="font-medium mb-1 flex items-center">
-                          {link.name}
-                          {link.external && <ArrowUpRight className="w-3 h-3 ml-1 opacity-50" />}
+                    {link.onClick ? (
+                      <button
+                        onClick={link.onClick}
+                        className="group flex items-start justify-between text-slate-400 hover:text-red-400 transition-all duration-300 w-full text-left"
+                      >
+                        <div>
+                          <div className="font-medium mb-1 flex items-center">
+                            {link.name}
+                            {link.external && <ArrowUpRight className="w-3 h-3 ml-1 opacity-50" />}
+                          </div>
+                          <div className="text-xs text-slate-500 group-hover:text-slate-400 transition-colors duration-300">
+                            {link.description}
+                          </div>
                         </div>
-                        <div className="text-xs text-slate-500 group-hover:text-slate-400 transition-colors duration-300">
-                          {link.description}
+                      </button>
+                    ) : (
+                      <a
+                        href={link.href}
+                        target={link.external ? '_blank' : undefined}
+                        rel={link.external ? 'noopener noreferrer' : undefined}
+                        className="group flex items-start justify-between text-slate-400 hover:text-red-400 transition-all duration-300"
+                      >
+                        <div>
+                          <div className="font-medium mb-1 flex items-center">
+                            {link.name}
+                            {link.external && <ArrowUpRight className="w-3 h-3 ml-1 opacity-50" />}
+                          </div>
+                          <div className="text-xs text-slate-500 group-hover:text-slate-400 transition-colors duration-300">
+                            {link.description}
+                          </div>
                         </div>
-                      </div>
-                    </a>
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -134,8 +166,8 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-slate-700/50">
           <div className="text-slate-400 mb-6 md:mb-0 text-center md:text-left">
-            <div className="font-medium">© 2024 ECG Buddy by ARPI. All rights reserved.</div>
-            <div className="text-sm text-slate-500 mt-1">Transforming cardiac care with AI</div>
+            <div className="font-medium">© 2024 ARPI Inc. All rights reserved.</div>
+            <div className="text-sm text-slate-500 mt-1">ECG Buddy is a product of ARPI Inc.</div>
           </div>
           
           {/* Social Links */}

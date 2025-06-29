@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Heart, Globe, ChevronDown, ArrowUpRight, User, Zap, Shield, Brain, Activity, Sparkles, Play, FileText, Users, BookOpen, Headphones, HelpCircle } from 'lucide-react';
+import { Menu, X, Heart, Globe, ChevronDown, ArrowUpRight, User, Zap, Shield, Brain, Activity, Sparkles, Play, FileText, Users, BookOpen, Headphones, HelpCircle, Building2 } from 'lucide-react';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -366,6 +366,14 @@ const Header = () => {
               >
                 <span>FAQ</span>
               </button>
+
+              {/* About ARPI Navigation - Direct Click with focus state */}
+              <button 
+                onClick={() => scrollToSection('about-arpi-section')}
+                className="flex items-center space-x-1 px-4 py-2 text-slate-700 hover:text-slate-900 transition-all duration-200 font-medium rounded-lg hover:bg-red-50/50 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:bg-red-50/50"
+              >
+                <span>About Us</span>
+              </button>
             </nav>
 
             {/* Right Side Actions with improved states */}
@@ -461,6 +469,20 @@ const Header = () => {
                 >
                   FAQ
                   <HelpCircle className="w-4 h-4 ml-2 text-slate-500" />
+                </button>
+              </div>
+
+              {/* Mobile About ARPI */}
+              <div className="mt-6 pt-6 border-t border-slate-100">
+                <button 
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    scrollToSection('about-arpi-section');
+                  }}
+                  className="w-full text-left font-semibold text-slate-900 mb-3 flex items-center p-2 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500/20"
+                >
+                  About Us
+                  <Building2 className="w-4 h-4 ml-2 text-slate-500" />
                 </button>
               </div>
               
