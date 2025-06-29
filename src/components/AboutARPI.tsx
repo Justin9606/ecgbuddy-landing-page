@@ -218,7 +218,7 @@ const AboutARPI = () => {
   const isNextDisabled = selectedMilestone === milestones.length - 1; // At 2025 (last milestone)
 
   return (
-    <section id="about-arpi-section" className="relative py-32 overflow-hidden">
+    <section id="about-arpi-section" className="relative py-40 overflow-hidden">
       {/* Premium Background with ARPI Brand Colors */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50/80 via-white to-blue-50/30"></div>
       
@@ -277,7 +277,7 @@ const AboutARPI = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         {/* Enhanced Section Header */}
         <motion.div 
-          className="text-center mb-20"
+          className="text-center mb-24"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -345,7 +345,7 @@ const AboutARPI = () => {
 
         {/* Enhanced Products Section */}
         <motion.div 
-          className="mb-20"
+          className="mb-24"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -435,7 +435,7 @@ const AboutARPI = () => {
 
         {/* COMPLETELY REDESIGNED Premium Journey Map Section */}
         <motion.div 
-          className="mb-20"
+          className="mb-24"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -834,7 +834,7 @@ const AboutARPI = () => {
 
         {/* COMPLETELY REDESIGNED Auto-Sliding Partners Carousel */}
         <motion.div
-          className="mb-20"
+          className="mb-24"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -862,9 +862,9 @@ const AboutARPI = () => {
             </p>
           </motion.div>
 
-          {/* Auto-Sliding Carousel Container */}
+          {/* Auto-Sliding Carousel Container with Extra Padding */}
           <div 
-            className="relative overflow-hidden"
+            className="relative overflow-hidden py-8"
             onMouseEnter={() => setIsCarouselPaused(true)}
             onMouseLeave={() => setIsCarouselPaused(false)}
           >
@@ -999,9 +999,9 @@ const AboutARPI = () => {
             </motion.div>
           </div>
 
-          {/* Carousel Status Indicator */}
+          {/* Carousel Status Indicator with Extra Bottom Margin */}
           <motion.div 
-            className="flex items-center justify-center mt-8 space-x-4"
+            className="flex items-center justify-center mt-12 space-x-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
