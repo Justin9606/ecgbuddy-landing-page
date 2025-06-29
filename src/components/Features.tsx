@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, Clock, Shield, Users, BarChart3, Stethoscope, ArrowRight, Sparkles, CheckCircle, Star, TrendingUp, Zap, Activity, Award, Target } from 'lucide-react';
+import { Brain, Clock, Shield, Users, BarChart3, Stethoscope, ArrowRight, Sparkles, CheckCircle, Star, TrendingUp, Zap, Activity, Award, Target, Building2, Heart, Globe, Briefcase } from 'lucide-react';
 
 const Features = () => {
   const [activeTab, setActiveTab] = useState<string>('all');
@@ -292,7 +292,7 @@ const Features = () => {
           </AnimatePresence>
         </motion.div>
 
-        {/* STATIC Bottom Section - No Animated Counters */}
+        {/* REDESIGNED: Premium "Trusted by Healthcare Leaders" Section */}
         <motion.div 
           className="relative"
           initial={{ opacity: 0, y: 30 }}
@@ -300,56 +300,160 @@ const Features = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <div className="relative bg-white/60 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-12 max-w-4xl mx-auto text-center shadow-sm">
-            <div className="inline-flex items-center space-x-2 bg-slate-100/80 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-              <Award className="w-4 h-4 text-slate-600" />
-              <span className="text-sm font-medium text-slate-700">Trusted by Healthcare Leaders</span>
+          {/* Main CTA Container with Premium Design */}
+          <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl overflow-hidden shadow-2xl">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute inset-0" style={{
+                backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.3) 1px, transparent 0)`,
+                backgroundSize: '30px 30px'
+              }}></div>
             </div>
-            
-            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-              Ready to transform your practice?
-            </h3>
-            
-            <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Join thousands of healthcare professionals who trust ECG Buddy for accurate, 
-              fast, and secure cardiac analysis.
-            </p>
 
-            {/* STATIC Stats - No Animation */}
-            <div className="grid grid-cols-3 gap-8 mb-8 max-w-2xl mx-auto">
-              {[
-                { label: 'Healthcare Professionals', value: '10,000+', icon: Users },
-                { label: 'Diagnostic Accuracy', value: '99.2%', icon: Target },
-                { label: 'System Integrations', value: '200+', icon: CheckCircle }
-              ].map((stat, index) => (
-                <div key={index} className="text-center">
-                  <div className="flex items-center justify-center mb-2">
-                    <stat.icon className="w-5 h-5 text-slate-600" />
-                  </div>
-                  <div className="text-2xl font-bold text-slate-900">{stat.value}</div>
-                  <div className="text-sm text-slate-600">{stat.label}</div>
-                </div>
-              ))}
+            {/* Floating Orbs */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute top-10 right-20 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-2xl"></div>
+              <div className="absolute bottom-10 left-20 w-40 h-40 bg-gradient-to-br from-red-400/20 to-pink-400/20 rounded-full blur-2xl"></div>
             </div>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <motion.button 
-                className="bg-slate-900 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+
+            <div className="relative z-10 p-12 lg:p-16">
+              {/* Header Badge */}
+              <motion.div 
+                className="inline-flex items-center space-x-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3 mb-8"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
               >
-                <span>Get Started Today</span>
-                <ArrowRight className="w-4 h-4" />
-              </motion.button>
+                <Award className="w-5 h-5 text-amber-400" />
+                <span className="text-sm font-semibold text-white">Trusted by Healthcare Leaders</span>
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+              </motion.div>
               
-              <motion.button 
-                className="text-slate-600 hover:text-slate-900 font-medium transition-colors duration-300 flex items-center space-x-2"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span>Schedule Demo</span>
-                <ArrowRight className="w-4 h-4" />
-              </motion.button>
+              {/* Main Content Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                {/* Left Side - Text Content */}
+                <div>
+                  <motion.h3 
+                    className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 0.6 }}
+                  >
+                    Ready to transform your 
+                    <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                      cardiac care practice?
+                    </span>
+                  </motion.h3>
+                  
+                  <motion.p 
+                    className="text-xl text-slate-300 mb-8 leading-relaxed"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.6 }}
+                  >
+                    Join thousands of healthcare professionals who trust ECG Buddy for 
+                    accurate, fast, and secure cardiac analysis that saves lives.
+                  </motion.p>
+
+                  {/* Trust Indicators */}
+                  <motion.div 
+                    className="flex flex-wrap items-center gap-6 mb-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.6 }}
+                  >
+                    {[
+                      { icon: Shield, text: 'HIPAA Compliant', color: 'text-emerald-400' },
+                      { icon: Award, text: 'FDA Approved', color: 'text-blue-400' },
+                      { icon: Globe, text: 'Global Standard', color: 'text-purple-400' }
+                    ].map((item, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <item.icon className={`w-5 h-5 ${item.color}`} />
+                        <span className="text-sm font-medium text-slate-300">{item.text}</span>
+                      </div>
+                    ))}
+                  </motion.div>
+
+                  {/* CTA Buttons */}
+                  <motion.div 
+                    className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.6 }}
+                  >
+                    <motion.button 
+                      className="group relative bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-500 flex items-center space-x-3 overflow-hidden"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                      <Heart className="w-5 h-5 relative z-10" />
+                      <span className="relative z-10">Start Free Trial</span>
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
+                    </motion.button>
+                    
+                    <motion.button 
+                      className="text-slate-300 hover:text-white font-semibold transition-colors duration-300 flex items-center space-x-2 group"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Briefcase className="w-5 h-5" />
+                      <span>Schedule Enterprise Demo</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                    </motion.button>
+                  </motion.div>
+                </div>
+
+                {/* Right Side - Enhanced Stats Cards */}
+                <div className="grid grid-cols-1 gap-6">
+                  {[
+                    { 
+                      icon: Users, 
+                      label: 'Healthcare Professionals', 
+                      value: '10,000+', 
+                      gradient: 'from-blue-500 to-cyan-500',
+                      description: 'Active users worldwide'
+                    },
+                    { 
+                      icon: Target, 
+                      label: 'Diagnostic Accuracy', 
+                      value: '99.2%', 
+                      gradient: 'from-emerald-500 to-teal-500',
+                      description: 'Clinical validation rate'
+                    },
+                    { 
+                      icon: Building2, 
+                      label: 'Healthcare Institutions', 
+                      value: '500+', 
+                      gradient: 'from-purple-500 to-pink-500',
+                      description: 'Hospitals & clinics'
+                    }
+                  ].map((stat, index) => (
+                    <motion.div 
+                      key={index}
+                      className="group relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-500"
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.7 + index * 0.1, duration: 0.6 }}
+                      whileHover={{ scale: 1.02, y: -2 }}
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className={`w-12 h-12 bg-gradient-to-br ${stat.gradient} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                          <stat.icon className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
+                          <div className="text-sm font-medium text-slate-300 mb-1">{stat.label}</div>
+                          <div className="text-xs text-slate-400">{stat.description}</div>
+                        </div>
+                      </div>
+                      
+                      {/* Subtle glow effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out rounded-2xl"></div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>
