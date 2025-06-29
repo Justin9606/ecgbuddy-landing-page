@@ -5,6 +5,7 @@ import { Building2, Heart, Users, Award, MapPin, Mail, Phone, Globe, Linkedin, T
 const AboutARPI = () => {
   // FIXED: Default to 2025 (index 3) since we're in 2025
   const [selectedMilestone, setSelectedMilestone] = useState(3);
+  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -133,34 +134,67 @@ const AboutARPI = () => {
     }
   ];
 
+  // Enhanced Partners with more details for carousel
   const partners = [
     { 
       name: 'Seoul National University Hospital', 
       type: 'Research Partner',
-      description: 'Clinical validation and research collaboration',
+      description: 'Clinical validation and research collaboration for AI-powered cardiac diagnostics',
       icon: Brain,
-      color: 'blue'
+      color: 'blue',
+      logo: '🏥',
+      established: '2022',
+      projects: '15+ Studies'
     },
     { 
       name: 'Samsung Medical Center', 
       type: 'Clinical Partner',
-      description: 'Real-world deployment and testing',
+      description: 'Real-world deployment and testing of ECG analysis systems',
       icon: Heart,
-      color: 'red'
+      color: 'red',
+      logo: '🏥',
+      established: '2023',
+      projects: '8+ Trials'
     },
     { 
       name: 'Asan Medical Center', 
       type: 'Technology Partner',
-      description: 'AI algorithm development and optimization',
+      description: 'AI algorithm development and optimization for cardiac care',
       icon: Zap,
-      color: 'yellow'
+      color: 'yellow',
+      logo: '🏥',
+      established: '2023',
+      projects: '12+ Projects'
     },
     { 
       name: 'Korean Medical Association', 
       type: 'Industry Partner',
-      description: 'Standards development and advocacy',
+      description: 'Standards development and advocacy for medical AI adoption',
       icon: Users,
-      color: 'green'
+      color: 'green',
+      logo: '🏛️',
+      established: '2024',
+      projects: '5+ Initiatives'
+    },
+    { 
+      name: 'Yonsei Severance Hospital', 
+      type: 'Research Partner',
+      description: 'Advanced cardiac imaging and AI integration research',
+      icon: Target,
+      color: 'purple',
+      logo: '🏥',
+      established: '2024',
+      projects: '6+ Studies'
+    },
+    { 
+      name: 'Korea University Medical Center', 
+      type: 'Clinical Partner',
+      description: 'Emergency medicine AI deployment and validation',
+      icon: Shield,
+      color: 'indigo',
+      logo: '🏥',
+      established: '2024',
+      projects: '4+ Trials'
     }
   ];
 
@@ -798,7 +832,7 @@ const AboutARPI = () => {
           </div>
         </motion.div>
 
-        {/* Enhanced Partners Section */}
+        {/* COMPLETELY REDESIGNED Auto-Sliding Partners Carousel */}
         <motion.div
           className="mb-20"
           initial={{ opacity: 0, y: 30 }}
@@ -807,48 +841,194 @@ const AboutARPI = () => {
           transition={{ duration: 0.8 }}
         >
           <motion.div className="text-center mb-12" variants={itemVariants}>
-            <h3 className="text-3xl font-bold text-slate-900 mb-4 flex items-center justify-center">
-              <Users className="w-8 h-8 mr-3 text-blue-600" />
-              Our Partners
+            <motion.div 
+              className="inline-flex items-center space-x-3 bg-gradient-to-r from-green-50/80 to-emerald-50/80 backdrop-blur-sm border border-green-200/50 rounded-full px-6 py-3 mb-8 shadow-sm"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Users className="w-4 h-4 text-green-600" />
+              <span className="text-sm font-medium text-green-700">Strategic Partnerships</span>
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            </motion.div>
+            
+            <h3 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+              <span className="block text-slate-900 mb-2">Our Partners</span>
+              <span className="block bg-gradient-to-r from-green-600 via-emerald-500 to-teal-500 bg-clip-text text-transparent">
+                Leading Healthcare Innovation
+              </span>
             </h3>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Collaborating with leading healthcare institutions to advance medical AI
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Collaborating with premier healthcare institutions to advance medical AI and improve patient outcomes worldwide
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {partners.map((partner, index) => (
-              <motion.div
-                key={index}
-                className="bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-6 hover:shadow-lg transition-all duration-500 group relative overflow-hidden"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                whileHover={{ scale: 1.02, y: -2 }}
-              >
-                {/* Glassy Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                
-                <div className="relative z-10 flex items-center space-x-4">
-                  <motion.div 
-                    className={`w-12 h-12 bg-${partner.color}-100 rounded-xl flex items-center justify-center`}
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                  >
-                    <partner.icon className={`w-6 h-6 text-${partner.color}-600`} />
-                  </motion.div>
-                  <div className="flex-1">
-                    <div className="font-semibold text-slate-900 mb-1">{partner.name}</div>
-                    <div className="text-sm text-slate-600 mb-2">{partner.description}</div>
-                    <div className={`inline-flex items-center px-2 py-1 bg-${partner.color}-100/50 text-${partner.color}-700 text-xs font-medium rounded-full`}>
-                      {partner.type}
+          {/* Auto-Sliding Carousel Container */}
+          <div 
+            className="relative overflow-hidden"
+            onMouseEnter={() => setIsCarouselPaused(true)}
+            onMouseLeave={() => setIsCarouselPaused(false)}
+          >
+            {/* Premium Gradient Overlays */}
+            <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
+            
+            {/* Infinitely Sliding Partners */}
+            <motion.div
+              className="flex space-x-8"
+              animate={{
+                x: isCarouselPaused ? undefined : [0, -1920] // Move by total width of all cards
+              }}
+              transition={{
+                x: {
+                  duration: 30, // Slower, more elegant speed
+                  repeat: Infinity,
+                  ease: "linear"
+                }
+              }}
+              style={{ width: 'calc(320px * 12)' }} // 6 partners × 2 (duplicated) × 320px width
+            >
+              {/* Render partners twice for infinite loop */}
+              {[...partners, ...partners].map((partner, index) => (
+                <motion.div
+                  key={`partner-${index}`}
+                  className="group relative bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.08)] hover:shadow-[0_30px_80px_rgba(0,0,0,0.12)] transition-all duration-700 overflow-hidden flex-shrink-0"
+                  style={{ 
+                    width: '320px',
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: '0 20px 60px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9)'
+                  }}
+                  whileHover={{ 
+                    scale: 1.05, 
+                    y: -8,
+                    rotateY: 5,
+                    transition: { duration: 0.3 }
+                  }}
+                >
+                  {/* Premium Glassy Hover Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/40 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+                  
+                  <div className="relative z-10">
+                    {/* Partner Header */}
+                    <div className="flex items-center space-x-4 mb-6">
+                      <motion.div 
+                        className="text-4xl"
+                        whileHover={{ scale: 1.2, rotate: 10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {partner.logo}
+                      </motion.div>
+                      <div className="flex-1">
+                        <motion.div 
+                          className={`inline-flex items-center px-3 py-1.5 bg-${partner.color}-100/70 backdrop-blur-sm text-${partner.color}-700 text-xs font-bold rounded-full border border-${partner.color}-200/50 mb-2`}
+                          whileHover={{ scale: 1.05 }}
+                        >
+                          <partner.icon className="w-3 h-3 mr-1" />
+                          {partner.type}
+                        </motion.div>
+                      </div>
+                      <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <CheckCircle className="w-6 h-6 text-green-500" />
+                      </motion.div>
+                    </div>
+
+                    {/* Partner Name */}
+                    <motion.h4 
+                      className="text-xl font-bold text-slate-900 mb-3 group-hover:text-slate-800 transition-colors duration-300"
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05, duration: 0.4 }}
+                    >
+                      {partner.name}
+                    </motion.h4>
+                    
+                    {/* Partner Description */}
+                    <motion.p 
+                      className="text-slate-600 leading-relaxed mb-6 text-sm"
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 + 0.1, duration: 0.4 }}
+                    >
+                      {partner.description}
+                    </motion.p>
+
+                    {/* Partner Metrics */}
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <motion.div 
+                        className="text-center p-3 bg-slate-50/80 backdrop-blur-sm rounded-xl border border-slate-200/50"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="text-sm font-bold text-slate-900">{partner.established}</div>
+                        <div className="text-xs text-slate-500">Partnership</div>
+                      </motion.div>
+                      <motion.div 
+                        className="text-center p-3 bg-slate-50/80 backdrop-blur-sm rounded-xl border border-slate-200/50"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="text-sm font-bold text-slate-900">{partner.projects}</div>
+                        <div className="text-xs text-slate-500">Active</div>
+                      </motion.div>
+                    </div>
+
+                    {/* Partnership Status */}
+                    <motion.div 
+                      className="flex items-center justify-between"
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 + 0.2, duration: 0.4 }}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <span className="text-xs font-medium text-green-700">Active Partnership</span>
+                      </div>
+                      <motion.div
+                        whileHover={{ x: 3 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors duration-300" />
+                      </motion.div>
                     </div>
                   </div>
-                  <CheckCircle className="w-6 h-6 text-green-500" />
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
+
+          {/* Carousel Status Indicator */}
+          <motion.div 
+            className="flex items-center justify-center mt-8 space-x-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+          >
+            <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-full px-4 py-2 shadow-sm">
+              <motion.div 
+                className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                  isCarouselPaused ? 'bg-orange-400' : 'bg-green-400'
+                }`}
+                animate={{
+                  scale: isCarouselPaused ? [1, 1.2, 1] : 1,
+                  opacity: isCarouselPaused ? [1, 0.5, 1] : 1
+                }}
+                transition={{
+                  duration: 1,
+                  repeat: isCarouselPaused ? Infinity : 0
+                }}
+              />
+              <span className="text-xs font-medium text-slate-600">
+                {isCarouselPaused ? 'Paused' : 'Auto-sliding'}
+              </span>
+            </div>
+            <div className="text-xs text-slate-500">
+              Hover to pause • {partners.length} Partners
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>
