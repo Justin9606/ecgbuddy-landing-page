@@ -141,7 +141,7 @@ const FAQ = () => {
   const answerVariants = {
     hidden: { 
       opacity: 0, 
-      height: 0,
+      maxHeight: 0,
       transition: {
         duration: 0.3,
         ease: "easeInOut"
@@ -149,7 +149,7 @@ const FAQ = () => {
     },
     visible: { 
       opacity: 1, 
-      height: "auto",
+      maxHeight: 1000,
       transition: {
         duration: 0.4,
         ease: "easeOut"
