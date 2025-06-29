@@ -992,7 +992,7 @@ const AboutARPI = () => {
                       >
                         <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors duration-300" />
                       </motion.div>
-                    </div>
+                    </motion.div>
                   </div>
                 </motion.div>
               ))}
