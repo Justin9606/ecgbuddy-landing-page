@@ -60,40 +60,24 @@ const AboutARPI = () => {
     }
   ];
 
+  // FIXED: Reordered milestones in chronological order (2021 first, 2025 last)
   const milestones = [
     {
-      year: '2025',
-      title: 'Global Leadership',
-      description: 'Expanding to 25+ countries with 15,000+ users. Launching CardioInsight Pro and establishing strategic partnerships across Asia-Pacific region',
-      icon: Rocket,
-      color: 'orange',
-      bgColor: 'bg-orange-500',
-      lightColor: 'bg-orange-100',
-      textColor: 'text-orange-600',
-      borderColor: 'border-orange-200',
-      shadowColor: 'shadow-orange-500/25',
-      glowColor: 'shadow-orange-500/40',
-      metrics: ['25+ Countries', '15K+ Users', 'APAC Expansion'],
-      achievement: 'Current Progress',
-      position: { x: 85, y: 10 },
-      pathColor: '#F97316'
-    },
-    {
-      year: '2024',
-      title: 'Global Expansion',
-      description: 'ECG Buddy reaches 10,000+ healthcare professionals across 15 countries with 99.2% accuracy rate and FDA breakthrough approval',
-      icon: Target,
-      color: 'red',
-      bgColor: 'bg-red-500',
-      lightColor: 'bg-red-100',
-      textColor: 'text-red-600',
-      borderColor: 'border-red-200',
-      shadowColor: 'shadow-red-500/25',
-      glowColor: 'shadow-red-500/40',
-      metrics: ['10K+ Users', '15 Countries', 'FDA 510(k)'],
-      achievement: 'Major Milestone',
-      position: { x: 65, y: 35 },
-      pathColor: '#EF4444'
+      year: '2021',
+      title: 'ARPI Founded',
+      description: 'Company established with mission to revolutionize healthcare through artificial intelligence and machine learning',
+      icon: Building2,
+      color: 'purple',
+      bgColor: 'bg-purple-500',
+      lightColor: 'bg-purple-100',
+      textColor: 'text-purple-600',
+      borderColor: 'border-purple-200',
+      shadowColor: 'shadow-purple-500/25',
+      glowColor: 'shadow-purple-500/40',
+      metrics: ['Founded', 'AI Focus', 'Healthcare'],
+      achievement: 'Company Launch',
+      position: { x: 15, y: 85 },
+      pathColor: '#8B5CF6'
     },
     {
       year: '2023',
@@ -113,21 +97,38 @@ const AboutARPI = () => {
       pathColor: '#3B82F6'
     },
     {
-      year: '2021',
-      title: 'ARPI Founded',
-      description: 'Company established with mission to revolutionize healthcare through artificial intelligence and machine learning',
-      icon: Building2,
-      color: 'purple',
-      bgColor: 'bg-purple-500',
-      lightColor: 'bg-purple-100',
-      textColor: 'text-purple-600',
-      borderColor: 'border-purple-200',
-      shadowColor: 'shadow-purple-500/25',
-      glowColor: 'shadow-purple-500/40',
-      metrics: ['Founded', 'AI Focus', 'Healthcare'],
-      achievement: 'Company Launch',
-      position: { x: 15, y: 85 },
-      pathColor: '#8B5CF6'
+      year: '2024',
+      title: 'Global Expansion',
+      description: 'ECG Buddy reaches 10,000+ healthcare professionals across 15 countries with 99.2% accuracy rate and FDA breakthrough approval',
+      icon: Target,
+      color: 'red',
+      bgColor: 'bg-red-500',
+      lightColor: 'bg-red-100',
+      textColor: 'text-red-600',
+      borderColor: 'border-red-200',
+      shadowColor: 'shadow-red-500/25',
+      glowColor: 'shadow-red-500/40',
+      metrics: ['10K+ Users', '15 Countries', 'FDA 510(k)'],
+      achievement: 'Major Milestone',
+      position: { x: 65, y: 35 },
+      pathColor: '#EF4444'
+    },
+    {
+      year: '2025',
+      title: 'Global Leadership',
+      description: 'Expanding to 25+ countries with 15,000+ users. Launching CardioInsight Pro and establishing strategic partnerships across Asia-Pacific region',
+      icon: Rocket,
+      color: 'orange',
+      bgColor: 'bg-orange-500',
+      lightColor: 'bg-orange-100',
+      textColor: 'text-orange-600',
+      borderColor: 'border-orange-200',
+      shadowColor: 'shadow-orange-500/25',
+      glowColor: 'shadow-orange-500/40',
+      metrics: ['25+ Countries', '15K+ Users', 'APAC Expansion'],
+      achievement: 'Current Progress',
+      position: { x: 85, y: 10 },
+      pathColor: '#F97316'
     }
   ];
 
@@ -164,12 +165,22 @@ const AboutARPI = () => {
 
   // FIXED: Corrected navigation logic
   const nextMilestone = () => {
-    setSelectedMilestone((prev) => (prev + 1) % milestones.length);
+    // Next = forward in time (higher index, later year)
+    if (selectedMilestone < milestones.length - 1) {
+      setSelectedMilestone(selectedMilestone + 1);
+    }
   };
 
   const prevMilestone = () => {
-    setSelectedMilestone((prev) => (prev - 1 + milestones.length) % milestones.length);
+    // Previous = backward in time (lower index, earlier year)
+    if (selectedMilestone > 0) {
+      setSelectedMilestone(selectedMilestone - 1);
+    }
   };
+
+  // FIXED: Check if buttons should be disabled
+  const isPrevDisabled = selectedMilestone === 0; // At 2021 (first milestone)
+  const isNextDisabled = selectedMilestone === milestones.length - 1; // At 2025 (last milestone)
 
   return (
     <section id="about-arpi-section" className="relative py-32 overflow-hidden">
@@ -598,18 +609,24 @@ const AboutARPI = () => {
                   ))}
                 </div>
                 
-                {/* FIXED: Premium Navigation Controls with Better Colors */}
+                {/* FIXED: Premium Navigation Controls with Proper Logic and Disabled States */}
                 <div className="flex items-center justify-between mt-8">
                   <motion.button
                     onClick={prevMilestone}
-                    className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-100/80 to-blue-200/60 backdrop-blur-sm hover:from-blue-200/80 hover:to-blue-300/60 text-blue-700 hover:text-blue-800 rounded-2xl transition-all duration-300 border border-blue-200/50 shadow-lg"
-                    whileHover={{ scale: 1.05, x: -2 }}
-                    whileTap={{ scale: 0.95 }}
+                    disabled={isPrevDisabled}
+                    className={`flex items-center space-x-2 px-6 py-3 rounded-2xl transition-all duration-300 border shadow-lg ${
+                      isPrevDisabled 
+                        ? 'bg-gray-100/50 text-gray-400 border-gray-200/50 cursor-not-allowed opacity-50' 
+                        : 'bg-gradient-to-r from-blue-100/80 to-blue-200/60 backdrop-blur-sm hover:from-blue-200/80 hover:to-blue-300/60 text-blue-700 hover:text-blue-800 border-blue-200/50'
+                    }`}
+                    whileHover={!isPrevDisabled ? { scale: 1.05, x: -2 } : {}}
+                    whileTap={!isPrevDisabled ? { scale: 0.95 } : {}}
                   >
                     <ChevronLeft className="w-4 h-4" />
                     <span className="text-sm font-medium">Previous</span>
                   </motion.button>
                   
+                  {/* FIXED: Dots now properly correspond to milestone array indices */}
                   <div className="flex space-x-3">
                     {milestones.map((_, index) => (
                       <motion.button
@@ -628,9 +645,14 @@ const AboutARPI = () => {
                   
                   <motion.button
                     onClick={nextMilestone}
-                    className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-100/80 to-blue-200/60 backdrop-blur-sm hover:from-blue-200/80 hover:to-blue-300/60 text-blue-700 hover:text-blue-800 rounded-2xl transition-all duration-300 border border-blue-200/50 shadow-lg"
-                    whileHover={{ scale: 1.05, x: 2 }}
-                    whileTap={{ scale: 0.95 }}
+                    disabled={isNextDisabled}
+                    className={`flex items-center space-x-2 px-6 py-3 rounded-2xl transition-all duration-300 border shadow-lg ${
+                      isNextDisabled 
+                        ? 'bg-gray-100/50 text-gray-400 border-gray-200/50 cursor-not-allowed opacity-50' 
+                        : 'bg-gradient-to-r from-blue-100/80 to-blue-200/60 backdrop-blur-sm hover:from-blue-200/80 hover:to-blue-300/60 text-blue-700 hover:text-blue-800 border-blue-200/50'
+                    }`}
+                    whileHover={!isNextDisabled ? { scale: 1.05, x: 2 } : {}}
+                    whileTap={!isNextDisabled ? { scale: 0.95 } : {}}
                   >
                     <span className="text-sm font-medium">Next</span>
                     <ChevronRight className="w-4 h-4" />
