@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Play, Heart, Zap, Shield, Sparkles, Activity, Brain, Users, Award, TrendingUp, Target, Clock, BarChart3 } from 'lucide-react';
+import { ArrowRight, Play, Heart, Zap, Shield, Sparkles, Activity, Brain, Users, Award, TrendingUp, Target, Clock, BarChart3, CheckCircle, Star } from 'lucide-react';
 
 const Hero = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -401,27 +401,88 @@ const Hero = () => {
             ))}
           </motion.div>
 
-          {/* Trust Indicators */}
+          {/* REDESIGNED Premium Trust Indicators */}
           <motion.div 
-            className="mt-16 flex flex-wrap items-center justify-center space-x-8 opacity-60"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.6 }}
+            className="mt-20 flex flex-wrap items-center justify-center gap-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 2.5 }}
           >
             {[
-              { icon: Award, text: 'FDA Approved' },
-              { icon: Shield, text: 'HIPAA Compliant' },
-              { icon: Users, text: '10,000+ Users' }
+              { 
+                icon: Award, 
+                text: 'FDA Approved', 
+                subtext: 'Medical Device',
+                gradient: 'from-emerald-500 to-teal-600',
+                bgGradient: 'from-emerald-50/50 to-teal-50/50',
+                borderColor: 'emerald-200/50'
+              },
+              { 
+                icon: Shield, 
+                text: 'HIPAA Compliant', 
+                subtext: 'Enterprise Security',
+                gradient: 'from-blue-500 to-indigo-600',
+                bgGradient: 'from-blue-50/50 to-indigo-50/50',
+                borderColor: 'blue-200/50'
+              },
+              { 
+                icon: Users, 
+                text: '10,000+ Users', 
+                subtext: 'Healthcare Professionals',
+                gradient: 'from-purple-500 to-violet-600',
+                bgGradient: 'from-purple-50/50 to-violet-50/50',
+                borderColor: 'purple-200/50'
+              }
             ].map((item, index) => (
               <motion.div 
                 key={index}
-                className="flex items-center space-x-2 text-slate-600"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 2.7 + index * 0.1 }}
+                className={`group relative bg-gradient-to-br ${item.bgGradient} backdrop-blur-2xl border border-${item.borderColor} rounded-2xl p-6 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] overflow-hidden cursor-pointer min-w-[200px]`}
+                initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 2.7 + index * 0.1, duration: 0.6, ease: "easeOut" }}
+                whileHover={{ y: -5, scale: 1.02 }}
               >
-                <item.icon className="w-5 h-5" />
-                <span className="text-sm font-medium">{item.text}</span>
+                {/* Glassy hover effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+                
+                {/* Certification Badge */}
+                <div className="relative flex items-center space-x-4">
+                  <motion.div 
+                    className={`w-12 h-12 bg-gradient-to-br ${item.gradient} rounded-xl flex items-center justify-center shadow-lg transition-all duration-300`}
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                  >
+                    <item.icon className="w-6 h-6 text-white" />
+                  </motion.div>
+                  <div className="flex-1">
+                    <div className="font-bold text-slate-800 text-sm mb-1 group-hover:text-slate-900 transition-colors">
+                      {item.text}
+                    </div>
+                    <div className="text-xs text-slate-600 group-hover:text-slate-700 transition-colors">
+                      {item.subtext}
+                    </div>
+                  </div>
+                  <motion.div
+                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    whileHover={{ scale: 1.2 }}
+                  >
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                  </motion.div>
+                </div>
+
+                {/* Verification Indicator */}
+                <motion.div 
+                  className="absolute top-2 right-2 w-3 h-3 bg-green-400 rounded-full shadow-sm"
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    opacity: [0.7, 1, 0.7]
+                  }}
+                  transition={{ 
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: index * 0.5
+                  }}
+                />
               </motion.div>
             ))}
           </motion.div>
