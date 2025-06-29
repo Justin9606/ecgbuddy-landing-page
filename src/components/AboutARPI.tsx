@@ -5,7 +5,6 @@ import { Building2, Heart, Users, Award, MapPin, Mail, Phone, Globe, Linkedin, T
 const AboutARPI = () => {
   // FIXED: Default to 2025 (index 3) since we're in 2025
   const [selectedMilestone, setSelectedMilestone] = useState(3);
-  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -134,87 +133,34 @@ const AboutARPI = () => {
     }
   ];
 
-  // Enhanced partners array with more realistic data
   const partners = [
     { 
       name: 'Seoul National University Hospital', 
       type: 'Research Partner',
-      description: 'Clinical validation and research collaboration for AI-powered cardiac diagnostics',
+      description: 'Clinical validation and research collaboration',
       icon: Brain,
-      color: 'blue',
-      logo: 'SNUH',
-      established: '2022',
-      collaboration: 'Clinical Research'
+      color: 'blue'
     },
     { 
       name: 'Samsung Medical Center', 
       type: 'Clinical Partner',
-      description: 'Real-world deployment and testing of ECG analysis systems',
+      description: 'Real-world deployment and testing',
       icon: Heart,
-      color: 'red',
-      logo: 'SMC',
-      established: '2023',
-      collaboration: 'Technology Integration'
+      color: 'red'
     },
     { 
       name: 'Asan Medical Center', 
       type: 'Technology Partner',
-      description: 'AI algorithm development and optimization for cardiac care',
+      description: 'AI algorithm development and optimization',
       icon: Zap,
-      color: 'yellow',
-      logo: 'AMC',
-      established: '2023',
-      collaboration: 'AI Development'
+      color: 'yellow'
     },
     { 
       name: 'Korean Medical Association', 
       type: 'Industry Partner',
-      description: 'Standards development and regulatory advocacy',
+      description: 'Standards development and advocacy',
       icon: Users,
-      color: 'green',
-      logo: 'KMA',
-      established: '2024',
-      collaboration: 'Standards & Policy'
-    },
-    { 
-      name: 'Yonsei Severance Hospital', 
-      type: 'Research Partner',
-      description: 'Advanced cardiac imaging and AI integration studies',
-      icon: Target,
-      color: 'purple',
-      logo: 'YSH',
-      established: '2024',
-      collaboration: 'Imaging Research'
-    },
-    { 
-      name: 'Gangnam Severance Hospital', 
-      type: 'Clinical Partner',
-      description: 'Emergency medicine ECG analysis implementation',
-      icon: Shield,
-      color: 'indigo',
-      logo: 'GSH',
-      established: '2024',
-      collaboration: 'Emergency Care'
-    },
-    { 
-      name: 'Korea University Medical Center', 
-      type: 'Technology Partner',
-      description: 'Machine learning model validation and improvement',
-      icon: Brain,
-      color: 'cyan',
-      logo: 'KUMC',
-      established: '2024',
-      collaboration: 'ML Validation'
-    },
-    { 
-      name: 'Hanyang University Hospital', 
-      type: 'Research Partner',
-      description: 'Pediatric cardiology AI applications research',
-      icon: Heart,
-      color: 'pink',
-      logo: 'HUH',
-      established: '2024',
-      collaboration: 'Pediatric Research'
+      color: 'green'
     }
   ];
 
@@ -852,7 +798,7 @@ const AboutARPI = () => {
           </div>
         </motion.div>
 
-        {/* COMPLETELY REDESIGNED Auto-Sliding Partners Carousel */}
+        {/* Enhanced Partners Section */}
         <motion.div
           className="mb-20"
           initial={{ opacity: 0, y: 30 }}
@@ -861,208 +807,48 @@ const AboutARPI = () => {
           transition={{ duration: 0.8 }}
         >
           <motion.div className="text-center mb-12" variants={itemVariants}>
-            <motion.div 
-              className="inline-flex items-center space-x-3 bg-gradient-to-r from-green-50/80 to-emerald-50/80 backdrop-blur-sm border border-green-200/50 rounded-full px-6 py-3 mb-8 shadow-sm"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Users className="w-4 h-4 text-green-600" />
-              <span className="text-sm font-medium text-green-700">Strategic Partnerships</span>
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            </motion.div>
-            
-            <h3 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              <span className="block text-slate-900 mb-2">Our Partners</span>
-              <span className="block bg-gradient-to-r from-green-600 via-emerald-500 to-teal-500 bg-clip-text text-transparent">
-                Leading Healthcare Innovation
-              </span>
+            <h3 className="text-3xl font-bold text-slate-900 mb-4 flex items-center justify-center">
+              <Users className="w-8 h-8 mr-3 text-blue-600" />
+              Our Partners
             </h3>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-              Collaborating with premier healthcare institutions to advance medical AI and improve patient outcomes worldwide
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Collaborating with leading healthcare institutions to advance medical AI
             </p>
           </motion.div>
 
-          {/* Auto-Sliding Carousel Container */}
-          <div className="relative overflow-hidden">
-            <motion.div
-              className="flex space-x-6"
-              animate={{
-                x: isCarouselPaused ? 0 : [0, `-${100 * (partners.length / 2)}%`]
-              }}
-              transition={{
-                x: {
-                  duration: isCarouselPaused ? 0 : 30,
-                  repeat: isCarouselPaused ? 0 : Infinity,
-                  ease: "linear"
-                }
-              }}
-              onMouseEnter={() => setIsCarouselPaused(true)}
-              onMouseLeave={() => setIsCarouselPaused(false)}
-              style={{ width: `${partners.length * 200}%` }}
-            >
-              {/* Duplicate partners array for seamless loop */}
-              {[...partners, ...partners].map((partner, index) => (
-                <motion.div
-                  key={`${partner.name}-${index}`}
-                  className="flex-shrink-0 w-96 group relative bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-3xl p-8 hover:shadow-xl transition-all duration-500 overflow-hidden"
-                  style={{ minWidth: '384px' }}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: (index % partners.length) * 0.1, duration: 0.5 }}
-                >
-                  {/* Premium Glassy Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
-                  
-                  <div className="relative z-10">
-                    {/* Partner Header */}
-                    <div className="flex items-start justify-between mb-6">
-                      <div className="flex items-center space-x-4">
-                        <motion.div 
-                          className={`w-16 h-16 bg-gradient-to-br from-${partner.color}-100 to-${partner.color}-200 rounded-2xl flex items-center justify-center shadow-lg relative overflow-hidden border border-${partner.color}-200/50`}
-                          whileHover={{ scale: 1.1, rotate: 5 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/40 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 ease-out"></div>
-                          <span className={`text-lg font-bold text-${partner.color}-700 relative z-10`}>
-                            {partner.logo}
-                          </span>
-                        </motion.div>
-                        <div>
-                          <motion.div 
-                            className={`inline-flex items-center px-3 py-1 bg-${partner.color}-100/70 text-${partner.color}-700 text-xs font-semibold rounded-full border border-${partner.color}-200/50 mb-2`}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.2, duration: 0.3 }}
-                          >
-                            {partner.type}
-                          </motion.div>
-                          <div className="text-xs text-slate-500">
-                            Since {partner.established}
-                          </div>
-                        </div>
-                      </div>
-                      <motion.div
-                        whileHover={{ scale: 1.2, rotate: 10 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <CheckCircle className="w-6 h-6 text-green-500" />
-                      </motion.div>
-                    </div>
-
-                    {/* Partner Content */}
-                    <motion.h4 
-                      className="text-xl font-bold text-slate-900 mb-3 group-hover:text-slate-800 transition-colors"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1, duration: 0.4 }}
-                    >
-                      {partner.name}
-                    </motion.h4>
-                    
-                    <motion.p 
-                      className="text-slate-600 leading-relaxed mb-6 text-sm"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2, duration: 0.4 }}
-                    >
-                      {partner.description}
-                    </motion.p>
-
-                    {/* Collaboration Focus */}
-                    <div className="flex items-center justify-between">
-                      <motion.div 
-                        className="flex items-center space-x-2"
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3, duration: 0.4 }}
-                      >
-                        <partner.icon className={`w-4 h-4 text-${partner.color}-600`} />
-                        <span className="text-sm font-medium text-slate-700">
-                          {partner.collaboration}
-                        </span>
-                      </motion.div>
-                      
-                      <motion.div 
-                        className="flex items-center space-x-1"
-                        initial={{ opacity: 0, x: 10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4, duration: 0.4 }}
-                      >
-                        <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                        <span className="text-sm font-semibold text-slate-700">4.9</span>
-                      </motion.div>
-                    </div>
-
-                    {/* Partnership Metrics */}
-                    <motion.div 
-                      className="mt-6 pt-6 border-t border-slate-200/50 grid grid-cols-2 gap-4"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5, duration: 0.4 }}
-                    >
-                      <div className="text-center">
-                        <div className={`text-lg font-bold text-${partner.color}-600`}>
-                          {Math.floor(Math.random() * 50) + 10}+
-                        </div>
-                        <div className="text-xs text-slate-500">Projects</div>
-                      </div>
-                      <div className="text-center">
-                        <div className={`text-lg font-bold text-${partner.color}-600`}>
-                          {Math.floor(Math.random() * 5) + 2} yrs
-                        </div>
-                        <div className="text-xs text-slate-500">Partnership</div>
-                      </div>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* Gradient Overlays for Seamless Effect */}
-            <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none z-10"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none z-10"></div>
-          </div>
-
-          {/* Carousel Controls & Info */}
-          <motion.div 
-            className="flex items-center justify-center mt-12 space-x-8"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-          >
-            <div className="flex items-center space-x-3 text-slate-600">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {partners.map((partner, index) => (
               <motion.div
-                animate={{ 
-                  scale: isCarouselPaused ? [1, 1.2, 1] : 1,
-                  opacity: isCarouselPaused ? [1, 0.5, 1] : 1
-                }}
-                transition={{ 
-                  duration: isCarouselPaused ? 1 : 0,
-                  repeat: isCarouselPaused ? Infinity : 0
-                }}
-                className={`w-3 h-3 rounded-full ${isCarouselPaused ? 'bg-orange-400' : 'bg-green-400'}`}
-              />
-              <span className="text-sm font-medium">
-                {isCarouselPaused ? 'Paused' : 'Auto-sliding'}
-              </span>
-            </div>
-            
-            <div className="text-sm text-slate-500">
-              Hover to pause • {partners.length} Partners
-            </div>
-            
-            <motion.button
-              onClick={() => setIsCarouselPaused(!isCarouselPaused)}
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium transition-colors duration-200"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {isCarouselPaused ? 'Resume' : 'Pause'}
-            </motion.button>
-          </motion.div>
+                key={index}
+                className="bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-6 hover:shadow-lg transition-all duration-500 group relative overflow-hidden"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                whileHover={{ scale: 1.02, y: -2 }}
+              >
+                {/* Glassy Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                
+                <div className="relative z-10 flex items-center space-x-4">
+                  <motion.div 
+                    className={`w-12 h-12 bg-${partner.color}-100 rounded-xl flex items-center justify-center`}
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                  >
+                    <partner.icon className={`w-6 h-6 text-${partner.color}-600`} />
+                  </motion.div>
+                  <div className="flex-1">
+                    <div className="font-semibold text-slate-900 mb-1">{partner.name}</div>
+                    <div className="text-sm text-slate-600 mb-2">{partner.description}</div>
+                    <div className={`inline-flex items-center px-2 py-1 bg-${partner.color}-100/50 text-${partner.color}-700 text-xs font-medium rounded-full`}>
+                      {partner.type}
+                    </div>
+                  </div>
+                  <CheckCircle className="w-6 h-6 text-green-500" />
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
       </div>
     </section>
