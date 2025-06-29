@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Building2, Heart, Users, Award, MapPin, Mail, Phone, Globe, Linkedin, Twitter, Github, Sparkles, Target, TrendingUp, Shield, Brain, Activity, CheckCircle, ArrowUpRight, Star, Calendar, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Building2, Heart, Users, Award, MapPin, Mail, Phone, Globe, Linkedin, Twitter, Github, Sparkles, Target, TrendingUp, Shield, Brain, Activity, CheckCircle, ArrowUpRight, Star, Calendar, Zap, ChevronLeft, ChevronRight, Compass, Navigation } from 'lucide-react';
 
 const AboutARPI = () => {
   const [selectedMilestone, setSelectedMilestone] = useState(0);
@@ -71,9 +71,13 @@ const AboutARPI = () => {
       bgColor: 'bg-red-500',
       lightColor: 'bg-red-100',
       textColor: 'text-red-600',
+      borderColor: 'border-red-200',
+      shadowColor: 'shadow-red-500/25',
+      glowColor: 'shadow-red-500/40',
       metrics: ['10K+ Users', '15 Countries', '99.2% Accuracy'],
       achievement: 'Major Milestone',
-      position: { x: 85, y: 20 }
+      position: { x: 85, y: 15 },
+      pathColor: '#EF4444'
     },
     {
       year: '2024',
@@ -85,9 +89,13 @@ const AboutARPI = () => {
       bgColor: 'bg-emerald-500',
       lightColor: 'bg-emerald-100',
       textColor: 'text-emerald-600',
+      borderColor: 'border-emerald-200',
+      shadowColor: 'shadow-emerald-500/25',
+      glowColor: 'shadow-emerald-500/40',
       metrics: ['FDA 510(k)', 'First in Korea', 'Class II Device'],
       achievement: 'Regulatory Approval',
-      position: { x: 65, y: 60 }
+      position: { x: 65, y: 45 },
+      pathColor: '#10B981'
     },
     {
       year: '2023',
@@ -99,9 +107,13 @@ const AboutARPI = () => {
       bgColor: 'bg-blue-500',
       lightColor: 'bg-blue-100',
       textColor: 'text-blue-600',
+      borderColor: 'border-blue-200',
+      shadowColor: 'shadow-blue-500/25',
+      glowColor: 'shadow-blue-500/40',
       metrics: ['$15M Raised', 'Series A', 'Global VCs'],
       achievement: 'Funding Round',
-      position: { x: 35, y: 40 }
+      position: { x: 35, y: 65 },
+      pathColor: '#3B82F6'
     },
     {
       year: '2021',
@@ -113,9 +125,13 @@ const AboutARPI = () => {
       bgColor: 'bg-purple-500',
       lightColor: 'bg-purple-100',
       textColor: 'text-purple-600',
+      borderColor: 'border-purple-200',
+      shadowColor: 'shadow-purple-500/25',
+      glowColor: 'shadow-purple-500/40',
       metrics: ['Founded', 'AI Focus', 'Healthcare'],
       achievement: 'Company Launch',
-      position: { x: 15, y: 80 }
+      position: { x: 15, y: 85 },
+      pathColor: '#8B5CF6'
     }
   ];
 
@@ -160,10 +176,10 @@ const AboutARPI = () => {
 
   return (
     <section id="about-arpi-section" className="relative py-32 overflow-hidden">
-      {/* Enhanced Background */}
+      {/* Enhanced Background with Depth */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-gray-50"></div>
       
-      {/* Animated Grid Pattern */}
+      {/* Multiple Layer Grid Pattern */}
       <div className="absolute inset-0 opacity-[0.02]">
         <motion.div 
           className="absolute inset-0" 
@@ -182,7 +198,7 @@ const AboutARPI = () => {
         />
       </div>
 
-      {/* Enhanced Floating Elements */}
+      {/* Enhanced Floating Elements with More Depth */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div 
           className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-100/30 to-purple-100/30 rounded-full blur-3xl"
@@ -211,6 +227,20 @@ const AboutARPI = () => {
             repeat: Infinity,
             ease: "easeInOut",
             delay: 2
+          }}
+        />
+        <motion.div 
+          className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-to-br from-emerald-100/20 to-teal-100/20 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.2, 0.4, 0.2],
+            rotate: [0, 180, 360]
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 4
           }}
         />
       </div>
@@ -370,7 +400,7 @@ const AboutARPI = () => {
           </div>
         </motion.div>
 
-        {/* COMPLETELY REDESIGNED Milestones Section - Interactive Journey Map */}
+        {/* COMPLETELY REDESIGNED Premium Journey Map Section */}
         <motion.div 
           className="mb-20"
           variants={containerVariants}
@@ -379,142 +409,242 @@ const AboutARPI = () => {
           viewport={{ once: true }}
         >
           <motion.div className="text-center mb-16" variants={itemVariants}>
-            <h3 className="text-3xl font-bold text-slate-900 mb-4 flex items-center justify-center">
-              <Calendar className="w-8 h-8 mr-3 text-blue-600" />
-              Our Journey
+            <motion.div 
+              className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-50 to-purple-50 backdrop-blur-sm border border-blue-200/50 rounded-full px-6 py-3 mb-8 shadow-sm"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Compass className="w-4 h-4 text-blue-600" />
+              <span className="text-sm font-medium text-blue-700">Company Timeline</span>
+              <Navigation className="w-4 h-4 text-purple-600" />
+            </motion.div>
+            
+            <h3 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+              <span className="block text-slate-900 mb-2">Our Journey</span>
+              <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                Through Innovation
+              </span>
             </h3>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Navigate through our key milestones and achievements
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Navigate through our key milestones and achievements as we transform healthcare with AI
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Interactive Journey Map */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Premium Interactive Journey Map */}
             <motion.div 
-              className="relative bg-white/40 backdrop-blur-2xl border border-slate-200/50 rounded-3xl p-8 shadow-[0_20px_70px_rgba(0,0,0,0.1)] overflow-hidden group"
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              className="relative bg-gradient-to-br from-white/60 via-white/40 to-white/20 backdrop-blur-3xl border border-white/30 rounded-3xl p-10 shadow-[0_25px_80px_rgba(0,0,0,0.12)] overflow-hidden group"
+              initial={{ opacity: 0, x: -50, rotateY: -15 }}
+              whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.2) 100%)',
+                backdropFilter: 'blur(20px)',
+                boxShadow: '0 25px 80px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.6)'
+              }}
             >
-              {/* Glassy Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+              {/* Premium Glassy Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1500 ease-out"></div>
               
               <div className="relative z-10">
-                <h4 className="text-xl font-bold text-slate-900 mb-6 flex items-center">
-                  <Sparkles className="w-5 h-5 mr-2 text-purple-600" />
-                  Journey Map
-                </h4>
+                <div className="flex items-center justify-between mb-8">
+                  <h4 className="text-2xl font-bold text-slate-900 flex items-center">
+                    <motion.div
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    >
+                      <Compass className="w-6 h-6 mr-3 text-blue-600" />
+                    </motion.div>
+                    Journey Map
+                  </h4>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-slate-600">Interactive</span>
+                  </div>
+                </div>
                 
-                {/* Interactive SVG Path */}
-                <div className="relative h-80 bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl overflow-hidden">
+                {/* Enhanced Interactive SVG Path with Premium Design */}
+                <div className="relative h-96 bg-gradient-to-br from-slate-50/80 via-white/60 to-slate-100/40 rounded-2xl overflow-hidden border border-white/50 shadow-inner">
+                  {/* Animated Background Pattern */}
+                  <div className="absolute inset-0 opacity-5">
+                    <motion.div 
+                      className="absolute inset-0" 
+                      style={{
+                        backgroundImage: `radial-gradient(circle at 2px 2px, rgba(59, 130, 246, 0.4) 1px, transparent 0)`,
+                        backgroundSize: '30px 30px'
+                      }}
+                      animate={{
+                        backgroundPosition: ['0px 0px', '30px 30px']
+                      }}
+                      transition={{
+                        duration: 15,
+                        repeat: Infinity,
+                        ease: "linear"
+                      }}
+                    />
+                  </div>
+
                   <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    {/* Animated Path */}
+                    {/* Enhanced Animated Path with Gradient */}
                     <motion.path
-                      d="M 15,80 Q 35,20 65,60 Q 85,10 85,20"
-                      stroke="url(#gradient)"
-                      strokeWidth="0.5"
+                      d="M 15,85 Q 25,45 35,65 Q 55,25 65,45 Q 75,15 85,15"
+                      stroke="url(#premiumGradient)"
+                      strokeWidth="0.8"
                       fill="none"
-                      strokeDasharray="2,1"
+                      strokeDasharray="3,2"
+                      initial={{ pathLength: 0, opacity: 0 }}
+                      whileInView={{ pathLength: 1, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 4, ease: "easeInOut", delay: 0.5 }}
+                    />
+                    
+                    {/* Glowing Path Effect */}
+                    <motion.path
+                      d="M 15,85 Q 25,45 35,65 Q 55,25 65,45 Q 75,15 85,15"
+                      stroke="url(#glowGradient)"
+                      strokeWidth="2"
+                      fill="none"
+                      opacity="0.3"
                       initial={{ pathLength: 0 }}
                       whileInView={{ pathLength: 1 }}
                       viewport={{ once: true }}
-                      transition={{ duration: 3, ease: "easeInOut" }}
+                      transition={{ duration: 4, ease: "easeInOut", delay: 0.7 }}
                     />
                     
-                    {/* Gradient Definition */}
+                    {/* Premium Gradient Definitions */}
                     <defs>
-                      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <linearGradient id="premiumGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" stopColor="#8B5CF6" />
                         <stop offset="25%" stopColor="#3B82F6" />
                         <stop offset="50%" stopColor="#10B981" />
                         <stop offset="75%" stopColor="#F59E0B" />
                         <stop offset="100%" stopColor="#EF4444" />
                       </linearGradient>
+                      <linearGradient id="glowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.6" />
+                        <stop offset="25%" stopColor="#3B82F6" stopOpacity="0.6" />
+                        <stop offset="50%" stopColor="#10B981" stopOpacity="0.6" />
+                        <stop offset="75%" stopColor="#F59E0B" stopOpacity="0.6" />
+                        <stop offset="100%" stopColor="#EF4444" stopOpacity="0.6" />
+                      </linearGradient>
                     </defs>
                   </svg>
                   
-                  {/* Interactive Milestone Dots */}
+                  {/* Premium Interactive Milestone Dots */}
                   {milestones.map((milestone, index) => (
-                    <motion.button
+                    <motion.div
                       key={index}
-                      className={`absolute w-6 h-6 ${milestone.bgColor} rounded-full border-4 border-white shadow-lg cursor-pointer transform -translate-x-1/2 -translate-y-1/2 hover:scale-125 transition-all duration-300 ${
-                        selectedMilestone === index ? 'scale-125 ring-4 ring-blue-200' : ''
-                      }`}
+                      className="absolute transform -translate-x-1/2 -translate-y-1/2"
                       style={{
                         left: `${milestone.position.x}%`,
                         top: `${milestone.position.y}%`
                       }}
-                      onClick={() => setSelectedMilestone(index)}
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
+                      initial={{ scale: 0, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
                       viewport={{ once: true }}
-                      transition={{ delay: index * 0.2, duration: 0.5, type: "spring" }}
-                      whileHover={{ scale: 1.3 }}
-                      whileTap={{ scale: 0.9 }}
+                      transition={{ delay: 1 + index * 0.3, duration: 0.6, type: "spring", bounce: 0.4 }}
                     >
-                      {/* Pulsing Effect for Active */}
-                      {selectedMilestone === index && (
-                        <motion.div 
-                          className={`absolute inset-0 ${milestone.bgColor} rounded-full opacity-30`}
-                          animate={{ 
-                            scale: [1, 2, 1],
-                            opacity: [0.3, 0, 0.3]
-                          }}
-                          transition={{ 
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                          }}
-                        />
-                      )}
-                    </motion.button>
-                  ))}
-                  
-                  {/* Year Labels */}
-                  {milestones.map((milestone, index) => (
-                    <div
-                      key={`label-${index}`}
-                      className="absolute text-xs font-bold text-slate-600 transform -translate-x-1/2"
-                      style={{
-                        left: `${milestone.position.x}%`,
-                        top: `${milestone.position.y + 8}%`
-                      }}
-                    >
-                      {milestone.year}
-                    </div>
+                      <motion.button
+                        className={`relative w-8 h-8 ${milestone.bgColor} rounded-full border-4 border-white ${milestone.shadowColor} cursor-pointer transition-all duration-500 ${
+                          selectedMilestone === index ? `scale-125 ${milestone.glowColor}` : 'hover:scale-110'
+                        }`}
+                        onClick={() => setSelectedMilestone(index)}
+                        whileHover={{ scale: 1.3 }}
+                        whileTap={{ scale: 0.9 }}
+                        style={{
+                          boxShadow: selectedMilestone === index 
+                            ? `0 0 30px ${milestone.pathColor}40, 0 8px 25px rgba(0,0,0,0.15)` 
+                            : '0 4px 15px rgba(0,0,0,0.1)'
+                        }}
+                      >
+                        {/* Premium Pulsing Effect for Active */}
+                        {selectedMilestone === index && (
+                          <>
+                            <motion.div 
+                              className={`absolute inset-0 ${milestone.bgColor} rounded-full opacity-40`}
+                              animate={{ 
+                                scale: [1, 2.5, 1],
+                                opacity: [0.4, 0, 0.4]
+                              }}
+                              transition={{ 
+                                duration: 2,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                              }}
+                            />
+                            <motion.div 
+                              className={`absolute inset-0 ${milestone.bgColor} rounded-full opacity-20`}
+                              animate={{ 
+                                scale: [1, 3.5, 1],
+                                opacity: [0.2, 0, 0.2]
+                              }}
+                              transition={{ 
+                                duration: 2,
+                                repeat: Infinity,
+                                ease: "easeInOut",
+                                delay: 0.5
+                              }}
+                            />
+                          </>
+                        )}
+                        
+                        {/* Icon */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          {React.createElement(milestone.icon, {
+                            className: "w-4 h-4 text-white"
+                          })}
+                        </div>
+                      </motion.button>
+                      
+                      {/* Enhanced Year Labels */}
+                      <motion.div
+                        className="absolute top-10 left-1/2 transform -translate-x-1/2 text-center"
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 1.2 + index * 0.3, duration: 0.4 }}
+                      >
+                        <div className="text-xs font-bold text-slate-700 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-full border border-slate-200/50 shadow-sm">
+                          {milestone.year}
+                        </div>
+                      </motion.div>
+                    </motion.div>
                   ))}
                 </div>
                 
-                {/* Navigation Controls */}
-                <div className="flex items-center justify-between mt-6">
+                {/* Premium Navigation Controls */}
+                <div className="flex items-center justify-between mt-8">
                   <motion.button
                     onClick={prevMilestone}
-                    className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors duration-300"
-                    whileHover={{ scale: 1.05 }}
+                    className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-slate-100/80 to-slate-200/60 backdrop-blur-sm hover:from-slate-200/80 hover:to-slate-300/60 rounded-2xl transition-all duration-300 border border-white/50 shadow-lg"
+                    whileHover={{ scale: 1.05, x: -2 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <ChevronLeft className="w-4 h-4" />
                     <span className="text-sm font-medium">Previous</span>
                   </motion.button>
                   
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-3">
                     {milestones.map((_, index) => (
                       <motion.button
                         key={index}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                          selectedMilestone === index ? 'bg-blue-500 w-6' : 'bg-slate-300'
+                        className={`h-2 rounded-full transition-all duration-500 ${
+                          selectedMilestone === index 
+                            ? `bg-gradient-to-r ${milestones[index].bgColor.replace('bg-', 'from-')} to-${milestones[index].color}-400 w-8 shadow-lg` 
+                            : 'bg-slate-300 w-2 hover:bg-slate-400'
                         }`}
                         onClick={() => setSelectedMilestone(index)}
                         whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
                       />
                     ))}
                   </div>
                   
                   <motion.button
                     onClick={nextMilestone}
-                    className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors duration-300"
-                    whileHover={{ scale: 1.05 }}
+                    className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-slate-100/80 to-slate-200/60 backdrop-blur-sm hover:from-slate-200/80 hover:to-slate-300/60 rounded-2xl transition-all duration-300 border border-white/50 shadow-lg"
+                    whileHover={{ scale: 1.05, x: 2 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <span className="text-sm font-medium">Next</span>
@@ -524,72 +654,116 @@ const AboutARPI = () => {
               </div>
             </motion.div>
 
-            {/* Selected Milestone Details */}
+            {/* Premium Selected Milestone Details */}
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: 50, rotateY: 15 }}
+              whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 1, ease: "easeOut" }}
             >
               <AnimatePresence mode="wait">
                 <motion.div
                   key={selectedMilestone}
-                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                  transition={{ duration: 0.5 }}
-                  className="bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl p-8 shadow-[0_20px_70px_rgba(0,0,0,0.1)] relative overflow-hidden group"
+                  initial={{ opacity: 0, y: 30, scale: 0.95, rotateX: -10 }}
+                  animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+                  exit={{ opacity: 0, y: -30, scale: 0.95, rotateX: 10 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                  className="relative bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-3xl border border-white/40 rounded-3xl p-10 shadow-[0_30px_90px_rgba(0,0,0,0.15)] overflow-hidden group"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.3) 100%)',
+                    backdropFilter: 'blur(25px)',
+                    boxShadow: '0 30px 90px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8)'
+                  }}
                 >
-                  {/* Glassy Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+                  {/* Premium Glassy Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1500 ease-out"></div>
                   
                   <div className="relative z-10">
-                    {/* Header */}
-                    <div className="flex items-center space-x-4 mb-6">
+                    {/* Premium Header */}
+                    <div className="flex items-center space-x-6 mb-8">
                       <motion.div 
-                        className={`w-16 h-16 ${milestones[selectedMilestone].lightColor} rounded-2xl flex items-center justify-center relative overflow-hidden`}
+                        className={`w-20 h-20 ${milestones[selectedMilestone].lightColor} rounded-3xl flex items-center justify-center relative overflow-hidden border border-white/50 ${milestones[selectedMilestone].shadowColor}`}
                         whileHover={{ scale: 1.1, rotate: 5 }}
+                        transition={{ duration: 0.3 }}
+                        style={{
+                          background: `linear-gradient(135deg, ${milestones[selectedMilestone].pathColor}20 0%, ${milestones[selectedMilestone].pathColor}10 100%)`,
+                          boxShadow: `0 10px 30px ${milestones[selectedMilestone].pathColor}20`
+                        }}
                       >
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/40 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
                         {React.createElement(milestones[selectedMilestone].icon, {
-                          className: `w-8 h-8 ${milestones[selectedMilestone].textColor}`
+                          className: `w-10 h-10 ${milestones[selectedMilestone].textColor} relative z-10`
                         })}
                       </motion.div>
                       <div>
-                        <div className="flex items-center space-x-3 mb-2">
-                          <span className={`text-3xl font-bold ${milestones[selectedMilestone].textColor}`}>
+                        <div className="flex items-center space-x-4 mb-3">
+                          <motion.span 
+                            className={`text-4xl font-bold ${milestones[selectedMilestone].textColor}`}
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 0.4, type: "spring" }}
+                          >
                             {milestones[selectedMilestone].year}
-                          </span>
-                          <span className="text-sm font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
+                          </motion.span>
+                          <motion.span 
+                            className="text-sm font-bold text-white bg-gradient-to-r from-slate-600 to-slate-700 px-3 py-1.5 rounded-full shadow-lg"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2, duration: 0.4 }}
+                          >
                             {milestones[selectedMilestone].quarter}
-                          </span>
+                          </motion.span>
                         </div>
-                        <div className="text-sm text-slate-500 font-medium">
+                        <motion.div 
+                          className="text-sm text-slate-600 font-medium bg-slate-100/60 backdrop-blur-sm px-3 py-1 rounded-full border border-slate-200/50"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.3, duration: 0.4 }}
+                        >
                           {milestones[selectedMilestone].achievement}
-                        </div>
+                        </motion.div>
                       </div>
                     </div>
 
-                    <h4 className="text-2xl font-bold text-slate-900 mb-4">
+                    <motion.h4 
+                      className="text-3xl font-bold text-slate-900 mb-6"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1, duration: 0.5 }}
+                    >
                       {milestones[selectedMilestone].title}
-                    </h4>
-                    <p className="text-slate-600 leading-relaxed mb-6">
+                    </motion.h4>
+                    <motion.p 
+                      className="text-lg text-slate-600 leading-relaxed mb-8"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2, duration: 0.5 }}
+                    >
                       {milestones[selectedMilestone].description}
-                    </p>
+                    </motion.p>
 
-                    {/* Metrics */}
-                    <div className="flex flex-wrap gap-2">
+                    {/* Premium Metrics */}
+                    <div className="grid grid-cols-3 gap-4">
                       {milestones[selectedMilestone].metrics.map((metric, metricIndex) => (
-                        <motion.span
+                        <motion.div
                           key={metricIndex}
-                          className={`inline-flex items-center px-3 py-1 ${milestones[selectedMilestone].lightColor} ${milestones[selectedMilestone].textColor} text-sm font-medium rounded-full border border-${milestones[selectedMilestone].color}-200/50`}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: metricIndex * 0.1, duration: 0.3 }}
-                          whileHover={{ scale: 1.05 }}
+                          className={`text-center p-4 bg-gradient-to-br ${milestones[selectedMilestone].lightColor} ${milestones[selectedMilestone].borderColor} border backdrop-blur-sm rounded-2xl shadow-lg relative overflow-hidden group/metric`}
+                          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          transition={{ delay: 0.3 + metricIndex * 0.1, duration: 0.4, type: "spring" }}
+                          whileHover={{ scale: 1.05, y: -2 }}
+                          style={{
+                            background: `linear-gradient(135deg, ${milestones[selectedMilestone].pathColor}15 0%, ${milestones[selectedMilestone].pathColor}05 100%)`
+                          }}
                         >
-                          <CheckCircle className="w-3 h-3 mr-1" />
-                          {metric}
-                        </motion.span>
+                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover/metric:translate-x-[100%] transition-transform duration-500 ease-out"></div>
+                          <div className="relative z-10">
+                            <CheckCircle className={`w-5 h-5 ${milestones[selectedMilestone].textColor} mx-auto mb-2`} />
+                            <div className={`text-sm font-bold ${milestones[selectedMilestone].textColor}`}>
+                              {metric}
+                            </div>
+                          </div>
+                        </motion.div>
                       ))}
                     </div>
                   </div>
@@ -599,7 +773,7 @@ const AboutARPI = () => {
           </div>
         </motion.div>
 
-        {/* Enhanced Partners Section (Removed Contact) */}
+        {/* Enhanced Partners Section */}
         <motion.div
           className="mb-20"
           initial={{ opacity: 0, y: 30 }}
