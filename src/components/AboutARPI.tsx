@@ -134,7 +134,7 @@ const AboutARPI = () => {
     }
   ];
 
-  // Enhanced Partners with more details for carousel
+  // Enhanced Partners with logo support and more premium details
   const partners = [
     { 
       name: 'Seoul National University Hospital', 
@@ -142,9 +142,13 @@ const AboutARPI = () => {
       description: 'Clinical validation and research collaboration for AI-powered cardiac diagnostics',
       icon: Brain,
       color: 'blue',
-      logo: '🏥',
+      logoUrl: '/api/placeholder/80/80', // Will be replaced with actual logos
+      logoFallback: '🏥',
       established: '2022',
-      projects: '15+ Studies'
+      projects: '15+ Studies',
+      gradient: 'from-blue-50/80 to-blue-100/60',
+      accentColor: 'blue-600',
+      borderColor: 'blue-200/40'
     },
     { 
       name: 'Samsung Medical Center', 
@@ -152,9 +156,13 @@ const AboutARPI = () => {
       description: 'Real-world deployment and testing of ECG analysis systems',
       icon: Heart,
       color: 'red',
-      logo: '🏥',
+      logoUrl: '/api/placeholder/80/80',
+      logoFallback: '🏥',
       established: '2023',
-      projects: '8+ Trials'
+      projects: '8+ Trials',
+      gradient: 'from-red-50/80 to-red-100/60',
+      accentColor: 'red-600',
+      borderColor: 'red-200/40'
     },
     { 
       name: 'Asan Medical Center', 
@@ -162,9 +170,13 @@ const AboutARPI = () => {
       description: 'AI algorithm development and optimization for cardiac care',
       icon: Zap,
       color: 'yellow',
-      logo: '🏥',
+      logoUrl: '/api/placeholder/80/80',
+      logoFallback: '🏥',
       established: '2023',
-      projects: '12+ Projects'
+      projects: '12+ Projects',
+      gradient: 'from-amber-50/80 to-amber-100/60',
+      accentColor: 'amber-600',
+      borderColor: 'amber-200/40'
     },
     { 
       name: 'Korean Medical Association', 
@@ -172,9 +184,13 @@ const AboutARPI = () => {
       description: 'Standards development and advocacy for medical AI adoption',
       icon: Users,
       color: 'green',
-      logo: '🏛️',
+      logoUrl: '/api/placeholder/80/80',
+      logoFallback: '🏛️',
       established: '2024',
-      projects: '5+ Initiatives'
+      projects: '5+ Initiatives',
+      gradient: 'from-emerald-50/80 to-emerald-100/60',
+      accentColor: 'emerald-600',
+      borderColor: 'emerald-200/40'
     },
     { 
       name: 'Yonsei Severance Hospital', 
@@ -182,9 +198,13 @@ const AboutARPI = () => {
       description: 'Advanced cardiac imaging and AI integration research',
       icon: Target,
       color: 'purple',
-      logo: '🏥',
+      logoUrl: '/api/placeholder/80/80',
+      logoFallback: '🏥',
       established: '2024',
-      projects: '6+ Studies'
+      projects: '6+ Studies',
+      gradient: 'from-purple-50/80 to-purple-100/60',
+      accentColor: 'purple-600',
+      borderColor: 'purple-200/40'
     },
     { 
       name: 'Korea University Medical Center', 
@@ -192,9 +212,13 @@ const AboutARPI = () => {
       description: 'Emergency medicine AI deployment and validation',
       icon: Shield,
       color: 'indigo',
-      logo: '🏥',
+      logoUrl: '/api/placeholder/80/80',
+      logoFallback: '🏥',
       established: '2024',
-      projects: '4+ Trials'
+      projects: '4+ Trials',
+      gradient: 'from-indigo-50/80 to-indigo-100/60',
+      accentColor: 'indigo-600',
+      borderColor: 'indigo-200/40'
     }
   ];
 
@@ -832,7 +856,7 @@ const AboutARPI = () => {
           </div>
         </motion.div>
 
-        {/* COMPLETELY REDESIGNED Auto-Sliding Partners Carousel */}
+        {/* COMPLETELY REDESIGNED Premium Auto-Sliding Partners Carousel */}
         <motion.div
           className="mb-24"
           initial={{ opacity: 0, y: 30 }}
@@ -840,20 +864,20 @@ const AboutARPI = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <motion.div className="text-center mb-12" variants={itemVariants}>
+          <motion.div className="text-center mb-16" variants={itemVariants}>
             <motion.div 
-              className="inline-flex items-center space-x-3 bg-gradient-to-r from-green-50/80 to-emerald-50/80 backdrop-blur-sm border border-green-200/50 rounded-full px-6 py-3 mb-8 shadow-sm"
+              className="inline-flex items-center space-x-3 bg-gradient-to-r from-emerald-50/90 to-teal-50/80 backdrop-blur-sm border border-emerald-200/50 rounded-full px-6 py-3 mb-8 shadow-sm"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
             >
-              <Users className="w-4 h-4 text-green-600" />
-              <span className="text-sm font-medium text-green-700">Strategic Partnerships</span>
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <Users className="w-4 h-4 text-emerald-600" />
+              <span className="text-sm font-medium text-emerald-700">Strategic Partnerships</span>
+              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
             </motion.div>
             
             <h3 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
               <span className="block text-slate-900 mb-2">Our Partners</span>
-              <span className="block bg-gradient-to-r from-green-600 via-emerald-500 to-teal-500 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
                 Leading Healthcare Innovation
               </span>
             </h3>
@@ -862,173 +886,185 @@ const AboutARPI = () => {
             </p>
           </motion.div>
 
-          {/* Auto-Sliding Carousel Container with Extra Padding */}
+          {/* COMPLETELY REDESIGNED Premium Auto-Sliding Carousel */}
           <div 
-            className="relative overflow-hidden py-8"
+            className="relative overflow-hidden py-12"
             onMouseEnter={() => setIsCarouselPaused(true)}
             onMouseLeave={() => setIsCarouselPaused(false)}
           >
-            {/* Premium Gradient Overlays */}
-            <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
+            {/* Ultra-Premium Gradient Overlays */}
+            <div className="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-white via-white/95 to-transparent z-20 pointer-events-none"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-40 bg-gradient-to-l from-white via-white/95 to-transparent z-20 pointer-events-none"></div>
             
-            {/* Infinitely Sliding Partners */}
+            {/* Infinitely Sliding Partners with Premium Design */}
             <motion.div
-              className="flex space-x-8"
+              className="flex space-x-10"
               animate={{
-                x: isCarouselPaused ? undefined : [0, -1920] // Move by total width of all cards
+                x: isCarouselPaused ? undefined : [0, -2040] // Adjusted for new card width
               }}
               transition={{
                 x: {
-                  duration: 30, // Slower, more elegant speed
+                  duration: 35, // Slower, more elegant
                   repeat: Infinity,
                   ease: "linear"
                 }
               }}
-              style={{ width: 'calc(320px * 12)' }} // 6 partners × 2 (duplicated) × 320px width
+              style={{ width: 'calc(340px * 12)' }} // 6 partners × 2 × 340px
             >
               {/* Render partners twice for infinite loop */}
               {[...partners, ...partners].map((partner, index) => (
                 <motion.div
                   key={`partner-${index}`}
-                  className="group relative bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.08)] hover:shadow-[0_30px_80px_rgba(0,0,0,0.12)] transition-all duration-700 overflow-hidden flex-shrink-0"
-                  style={{ 
-                    width: '320px',
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%)',
-                    backdropFilter: 'blur(20px)',
-                    boxShadow: '0 20px 60px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9)'
-                  }}
+                  className="group relative flex-shrink-0 overflow-hidden"
+                  style={{ width: '340px' }}
                   whileHover={{ 
-                    scale: 1.05, 
-                    y: -8,
-                    rotateY: 5,
-                    transition: { duration: 0.3 }
+                    scale: 1.08, 
+                    y: -12,
+                    rotateY: 8,
+                    transition: { duration: 0.4, ease: "easeOut" }
                   }}
                 >
-                  {/* Premium Glassy Hover Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/40 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
-                  
-                  <div className="relative z-10">
-                    {/* Partner Header */}
-                    <div className="flex items-center space-x-4 mb-6">
-                      <motion.div 
-                        className="text-4xl"
-                        whileHover={{ scale: 1.2, rotate: 10 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {partner.logo}
-                      </motion.div>
-                      <div className="flex-1">
+                  <div 
+                    className={`bg-gradient-to-br ${partner.gradient} backdrop-blur-3xl border border-${partner.borderColor} rounded-3xl p-8 shadow-[0_25px_80px_rgba(0,0,0,0.08)] hover:shadow-[0_35px_100px_rgba(0,0,0,0.15)] transition-all duration-700 relative overflow-hidden h-full`}
+                    style={{
+                      backdropFilter: 'blur(25px)',
+                      boxShadow: '0 25px 80px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9)'
+                    }}
+                  >
+                    {/* Ultra-Premium Glassy Hover Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/50 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1200 ease-out"></div>
+                    
+                    <div className="relative z-10">
+                      {/* Premium Partner Header with Logo Support */}
+                      <div className="flex items-center space-x-4 mb-6">
                         <motion.div 
-                          className={`inline-flex items-center px-3 py-1.5 bg-${partner.color}-100/70 backdrop-blur-sm text-${partner.color}-700 text-xs font-bold rounded-full border border-${partner.color}-200/50 mb-2`}
-                          whileHover={{ scale: 1.05 }}
+                          className="relative w-16 h-16 rounded-2xl overflow-hidden bg-white/90 backdrop-blur-sm border border-white/60 shadow-lg flex items-center justify-center"
+                          whileHover={{ scale: 1.15, rotate: 8 }}
+                          transition={{ duration: 0.3 }}
                         >
-                          <partner.icon className="w-3 h-3 mr-1" />
-                          {partner.type}
+                          {/* Logo Image with Fallback */}
+                          <img 
+                            src={partner.logoUrl} 
+                            alt={`${partner.name} logo`}
+                            className="w-12 h-12 object-contain"
+                            onError={(e) => {
+                              // Fallback to emoji if image fails
+                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.nextElementSibling.style.display = 'block';
+                            }}
+                          />
+                          <div className="text-2xl hidden">
+                            {partner.logoFallback}
+                          </div>
+                        </motion.div>
+                        
+                        <div className="flex-1">
+                          <motion.div 
+                            className={`inline-flex items-center px-3 py-1.5 bg-white/80 backdrop-blur-sm text-${partner.accentColor} text-xs font-bold rounded-full border border-white/60 mb-2 shadow-sm`}
+                            whileHover={{ scale: 1.05 }}
+                          >
+                            <partner.icon className="w-3 h-3 mr-1" />
+                            {partner.type}
+                          </motion.div>
+                        </div>
+                        
+                        <motion.div
+                          className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/60 shadow-sm"
+                          whileHover={{ scale: 1.15, rotate: 90 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <CheckCircle className="w-4 h-4 text-emerald-500" />
                         </motion.div>
                       </div>
-                      <motion.div
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <CheckCircle className="w-6 h-6 text-green-500" />
-                      </motion.div>
-                    </div>
 
-                    {/* Partner Name */}
-                    <motion.h4 
-                      className="text-xl font-bold text-slate-900 mb-3 group-hover:text-slate-800 transition-colors duration-300"
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05, duration: 0.4 }}
-                    >
-                      {partner.name}
-                    </motion.h4>
-                    
-                    {/* Partner Description */}
-                    <motion.p 
-                      className="text-slate-600 leading-relaxed mb-6 text-sm"
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 + 0.1, duration: 0.4 }}
-                    >
-                      {partner.description}
-                    </motion.p>
-
-                    {/* Partner Metrics */}
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <motion.div 
-                        className="text-center p-3 bg-slate-50/80 backdrop-blur-sm rounded-xl border border-slate-200/50"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 0.2 }}
+                      {/* Premium Partner Name */}
+                      <motion.h4 
+                        className="text-xl font-bold text-slate-900 mb-4 group-hover:text-slate-800 transition-colors duration-300 leading-tight"
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.03, duration: 0.4 }}
                       >
-                        <div className="text-sm font-bold text-slate-900">{partner.established}</div>
-                        <div className="text-xs text-slate-500">Partnership</div>
-                      </motion.div>
-                      <motion.div 
-                        className="text-center p-3 bg-slate-50/80 backdrop-blur-sm rounded-xl border border-slate-200/50"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 0.2 }}
+                        {partner.name}
+                      </motion.h4>
+                      
+                      {/* Premium Description */}
+                      <motion.p 
+                        className="text-slate-700 leading-relaxed mb-6 text-sm font-medium"
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.03 + 0.1, duration: 0.4 }}
                       >
-                        <div className="text-sm font-bold text-slate-900">{partner.projects}</div>
-                        <div className="text-xs text-slate-500">Active</div>
-                      </motion.div>
-                    </div>
+                        {partner.description}
+                      </motion.p>
 
-                    {/* Partnership Status */}
-                    <motion.div 
-                      className="flex items-center justify-between"
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 + 0.2, duration: 0.4 }}
-                    >
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                        <span className="text-xs font-medium text-green-700">Active Partnership</span>
+                      {/* Premium Metrics Grid */}
+                      <div className="grid grid-cols-2 gap-3 mb-6">
+                        <motion.div 
+                          className="text-center p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/60 shadow-sm relative overflow-hidden group/metric"
+                          whileHover={{ scale: 1.05, y: -2 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/40 to-white/0 translate-x-[-100%] group-hover/metric:translate-x-[100%] transition-transform duration-500 ease-out"></div>
+                          <div className="relative z-10">
+                            <div className="text-sm font-bold text-slate-900">{partner.established}</div>
+                            <div className="text-xs text-slate-600 font-medium">Partnership</div>
+                          </div>
+                        </motion.div>
+                        
+                        <motion.div 
+                          className="text-center p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/60 shadow-sm relative overflow-hidden group/metric"
+                          whileHover={{ scale: 1.05, y: -2 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/40 to-white/0 translate-x-[-100%] group-hover/metric:translate-x-[100%] transition-transform duration-500 ease-out"></div>
+                          <div className="relative z-10">
+                            <div className="text-sm font-bold text-slate-900">{partner.projects}</div>
+                            <div className="text-xs text-slate-600 font-medium">Active</div>
+                          </div>
+                        </motion.div>
                       </div>
-                      <motion.div
-                        whileHover={{ x: 3 }}
-                        transition={{ duration: 0.2 }}
+
+                      {/* Premium Partnership Status */}
+                      <motion.div 
+                        className="flex items-center justify-between"
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.03 + 0.2, duration: 0.4 }}
                       >
-                        <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors duration-300" />
+                        <div className="flex items-center space-x-2">
+                          <motion.div 
+                            className="w-2.5 h-2.5 bg-emerald-400 rounded-full"
+                            animate={{
+                              scale: [1, 1.3, 1],
+                              opacity: [1, 0.6, 1]
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              ease: "easeInOut"
+                            }}
+                          />
+                          <span className="text-xs font-semibold text-emerald-700 bg-emerald-100/70 backdrop-blur-sm px-3 py-1 rounded-full border border-emerald-200/50">
+                            Active Partnership
+                          </span>
+                        </div>
+                        
+                        <motion.div
+                          className="w-8 h-8 bg-white/60 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/60 shadow-sm group-hover:bg-white/80 transition-all duration-300"
+                          whileHover={{ x: 3, scale: 1.1 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-slate-700 transition-colors duration-300" />
+                        </motion.div>
                       </motion.div>
-                    </motion.div>
+                    </div>
                   </div>
                 </motion.div>
               ))}
             </motion.div>
           </div>
 
-          {/* Carousel Status Indicator with Extra Bottom Margin */}
-          <motion.div 
-            className="flex items-center justify-center mt-12 space-x-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
-            <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-full px-4 py-2 shadow-sm">
-              <motion.div 
-                className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                  isCarouselPaused ? 'bg-orange-400' : 'bg-green-400'
-                }`}
-                animate={{
-                  scale: isCarouselPaused ? [1, 1.2, 1] : 1,
-                  opacity: isCarouselPaused ? [1, 0.5, 1] : 1
-                }}
-                transition={{
-                  duration: 1,
-                  repeat: isCarouselPaused ? Infinity : 0
-                }}
-              />
-              <span className="text-xs font-medium text-slate-600">
-                {isCarouselPaused ? 'Paused' : 'Auto-sliding'}
-              </span>
-            </div>
-            <div className="text-xs text-slate-500">
-              Hover to pause • {partners.length} Partners
-            </div>
-          </motion.div>
+          {/* REMOVED: All status indicators and text as requested */}
         </motion.div>
       </div>
     </section>
