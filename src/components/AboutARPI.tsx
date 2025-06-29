@@ -550,7 +550,9 @@ const AboutARPI = () => {
                         className={`w-16 h-16 ${milestones[selectedMilestone].lightColor} rounded-2xl flex items-center justify-center relative overflow-hidden`}
                         whileHover={{ scale: 1.1, rotate: 5 }}
                       >
-                        <milestones[selectedMilestone].icon className={`w-8 h-8 ${milestones[selectedMilestone].textColor}`} />
+                        {React.createElement(milestones[selectedMilestone].icon, {
+                          className: `w-8 h-8 ${milestones[selectedMilestone].textColor}`
+                        })}
                       </motion.div>
                       <div>
                         <div className="flex items-center space-x-3 mb-2">
