@@ -95,13 +95,13 @@ const AboutARPI = () => {
     },
   ];
 
-  // FIXED: Reordered milestones in chronological order (2021 first, 2025 last)
+  // Company milestones based on actual timeline
   const milestones = [
     {
-      year: "2021",
-      title: "ARPI Founded",
+      year: "July 2021",
+      title: "ARPI Inc. Founded",
       description:
-        "Company established with mission to revolutionize healthcare through artificial intelligence and machine learning",
+        "ARPI Inc. established with the mission to revolutionize healthcare through artificial intelligence and machine learning technologies",
       icon: Building2,
       color: "purple",
       bgColor: "bg-purple-500",
@@ -116,10 +116,10 @@ const AboutARPI = () => {
       pathColor: "#8B5CF6",
     },
     {
-      year: "2023",
-      title: "Series A Success",
+      year: "November 2021",
+      title: "Seed Funding Completed",
       description:
-        "Raised $15M Series A led by top-tier VCs to accelerate AI healthcare development and global expansion",
+        "Successfully raised seed funding to accelerate AI healthcare development and build the core team for ECG analysis technology",
       icon: TrendingUp,
       color: "blue",
       bgColor: "bg-blue-500",
@@ -128,17 +128,35 @@ const AboutARPI = () => {
       borderColor: "border-blue-200",
       shadowColor: "shadow-blue-500/25",
       glowColor: "shadow-blue-500/40",
-      metrics: ["$15M Raised", "Series A", "Global VCs"],
-      achievement: "Funding Round",
+      metrics: ["Seed Round", "Team Growth", "R&D"],
+      achievement: "Initial Funding",
       position: { x: 35, y: 65 },
       pathColor: "#3B82F6",
     },
     {
-      year: "2024",
-      title: "Global Expansion",
+      year: "May 2023",
+      title: "Pre-A Round Completed",
       description:
-        "ECG Buddy reaches 10,000+ healthcare professionals across 15 countries with 99.2% accuracy rate and FDA breakthrough approval",
+        "Raised Pre-Series A funding to scale operations, enhance AI algorithms, and prepare for regulatory approvals",
       icon: Target,
+      color: "green",
+      bgColor: "bg-green-500",
+      lightColor: "bg-green-100",
+      textColor: "text-green-600",
+      borderColor: "border-green-200",
+      shadowColor: "shadow-green-500/25",
+      glowColor: "shadow-green-500/40",
+      metrics: ["Pre-A Round", "AI Enhancement", "Scale Up"],
+      achievement: "Growth Funding",
+      position: { x: 65, y: 35 },
+      pathColor: "#10B981",
+    },
+    {
+      year: "January 2024",
+      title: "MFDS Approval Received",
+      description:
+        "ECG Buddy received approval from Korea's Ministry of Food and Drug Safety (MFDS), marking a major regulatory milestone",
+      icon: Shield,
       color: "red",
       bgColor: "bg-red-500",
       lightColor: "bg-red-100",
@@ -146,28 +164,10 @@ const AboutARPI = () => {
       borderColor: "border-red-200",
       shadowColor: "shadow-red-500/25",
       glowColor: "shadow-red-500/40",
-      metrics: ["10K+ Users", "15 Countries", "FDA 510(k)"],
-      achievement: "Major Milestone",
-      position: { x: 65, y: 35 },
-      pathColor: "#EF4444",
-    },
-    {
-      year: "2025",
-      title: "Global Leadership",
-      description:
-        "Expanding to 25+ countries with 15,000+ users. Launching CardioInsight Pro and establishing strategic partnerships across Asia-Pacific region",
-      icon: Rocket,
-      color: "orange",
-      bgColor: "bg-orange-500",
-      lightColor: "bg-orange-100",
-      textColor: "text-orange-600",
-      borderColor: "border-orange-200",
-      shadowColor: "shadow-orange-500/25",
-      glowColor: "shadow-orange-500/40",
-      metrics: ["25+ Countries", "15K+ Users", "APAC Expansion"],
-      achievement: "Current Progress",
+      metrics: ["MFDS Approved", "Regulatory", "Market Ready"],
+      achievement: "Regulatory Approval",
       position: { x: 85, y: 10 },
-      pathColor: "#F97316",
+      pathColor: "#EF4444",
     },
   ];
 
