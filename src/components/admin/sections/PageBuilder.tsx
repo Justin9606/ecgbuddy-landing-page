@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Layers, Plus, Settings, Eye, Smartphone, Monitor, Tablet, Grid, Type, Image, Donut as Button, Layout, Heart, Star, Users, Clock, Shield, Zap, Brain, Activity, ChevronDown, ChevronRight, Trash2, Copy, Move, Edit, Save, Undo, Redo } from "lucide-react";
+import { Layers, Plus, Settings, Eye, Smartphone, Monitor, Tablet, Grid, Type, Image, Button, Layout, Heart, Star, Users, Clock, Shield, Zap, Brain, Activity, ChevronDown, ChevronRight, Trash2, Copy, Move, Edit, Save, Undo, Redo } from "lucide-react";
 
 interface Component {
   id: string;
