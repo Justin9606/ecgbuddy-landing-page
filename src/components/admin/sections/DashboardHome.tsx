@@ -15,6 +15,8 @@ import {
   Sparkles,
   Calendar,
   BarChart3,
+  ArrowUpRight,
+  FileText,
 } from "lucide-react";
 import { AdminSection } from "../AdminDashboard";
 
@@ -25,7 +27,7 @@ interface DashboardHomeProps {
 export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange }) => {
   const stats = [
     {
-      label: "Page Views Today",
+      label: "Page Views",
       value: "2,847",
       change: "+12.5%",
       trend: "up",
@@ -121,27 +123,26 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange })
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Welcome Section */}
       <motion.div
-        className="bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08)]"
+        className="bg-white border border-gray-200 rounded-lg p-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-slate-800 mb-2">
-              Welcome back, Admin! 👋
+            <h2 className="text-xl font-semibold text-gray-900 mb-1">
+              Welcome back! 👋
             </h2>
-            <p className="text-slate-600 text-lg">
-              Manage your ECG Buddy landing page content and monitor site
-              performance.
+            <p className="text-gray-600">
+              Manage your ECG Buddy landing page content and monitor site performance.
             </p>
           </div>
           <div className="hidden md:block">
-            <div className="flex items-center space-x-2 bg-green-100/50 backdrop-blur-sm border border-green-200/50 rounded-2xl px-4 py-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <div className="flex items-center space-x-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span className="text-sm font-medium text-green-700">
                 All Systems Operational
               </span>
@@ -151,156 +152,162 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange })
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.label}
-            className="bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.12)] transition-all duration-500 group"
+            className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: index * 0.1 }}
-            whileHover={{ y: -5 }}
           >
-            <div className="flex items-center justify-between mb-4">
-              <div
-                className={`w-12 h-12 bg-gradient-to-br from-${stat.color}-500 to-${stat.color}-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}
-              >
-                <stat.icon className="w-6 h-6 text-white" />
+            <div className="flex items-center justify-between mb-3">
+              <div className={`w-8 h-8 bg-${stat.color}-100 rounded-lg flex items-center justify-center`}>
+                <stat.icon className={`w-4 h-4 text-${stat.color}-600`} />
               </div>
               <div
-                className={`flex items-center space-x-1 text-sm ${
+                className={`flex items-center space-x-1 text-xs ${
                   stat.trend === "up"
                     ? "text-green-600"
                     : stat.trend === "down"
                     ? "text-red-600"
-                    : "text-slate-600"
+                    : "text-gray-600"
                 }`}
               >
-                {stat.trend === "up" && <TrendingUp className="w-4 h-4" />}
+                {stat.trend === "up" && <TrendingUp className="w-3 h-3" />}
                 <span className="font-medium">{stat.change}</span>
               </div>
             </div>
-            <div className="text-3xl font-bold text-slate-800 mb-1">
+            <div className="text-2xl font-semibold text-gray-900 mb-1">
               {stat.value}
             </div>
-            <div className="text-slate-600 text-sm">{stat.label}</div>
+            <div className="text-sm text-gray-600">{stat.label}</div>
           </motion.div>
         ))}
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activity */}
         <motion.div
-          className="lg:col-span-2 bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.08)]"
+          className="lg:col-span-2 bg-white border border-gray-200 rounded-lg"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-slate-800 flex items-center">
-              <Clock className="w-5 h-5 mr-2 text-slate-600" />
-              Recent Activity
-            </h3>
-            <button className="text-sm text-slate-600 hover:text-slate-800 transition-colors">
-              View All
-            </button>
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-gray-900 flex items-center">
+                <Clock className="w-4 h-4 mr-2 text-gray-500" />
+                Recent Activity
+              </h3>
+              <button className="text-xs text-blue-600 hover:text-blue-700 font-medium">
+                View All
+              </button>
+            </div>
           </div>
 
-          <div className="space-y-4">
-            {recentActivity.map((activity, index) => (
-              <motion.div
-                key={index}
-                className="flex items-center space-x-4 p-4 bg-white/40 backdrop-blur-sm border border-slate-200/50 rounded-2xl hover:bg-white/60 transition-all duration-300"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6 + index * 0.1 }}
-              >
-                <div
-                  className={`w-10 h-10 bg-gradient-to-br from-${activity.color}-500 to-${activity.color}-600 rounded-xl flex items-center justify-center shadow-sm`}
+          <div className="p-4">
+            <div className="space-y-3">
+              {recentActivity.map((activity, index) => (
+                <motion.div
+                  key={index}
+                  className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 + index * 0.1 }}
                 >
-                  <activity.icon className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1">
-                  <div className="font-medium text-slate-800">
-                    {activity.action}
+                  <div className={`w-8 h-8 bg-${activity.color}-100 rounded-lg flex items-center justify-center`}>
+                    <activity.icon className={`w-4 h-4 text-${activity.color}-600`} />
                   </div>
-                  <div className="text-sm text-slate-600">
-                    by {activity.user} • {activity.time}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-gray-900 truncate">
+                      {activity.action}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      by {activity.user} • {activity.time}
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))}
+            </div>
           </div>
         </motion.div>
 
         {/* Quick Actions */}
         <motion.div
-          className="bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.08)]"
+          className="bg-white border border-gray-200 rounded-lg"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
-            <Sparkles className="w-5 h-5 mr-2 text-slate-600" />
-            Quick Actions
-          </h3>
+          <div className="p-4 border-b border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-900 flex items-center">
+              <Sparkles className="w-4 h-4 mr-2 text-gray-500" />
+              Quick Actions
+            </h3>
+          </div>
 
-          <div className="space-y-3">
-            {quickActions.map((action, index) => (
-              <motion.button
-                key={action.title}
-                onClick={() => onSectionChange(action.action)}
-                className="w-full flex items-center space-x-3 p-4 bg-white/40 backdrop-blur-sm border border-slate-200/50 rounded-2xl hover:bg-white/60 transition-all duration-300 text-left group"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 + index * 0.1 }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <div
-                  className={`w-10 h-10 bg-gradient-to-br from-${action.color}-500 to-${action.color}-600 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300`}
+          <div className="p-4">
+            <div className="space-y-2">
+              {quickActions.map((action, index) => (
+                <motion.button
+                  key={action.title}
+                  onClick={() => onSectionChange(action.action)}
+                  className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors group"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 + index * 0.1 }}
+                  whileHover={{ x: 2 }}
                 >
-                  <action.icon className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1">
-                  <div className="font-medium text-slate-800 group-hover:text-slate-900 transition-colors">
-                    {action.title}
+                  <div className={`w-8 h-8 bg-${action.color}-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                    <action.icon className={`w-4 h-4 text-${action.color}-600`} />
                   </div>
-                  <div className="text-sm text-slate-600">
-                    {action.description}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-gray-900 group-hover:text-gray-800 transition-colors">
+                      {action.title}
+                    </div>
+                    <div className="text-xs text-gray-500 truncate">
+                      {action.description}
+                    </div>
                   </div>
-                </div>
-              </motion.button>
-            ))}
+                  <ArrowUpRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </motion.button>
+              ))}
+            </div>
           </div>
         </motion.div>
       </div>
 
       {/* Site Status */}
       <motion.div
-        className="bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.08)]"
+        className="bg-white border border-gray-200 rounded-lg p-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}
       >
-        <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
-          <Globe className="w-5 h-5 mr-2 text-slate-600" />
-          Site Status & Performance
-        </h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold text-gray-900 flex items-center">
+            <Globe className="w-4 h-4 mr-2 text-gray-500" />
+            Site Performance
+          </h3>
+          <button className="text-xs text-blue-600 hover:text-blue-700 font-medium">
+            View Details
+          </button>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600 mb-1">99.9%</div>
-            <div className="text-sm text-slate-600">Uptime</div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="text-center p-3 bg-gray-50 rounded-lg">
+            <div className="text-lg font-semibold text-green-600 mb-1">99.9%</div>
+            <div className="text-xs text-gray-600">Uptime</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600 mb-1">1.2s</div>
-            <div className="text-sm text-slate-600">Load Time</div>
+          <div className="text-center p-3 bg-gray-50 rounded-lg">
+            <div className="text-lg font-semibold text-blue-600 mb-1">1.2s</div>
+            <div className="text-xs text-gray-600">Load Time</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600 mb-1">95</div>
-            <div className="text-sm text-slate-600">Performance Score</div>
+          <div className="text-center p-3 bg-gray-50 rounded-lg">
+            <div className="text-lg font-semibold text-purple-600 mb-1">95</div>
+            <div className="text-xs text-gray-600">Performance Score</div>
           </div>
         </div>
       </motion.div>
