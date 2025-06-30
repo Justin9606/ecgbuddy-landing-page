@@ -1,179 +1,41 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { AdminSidebar } from "./AdminSidebar";
-import { AdminHeader } from "./AdminHeader";
-import { DashboardHome } from "./sections/DashboardHome";
-import { ContentEditor } from "./sections/ContentEditor";
-import { PageBuilder } from "./sections/PageBuilder";
-import { MediaLibrary } from "./sections/MediaLibrary";
-import { Settings } from "./sections/Settings";
-import { Users } from "./sections/Users";
-import { SiteContent } from "@/lib/admin/types";
-import { loadSiteContent, saveSiteContent, getDefaultSiteContent, savePreviewDraft } from "@/lib/admin/storage";
+import { ContentEditor } from "./ContentEditor";
+import { SiteContent } from "@/lib/admin/content-types";
+import { loadContent, saveContent } from "@/lib/admin/storage";
 
-export type AdminSection = 
-  | "dashboard" 
-  | "header" 
-  | "hero" 
-  | "features" 
-  | "mobile-download" 
-  | "faq" 
-  | "about-arpi" 
-  | "footer"
-  | "page-builder"
-  | "media-library"
-  | "settings"
-  | "users";
+export type ContentSection = 'hero' | 'features' | 'testimonials' | 'faq' | 'about' | 'contact';
 
 export const AdminDashboard: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<AdminSection>("dashboard");
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [siteContent, setSiteContent] = useState<SiteContent>(getDefaultSiteContent());
-  const [isLoading, setIsLoading] = useState(true);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [activeSection, setActiveSection] = useState<ContentSection>('hero');
+  const [content, setContent] = useState<SiteContent>(loadContent());
 
-  // Load content from localStorage on mount
-  useEffect(() => {
-    const loadContent = () => {
-      try {
-        const savedContent = loadSiteContent();
-        if (savedContent) {
-          setSiteContent(savedContent);
-          console.log('Loaded existing content from localStorage');
-        } else {
-          console.log('No existing content found, using defaults');
-        }
-      } catch (error) {
-        console.error('Error loading content:', error);
-      } finally {
-        setIsLoading(false);
-      }
+  const handleContentChange = (section: ContentSection, newContent: any) => {
+    const updatedContent = {
+      ...content,
+      [section]: newContent
     };
-
-    loadContent();
-  }, []);
-
-  // Handle content changes from ContentEditor
-  const handleContentChange = (section: AdminSection, newSectionContent: any) => {
-    setSiteContent(prevContent => {
-      const updatedContent = {
-        ...prevContent,
-        [section]: newSectionContent
-      };
-      
-      // Auto-save to localStorage after a short delay
-      setTimeout(() => {
-        saveSiteContent(updatedContent);
-        setLastSaved(new Date());
-      }, 500);
-      
-      return updatedContent;
-    });
-  };
-
-  // Handle manual save
-  const handleSaveAllChanges = () => {
-    try {
-      saveSiteContent(siteContent);
-      setLastSaved(new Date());
-      console.log('All changes saved successfully');
-    } catch (error) {
-      console.error('Error saving changes:', error);
-    }
-  };
-
-  // Handle preview
-  const handlePreview = () => {
-    try {
-      savePreviewDraft(siteContent);
-      // Open preview in new tab
-      window.open('/', '_blank');
-    } catch (error) {
-      console.error('Error creating preview:', error);
-    }
-  };
-
-  // Handle section change from dashboard quick actions
-  const handleSectionChange = (section: AdminSection) => {
-    setActiveSection(section);
-  };
-
-  const renderContent = () => {
-    if (isLoading) {
-      return (
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="w-8 h-8 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-slate-600">Loading content...</p>
-          </div>
-        </div>
-      );
-    }
-
-    switch (activeSection) {
-      case "dashboard":
-        return <DashboardHome onSectionChange={handleSectionChange} />;
-      case "page-builder":
-        return <PageBuilder />;
-      case "media-library":
-        return <MediaLibrary />;
-      case "settings":
-        return <Settings />;
-      case "users":
-        return <Users />;
-      default:
-        // Get the relevant section content
-        const sectionContent = siteContent[activeSection as keyof SiteContent];
-        return (
-          <ContentEditor 
-            section={activeSection}
-            initialContent={sectionContent}
-            onContentChange={(newContent) => handleContentChange(activeSection, newContent)}
-            onSave={handleSaveAllChanges}
-            onPreview={handlePreview}
-            lastSaved={lastSaved}
-          />
-        );
-    }
+    setContent(updatedContent);
+    saveContent(updatedContent);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <AdminSidebar
+      <AdminSidebar 
         activeSection={activeSection}
         onSectionChange={setActiveSection}
-        isCollapsed={isSidebarCollapsed}
-        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'ml-20' : 'ml-80'}`}>
-        {/* Header */}
-        <AdminHeader 
-          activeSection={activeSection}
-          onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          onSave={handleSaveAllChanges}
-          onPreview={handlePreview}
-          lastSaved={lastSaved}
+      <div className="flex-1 ml-64">
+        <ContentEditor
+          section={activeSection}
+          content={content[activeSection]}
+          onContentChange={(newContent) => handleContentChange(activeSection, newContent)}
         />
-
-        {/* Content Area */}
-        <main className="p-6">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeSection}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              {renderContent()}
-            </motion.div>
-          </AnimatePresence>
-        </main>
       </div>
     </div>
   );
