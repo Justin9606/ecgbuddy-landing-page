@@ -19,7 +19,7 @@ interface AdminSidebarProps {
 const menuItems = [
   { id: 'hero' as ContentSection, label: 'Hero Section', icon: Home },
   { id: 'features' as ContentSection, label: 'Features', icon: Star },
-  { id: 'testimonials' as ContentSection, label: 'Testimonials', icon: MessageSquare },
+  { id: 'testimonials' as ContentSection, label: 'Testimonials', icon: MessageSquote },
   { id: 'faq' as ContentSection, label: 'FAQ', icon: HelpCircle },
   { id: 'about' as ContentSection, label: 'About Us', icon: Building },
   { id: 'contact' as ContentSection, label: 'Contact', icon: Phone },
