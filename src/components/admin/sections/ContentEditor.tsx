@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Save,
@@ -9,24 +9,49 @@ import {
   Plus,
   Trash2,
   GripVertical,
-  Image,
   Type,
-  Link,
-  Palette,
   Settings,
   ChevronDown,
   ChevronUp,
+  CheckCircle,
+  AlertCircle,
 } from "lucide-react";
 import { AdminSection } from "../AdminDashboard";
 
 interface ContentEditorProps {
   section: AdminSection;
+  initialContent: any;
+  onContentChange: (newContent: any) => void;
+  onSave: () => void;
+  onPreview: () => void;
+  lastSaved?: Date | null;
 }
 
-export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
-  const [expandedSections, setExpandedSections] = useState<string[]>([
-    "basic-info",
-  ]);
+export const ContentEditor: React.FC<ContentEditorProps> = ({ 
+  section, 
+  initialContent, 
+  onContentChange, 
+  onSave, 
+  onPreview,
+  lastSaved 
+}) => {
+  const [localContent, setLocalContent] = useState(initialContent);
+  const [expandedSections, setExpandedSections] = useState<string[]>(["basic-info"]);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // Update local content when initialContent changes
+  useEffect(() => {
+    setLocalContent(initialContent);
+    setHasUnsavedChanges(false);
+  }, [initialContent]);
+
+  // Propagate changes to parent
+  useEffect(() => {
+    if (JSON.stringify(localContent) !== JSON.stringify(initialContent)) {
+      onContentChange(localContent);
+      setHasUnsavedChanges(true);
+    }
+  }, [localContent, initialContent, onContentChange]);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections((prev) =>
@@ -34,6 +59,94 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
         ? prev.filter((id) => id !== sectionId)
         : [...prev, sectionId]
     );
+  };
+
+  const handleFieldChange = (fieldPath: string, value: any) => {
+    setLocalContent((prev: any) => {
+      const newContent = { ...prev };
+      const pathArray = fieldPath.split('.');
+      let current = newContent;
+      
+      // Navigate to the parent of the field to be changed
+      for (let i = 0; i < pathArray.length - 1; i++) {
+        if (!current[pathArray[i]]) {
+          current[pathArray[i]] = {};
+        }
+        current = current[pathArray[i]];
+      }
+      
+      // Set the value
+      current[pathArray[pathArray.length - 1]] = value;
+      return newContent;
+    });
+  };
+
+  const handleArrayItemChange = (arrayPath: string, index: number, field: string, value: any) => {
+    setLocalContent((prev: any) => {
+      const newContent = { ...prev };
+      const pathArray = arrayPath.split('.');
+      let current = newContent;
+      
+      // Navigate to the array
+      for (const path of pathArray) {
+        current = current[path];
+      }
+      
+      // Update the specific item
+      if (current && Array.isArray(current) && current[index]) {
+        current[index] = { ...current[index], [field]: value };
+      }
+      
+      return newContent;
+    });
+  };
+
+  const handleAddArrayItem = (arrayPath: string, defaultItem: any) => {
+    setLocalContent((prev: any) => {
+      const newContent = { ...prev };
+      const pathArray = arrayPath.split('.');
+      let current = newContent;
+      
+      // Navigate to the array
+      for (const path of pathArray) {
+        if (!current[path]) {
+          current[path] = [];
+        }
+        current = current[path];
+      }
+      
+      // Add new item
+      if (Array.isArray(current)) {
+        current.push({ ...defaultItem });
+      }
+      
+      return newContent;
+    });
+  };
+
+  const handleRemoveArrayItem = (arrayPath: string, index: number) => {
+    setLocalContent((prev: any) => {
+      const newContent = { ...prev };
+      const pathArray = arrayPath.split('.');
+      let current = newContent;
+      
+      // Navigate to the array
+      for (const path of pathArray) {
+        current = current[path];
+      }
+      
+      // Remove item
+      if (Array.isArray(current)) {
+        current.splice(index, 1);
+      }
+      
+      return newContent;
+    });
+  };
+
+  const handleReset = () => {
+    setLocalContent(initialContent);
+    setHasUnsavedChanges(false);
   };
 
   const getSectionConfig = (section: AdminSection) => {
@@ -47,18 +160,16 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
             title: "Basic Information",
             fields: [
               {
-                id: "logo-text",
+                id: "logoText",
                 label: "Logo Text",
                 type: "text",
-                value: "ECG Buddy",
-                placeholder: "Enter logo text",
+                path: "logoText",
               },
               {
                 id: "tagline",
                 label: "Tagline",
                 type: "text",
-                value: "AI-powered ECG analysis",
-                placeholder: "Enter tagline",
+                path: "tagline",
               },
             ],
           },
@@ -70,13 +181,9 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
                 id: "nav-items",
                 label: "Navigation Items",
                 type: "repeatable",
-                items: [
-                  { name: "Product", href: "#product" },
-                  { name: "Solutions", href: "#solutions" },
-                  { name: "Resources", href: "#resources" },
-                  { name: "FAQ", href: "#faq" },
-                  { name: "About Us", href: "#about" },
-                ],
+                path: "navigationItems",
+                itemFields: ["name", "href"],
+                defaultItem: { name: "New Item", href: "#new" },
               },
             ],
           },
@@ -88,15 +195,13 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
                 id: "cta-text",
                 label: "Button Text",
                 type: "text",
-                value: "Try ECG Buddy",
-                placeholder: "Enter button text",
+                path: "ctaButton.text",
               },
               {
                 id: "cta-link",
                 label: "Button Link",
                 type: "text",
-                value: "#mobile-download",
-                placeholder: "Enter button link",
+                path: "ctaButton.link",
               },
             ],
           },
@@ -111,19 +216,22 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
             title: "Main Content",
             fields: [
               {
-                id: "main-heading",
-                label: "Main Heading",
-                type: "textarea",
-                value: "Revolutionize\nECG Analysis",
-                placeholder: "Enter main heading",
+                id: "main-heading-line1",
+                label: "Main Heading Line 1",
+                type: "text",
+                path: "mainHeading.line1",
+              },
+              {
+                id: "main-heading-line2",
+                label: "Main Heading Line 2",
+                type: "text",
+                path: "mainHeading.line2",
               },
               {
                 id: "subtitle",
                 label: "Subtitle",
                 type: "textarea",
-                value:
-                  "Transform complex cardiac data into clear, actionable insights with our AI-powered platform trusted by healthcare professionals worldwide.",
-                placeholder: "Enter subtitle",
+                path: "subtitle",
               },
             ],
           },
@@ -135,22 +243,16 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
                 id: "testimonial-list",
                 label: "Testimonials",
                 type: "repeatable",
-                items: [
-                  {
-                    text: "ECG Buddy has revolutionized our emergency department workflow",
-                    author: "Dr. Sarah Kim",
-                    role: "Emergency Medicine, Seoul National University Hospital",
-                    avatar: "👩‍⚕️",
-                    rating: 5,
-                  },
-                  {
-                    text: "The AI accuracy is remarkable - it's like having a cardiologist available 24/7",
-                    author: "Dr. Michael Chen",
-                    role: "Cardiology, Samsung Medical Center",
-                    avatar: "👨‍⚕️",
-                    rating: 5,
-                  },
-                ],
+                path: "testimonials",
+                itemFields: ["text", "author", "role", "avatar", "hospital", "rating"],
+                defaultItem: {
+                  text: "New testimonial",
+                  author: "Dr. Name",
+                  role: "Position, Hospital",
+                  avatar: "👨‍⚕️",
+                  hospital: "Hospital Name",
+                  rating: 5,
+                },
               },
             ],
           },
@@ -162,15 +264,13 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
                 id: "primary-cta",
                 label: "Primary Button Text",
                 type: "text",
-                value: "Start Analysis",
-                placeholder: "Enter primary button text",
+                path: "ctaButtons.primary.text",
               },
               {
                 id: "secondary-cta",
                 label: "Secondary Button Text",
                 type: "text",
-                value: "Watch Demo",
-                placeholder: "Enter secondary button text",
+                path: "ctaButtons.secondary.text",
               },
             ],
           },
@@ -188,16 +288,13 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
                 id: "section-title",
                 label: "Section Title",
                 type: "textarea",
-                value: "Professional-grade tools\nfor modern healthcare",
-                placeholder: "Enter section title",
+                path: "sectionHeader.title",
               },
               {
                 id: "section-description",
                 label: "Section Description",
                 type: "textarea",
-                value:
-                  "Comprehensive suite of advanced features designed to enhance diagnostic accuracy and streamline cardiac care workflows for healthcare professionals.",
-                placeholder: "Enter section description",
+                path: "sectionHeader.description",
               },
             ],
           },
@@ -209,24 +306,15 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
                 id: "features",
                 label: "Feature Items",
                 type: "repeatable",
-                items: [
-                  {
-                    title: "AI-Powered Analysis",
-                    description:
-                      "Advanced machine learning algorithms trained on millions of ECG patterns for unprecedented accuracy and reliability.",
-                    icon: "Brain",
-                    category: "ai",
-                    badge: "Most Popular",
-                  },
-                  {
-                    title: "Real-time Processing",
-                    description:
-                      "Get comprehensive ECG analysis results in under 30 seconds with our optimized cloud processing engine.",
-                    icon: "Clock",
-                    category: "performance",
-                    badge: "Speed Champion",
-                  },
-                ],
+                path: "features",
+                itemFields: ["title", "description", "icon", "category", "badge"],
+                defaultItem: {
+                  title: "New Feature",
+                  description: "Feature description",
+                  icon: "Star",
+                  category: "general",
+                  badge: "New",
+                },
               },
             ],
           },
@@ -243,7 +331,9 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
     );
   };
 
-  const config = getSectionConfig(section);
+  const getValueByPath = (obj: any, path: string) => {
+    return path.split('.').reduce((current, key) => current?.[key], obj) || '';
+  };
 
   const renderField = (field: any) => {
     switch (field.type) {
@@ -251,8 +341,9 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
         return (
           <input
             type="text"
-            value={field.value}
-            placeholder={field.placeholder}
+            value={getValueByPath(localContent, field.path)}
+            onChange={(e) => handleFieldChange(field.path, e.target.value)}
+            placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
             className="w-full px-4 py-3 bg-white/50 backdrop-blur-sm border border-slate-200/50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-400/50 transition-all duration-300 text-slate-800 placeholder-slate-500"
           />
         );
@@ -260,17 +351,19 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
       case "textarea":
         return (
           <textarea
-            value={field.value}
-            placeholder={field.placeholder}
+            value={getValueByPath(localContent, field.path)}
+            onChange={(e) => handleFieldChange(field.path, e.target.value)}
+            placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
             rows={4}
             className="w-full px-4 py-3 bg-white/50 backdrop-blur-sm border border-slate-200/50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-400/50 transition-all duration-300 text-slate-800 placeholder-slate-500 resize-none"
           />
         );
 
       case "repeatable":
+        const items = getValueByPath(localContent, field.path) || [];
         return (
           <div className="space-y-4">
-            {field.items?.map((item: any, index: number) => (
+            {items.map((item: any, index: number) => (
               <div
                 key={index}
                 className="bg-white/40 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-4"
@@ -282,20 +375,29 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
                       Item {index + 1}
                     </span>
                   </div>
-                  <button className="p-1 hover:bg-red-100/50 rounded-lg transition-colors">
+                  <button 
+                    onClick={() => handleRemoveArrayItem(field.path, index)}
+                    className="p-1 hover:bg-red-100/50 rounded-lg transition-colors"
+                  >
                     <Trash2 className="w-4 h-4 text-red-500" />
                   </button>
                 </div>
 
                 <div className="space-y-3">
-                  {Object.entries(item).map(([key, value]) => (
-                    <div key={key}>
+                  {field.itemFields.map((fieldName: string) => (
+                    <div key={fieldName}>
                       <label className="block text-sm font-medium text-slate-700 mb-1 capitalize">
-                        {key.replace(/([A-Z])/g, " $1").trim()}
+                        {fieldName.replace(/([A-Z])/g, " $1").trim()}
                       </label>
                       <input
-                        type="text"
-                        value={String(value)}
+                        type={fieldName === 'rating' ? 'number' : 'text'}
+                        value={item[fieldName] || ''}
+                        onChange={(e) => handleArrayItemChange(
+                          field.path, 
+                          index, 
+                          fieldName, 
+                          fieldName === 'rating' ? parseInt(e.target.value) || 0 : e.target.value
+                        )}
                         className="w-full px-3 py-2 bg-white/50 backdrop-blur-sm border border-slate-200/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-400/50 transition-all duration-300 text-slate-800 text-sm"
                       />
                     </div>
@@ -304,7 +406,10 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
               </div>
             ))}
 
-            <button className="w-full flex items-center justify-center space-x-2 py-3 border-2 border-dashed border-slate-300 rounded-2xl hover:border-slate-400 hover:bg-slate-50/50 transition-all duration-300 text-slate-600 hover:text-slate-700">
+            <button 
+              onClick={() => handleAddArrayItem(field.path, field.defaultItem)}
+              className="w-full flex items-center justify-center space-x-2 py-3 border-2 border-dashed border-slate-300 rounded-2xl hover:border-slate-400 hover:bg-slate-50/50 transition-all duration-300 text-slate-600 hover:text-slate-700"
+            >
               <Plus className="w-4 h-4" />
               <span className="text-sm font-medium">Add New Item</span>
             </button>
@@ -319,6 +424,8 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
         );
     }
   };
+
+  const config = getSectionConfig(section);
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -335,10 +442,26 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
               {config.title}
             </h2>
             <p className="text-slate-600 text-lg">{config.description}</p>
+            
+            {/* Status Indicator */}
+            <div className="flex items-center space-x-4 mt-4">
+              {hasUnsavedChanges ? (
+                <div className="flex items-center space-x-2 text-amber-600">
+                  <AlertCircle className="w-4 h-4" />
+                  <span className="text-sm font-medium">Unsaved changes</span>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2 text-green-600">
+                  <CheckCircle className="w-4 h-4" />
+                  <span className="text-sm font-medium">All changes saved</span>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center space-x-3">
             <motion.button
+              onClick={handleReset}
               className="flex items-center space-x-2 px-4 py-2 bg-white/50 backdrop-blur-sm border border-slate-200/50 rounded-2xl hover:bg-white/70 transition-all duration-300 text-slate-700"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -348,6 +471,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
             </motion.button>
 
             <motion.button
+              onClick={onPreview}
               className="flex items-center space-x-2 px-4 py-2 bg-white/50 backdrop-blur-sm border border-slate-200/50 rounded-2xl hover:bg-white/70 transition-all duration-300 text-slate-700"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -357,6 +481,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
             </motion.button>
 
             <motion.button
+              onClick={onSave}
               className="flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 text-white rounded-2xl hover:shadow-lg transition-all duration-300"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -440,16 +565,19 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
         <div className="flex items-center justify-between">
           <div className="text-sm text-slate-600">
             <p>
-              <strong>Note:</strong> Changes will be applied to the live site
-              immediately after saving.
+              <strong>Note:</strong> Changes are automatically saved locally. Click "Save Changes" to persist your edits.
             </p>
           </div>
 
           <div className="flex items-center space-x-3">
-            <button className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors">
+            <button 
+              onClick={handleReset}
+              className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors"
+            >
               Cancel
             </button>
             <motion.button
+              onClick={onSave}
               className="flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 text-white rounded-2xl hover:shadow-lg transition-all duration-300"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}

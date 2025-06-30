@@ -13,17 +13,24 @@ import {
   Menu,
   Globe,
   Clock,
+  CheckCircle,
 } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
 
 interface AdminHeaderProps {
   activeSection: AdminSection;
   onToggleSidebar: () => void;
+  onSave?: () => void;
+  onPreview?: () => void;
+  lastSaved?: Date | null;
 }
 
 export const AdminHeader: React.FC<AdminHeaderProps> = ({
   activeSection,
   onToggleSidebar,
+  onSave,
+  onPreview,
+  lastSaved,
 }) => {
   const getSectionTitle = (section: AdminSection) => {
     const titles = {
@@ -41,6 +48,18 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
       users: "User Management",
     };
     return titles[section] || "Content Management";
+  };
+
+  const formatLastSaved = (date: Date | null) => {
+    if (!date) return "Never";
+    
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    return date.toLocaleDateString();
   };
 
   return (
@@ -73,7 +92,17 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
             <div className="flex items-center space-x-4 mt-1">
               <div className="flex items-center space-x-2 text-sm text-slate-500">
                 <Clock className="w-4 h-4" />
-                <span>Last updated: 2 minutes ago</span>
+                <span>Last saved: {formatLastSaved(lastSaved)}</span>
+                {lastSaved && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="flex items-center space-x-1 text-green-600"
+                  >
+                    <CheckCircle className="w-3 h-3" />
+                    <span className="text-xs">Saved</span>
+                  </motion.div>
+                )}
               </div>
               <div className="flex items-center space-x-2 text-sm text-slate-500">
                 <Globe className="w-4 h-4" />
@@ -102,6 +131,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           {activeSection !== "dashboard" && (
             <div className="hidden sm:flex items-center space-x-2">
               <motion.button
+                onClick={onPreview}
                 className="flex items-center space-x-2 px-4 py-2 bg-white/50 backdrop-blur-sm border border-slate-200/50 rounded-2xl hover:bg-white/70 transition-all duration-300 text-slate-700 hover:text-slate-800"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -111,6 +141,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
               </motion.button>
 
               <motion.button
+                onClick={onSave}
                 className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 text-white rounded-2xl hover:shadow-lg transition-all duration-300"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}

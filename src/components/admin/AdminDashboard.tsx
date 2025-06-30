@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AdminSidebar } from "./AdminSidebar";
 import { AdminHeader } from "./AdminHeader";
@@ -10,6 +10,8 @@ import { PageBuilder } from "./sections/PageBuilder";
 import { MediaLibrary } from "./sections/MediaLibrary";
 import { Settings } from "./sections/Settings";
 import { Users } from "./sections/Users";
+import { SiteContent } from "@/lib/admin/types";
+import { loadSiteContent, saveSiteContent, getDefaultSiteContent, savePreviewDraft } from "@/lib/admin/storage";
 
 export type AdminSection = 
   | "dashboard" 
@@ -28,11 +30,91 @@ export type AdminSection =
 export const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<AdminSection>("dashboard");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [siteContent, setSiteContent] = useState<SiteContent>(getDefaultSiteContent());
+  const [isLoading, setIsLoading] = useState(true);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+
+  // Load content from localStorage on mount
+  useEffect(() => {
+    const loadContent = () => {
+      try {
+        const savedContent = loadSiteContent();
+        if (savedContent) {
+          setSiteContent(savedContent);
+          console.log('Loaded existing content from localStorage');
+        } else {
+          console.log('No existing content found, using defaults');
+        }
+      } catch (error) {
+        console.error('Error loading content:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadContent();
+  }, []);
+
+  // Handle content changes from ContentEditor
+  const handleContentChange = (section: AdminSection, newSectionContent: any) => {
+    setSiteContent(prevContent => {
+      const updatedContent = {
+        ...prevContent,
+        [section]: newSectionContent
+      };
+      
+      // Auto-save to localStorage after a short delay
+      setTimeout(() => {
+        saveSiteContent(updatedContent);
+        setLastSaved(new Date());
+      }, 500);
+      
+      return updatedContent;
+    });
+  };
+
+  // Handle manual save
+  const handleSaveAllChanges = () => {
+    try {
+      saveSiteContent(siteContent);
+      setLastSaved(new Date());
+      console.log('All changes saved successfully');
+    } catch (error) {
+      console.error('Error saving changes:', error);
+    }
+  };
+
+  // Handle preview
+  const handlePreview = () => {
+    try {
+      savePreviewDraft(siteContent);
+      // Open preview in new tab
+      window.open('/', '_blank');
+    } catch (error) {
+      console.error('Error creating preview:', error);
+    }
+  };
+
+  // Handle section change from dashboard quick actions
+  const handleSectionChange = (section: AdminSection) => {
+    setActiveSection(section);
+  };
 
   const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-slate-600">Loading content...</p>
+          </div>
+        </div>
+      );
+    }
+
     switch (activeSection) {
       case "dashboard":
-        return <DashboardHome />;
+        return <DashboardHome onSectionChange={handleSectionChange} />;
       case "page-builder":
         return <PageBuilder />;
       case "media-library":
@@ -42,7 +124,18 @@ export const AdminDashboard: React.FC = () => {
       case "users":
         return <Users />;
       default:
-        return <ContentEditor section={activeSection} />;
+        // Get the relevant section content
+        const sectionContent = siteContent[activeSection as keyof SiteContent];
+        return (
+          <ContentEditor 
+            section={activeSection}
+            initialContent={sectionContent}
+            onContentChange={(newContent) => handleContentChange(activeSection, newContent)}
+            onSave={handleSaveAllChanges}
+            onPreview={handlePreview}
+            lastSaved={lastSaved}
+          />
+        );
     }
   };
 
@@ -62,6 +155,9 @@ export const AdminDashboard: React.FC = () => {
         <AdminHeader 
           activeSection={activeSection}
           onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          onSave={handleSaveAllChanges}
+          onPreview={handlePreview}
+          lastSaved={lastSaved}
         />
 
         {/* Content Area */}

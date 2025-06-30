@@ -16,8 +16,13 @@ import {
   Calendar,
   BarChart3,
 } from "lucide-react";
+import { AdminSection } from "../AdminDashboard";
 
-export const DashboardHome: React.FC = () => {
+interface DashboardHomeProps {
+  onSectionChange: (section: AdminSection) => void;
+}
+
+export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange }) => {
   const stats = [
     {
       label: "Page Views Today",
@@ -90,28 +95,28 @@ export const DashboardHome: React.FC = () => {
       description: "Update main landing content",
       icon: Heart,
       color: "red",
-      action: "hero",
+      action: "hero" as AdminSection,
     },
     {
       title: "Manage Features",
       description: "Add or modify product features",
       icon: Sparkles,
       color: "purple",
-      action: "features",
+      action: "features" as AdminSection,
     },
     {
       title: "Update Mobile Apps",
       description: "Modify app download section",
       icon: Smartphone,
       color: "blue",
-      action: "mobile-download",
+      action: "mobile-download" as AdminSection,
     },
     {
-      title: "View Analytics",
-      description: "Check site performance",
+      title: "Manage FAQ",
+      description: "Update questions and answers",
       icon: BarChart3,
       color: "green",
-      action: "analytics",
+      action: "faq" as AdminSection,
     },
   ];
 
@@ -245,6 +250,7 @@ export const DashboardHome: React.FC = () => {
             {quickActions.map((action, index) => (
               <motion.button
                 key={action.title}
+                onClick={() => onSectionChange(action.action)}
                 className="w-full flex items-center space-x-3 p-4 bg-white/40 backdrop-blur-sm border border-slate-200/50 rounded-2xl hover:bg-white/60 transition-all duration-300 text-left group"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
