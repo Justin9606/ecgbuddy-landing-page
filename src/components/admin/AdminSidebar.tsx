@@ -19,6 +19,7 @@ import {
   Activity,
   FileText,
   Globe,
+  Edit,
 } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
 
@@ -40,6 +41,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       id: "dashboard" as AdminSection,
       label: "Dashboard",
       icon: Home,
+      category: "main",
+    },
+    {
+      id: "live-editor" as AdminSection,
+      label: "Live Editor",
+      icon: Edit,
       category: "main",
     },
     {
