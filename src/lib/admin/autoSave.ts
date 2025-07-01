@@ -1,8 +1,11 @@
-// Auto-save functionality with debouncing
+// Enhanced auto-save with proper debouncing and performance optimization
+import { useEffect, useRef, useState, useCallback } from 'react';
+
 export class AutoSaveManager {
   private saveTimeout: NodeJS.Timeout | null = null;
-  private readonly SAVE_DELAY = 500; // 500ms debounce
+  private readonly SAVE_DELAY = 2000; // 2 seconds debounce (not 100ms!)
   private readonly STORAGE_KEY = 'ecgbuddy_admin_autosave';
+  private lastSavedContent: string = '';
   
   constructor(
     private onSave: (content: any) => void,
@@ -11,14 +14,21 @@ export class AutoSaveManager {
     private onSaveError?: (error: Error) => void
   ) {}
 
-  // Schedule auto-save with debouncing
+  // Schedule auto-save with proper debouncing
   scheduleAutoSave(content: any) {
+    const contentString = JSON.stringify(content);
+    
+    // Don't save if content hasn't actually changed
+    if (contentString === this.lastSavedContent) {
+      return;
+    }
+
     // Clear existing timeout
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout);
     }
 
-    // Set new timeout
+    // Set new timeout with proper delay
     this.saveTimeout = setTimeout(() => {
       this.performSave(content);
     }, this.SAVE_DELAY);
@@ -27,9 +37,16 @@ export class AutoSaveManager {
   // Perform immediate save
   async performSave(content: any) {
     try {
+      const contentString = JSON.stringify(content);
+      
+      // Don't save if content hasn't changed
+      if (contentString === this.lastSavedContent) {
+        return;
+      }
+
       this.onSaveStart?.();
       
-      // Save to localStorage
+      // Save to localStorage with timestamp
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
         content,
         timestamp: Date.now(),
@@ -39,12 +56,19 @@ export class AutoSaveManager {
       // Call the save callback
       await this.onSave(content);
       
+      this.lastSavedContent = contentString;
       this.onSaveComplete?.();
       console.log('Auto-save completed successfully');
     } catch (error) {
       console.error('Auto-save failed:', error);
       this.onSaveError?.(error as Error);
     }
+  }
+
+  // Force immediate save
+  async forceSave(content: any) {
+    this.cancelPendingSave();
+    await this.performSave(content);
   }
 
   // Cancel pending save
@@ -72,6 +96,7 @@ export class AutoSaveManager {
   // Clear auto-saved content
   clearAutoSavedContent() {
     localStorage.removeItem(this.STORAGE_KEY);
+    this.lastSavedContent = '';
   }
 
   // Check if there's unsaved content
@@ -93,9 +118,7 @@ export class AutoSaveManager {
   }
 }
 
-// Hook for using auto-save
-import { useEffect, useRef, useState } from 'react';
-
+// Optimized hook for auto-save
 export const useAutoSave = (
   content: any,
   onSave: (content: any) => void,
@@ -105,13 +128,16 @@ export const useAutoSave = (
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const autoSaveManager = useRef<AutoSaveManager | null>(null);
-  const lastContentRef = useRef<any>(null);
+  const lastContentRef = useRef<string>('');
+
+  // Memoized save callback to prevent unnecessary re-renders
+  const memoizedOnSave = useCallback(onSave, []);
 
   useEffect(() => {
     if (!enabled) return;
 
     autoSaveManager.current = new AutoSaveManager(
-      onSave,
+      memoizedOnSave,
       () => {
         setIsSaving(true);
         setSaveError(null);
@@ -129,30 +155,32 @@ export const useAutoSave = (
     return () => {
       autoSaveManager.current?.destroy();
     };
-  }, [onSave, enabled]);
+  }, [memoizedOnSave, enabled]);
 
-  // Schedule auto-save when content changes
+  // Only trigger auto-save when content actually changes
   useEffect(() => {
-    if (autoSaveManager.current && content && 
-        JSON.stringify(content) !== JSON.stringify(lastContentRef.current)) {
-      lastContentRef.current = content;
-      autoSaveManager.current.scheduleAutoSave(content);
+    if (autoSaveManager.current && content) {
+      const contentString = JSON.stringify(content);
+      if (contentString !== lastContentRef.current) {
+        lastContentRef.current = contentString;
+        autoSaveManager.current.scheduleAutoSave(content);
+      }
     }
   }, [content]);
 
-  const forceSave = () => {
+  const forceSave = useCallback(() => {
     if (autoSaveManager.current && content) {
-      autoSaveManager.current.performSave(content);
+      return autoSaveManager.current.forceSave(content);
     }
-  };
+  }, [content]);
 
-  const loadAutoSaved = () => {
+  const loadAutoSaved = useCallback(() => {
     return autoSaveManager.current?.loadAutoSavedContent();
-  };
+  }, []);
 
-  const clearAutoSaved = () => {
+  const clearAutoSaved = useCallback(() => {
     autoSaveManager.current?.clearAutoSavedContent();
-  };
+  }, []);
 
   return {
     isSaving,

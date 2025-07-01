@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { Eye, EyeOff, Monitor, Smartphone, Tablet } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
+import { useAdminContentData } from "@/lib/admin/contentProvider";
 
 // Import ACTUAL landing page components
 import Hero from "@/components/sections/Hero";
@@ -19,12 +20,22 @@ interface StaticPreviewProps {
   onToggleVisibility?: () => void;
 }
 
-export const StaticPreview: React.FC<StaticPreviewProps> = ({
+// Memoized component wrapper to prevent unnecessary re-renders
+const ComponentWrapper = memo(({ children }: { children: React.ReactNode }) => (
+  <div className="admin-preview-wrapper">
+    {children}
+  </div>
+));
+
+ComponentWrapper.displayName = 'ComponentWrapper';
+
+export const StaticPreview: React.FC<StaticPreviewProps> = memo(({
   section,
   isVisible = true,
   onToggleVisibility,
 }) => {
   const [viewportMode, setViewportMode] = React.useState<"desktop" | "tablet" | "mobile">("desktop");
+  const { content, triggerUpdate } = useAdminContentData();
 
   const getViewportWidth = () => {
     switch (viewportMode) {
@@ -43,56 +54,57 @@ export const StaticPreview: React.FC<StaticPreviewProps> = ({
     { id: "mobile", name: "Mobile", icon: Smartphone },
   ];
 
-  const renderLivePreview = () => {
+  // Memoized component renderer to prevent unnecessary re-renders
+  const renderLivePreview = useMemo(() => {
     try {
       switch (section) {
         case "header":
           return (
-            <div className="admin-preview-wrapper">
+            <ComponentWrapper>
               <Header />
-            </div>
+            </ComponentWrapper>
           );
           
         case "hero":
           return (
-            <div className="admin-preview-wrapper">
+            <ComponentWrapper>
               <Hero />
-            </div>
+            </ComponentWrapper>
           );
           
         case "features":
           return (
-            <div className="admin-preview-wrapper">
+            <ComponentWrapper>
               <Features />
-            </div>
+            </ComponentWrapper>
           );
           
         case "mobile-download":
           return (
-            <div className="admin-preview-wrapper">
+            <ComponentWrapper>
               <MobileDownload />
-            </div>
+            </ComponentWrapper>
           );
           
         case "faq":
           return (
-            <div className="admin-preview-wrapper">
+            <ComponentWrapper>
               <FAQ />
-            </div>
+            </ComponentWrapper>
           );
           
         case "about-arpi":
           return (
-            <div className="admin-preview-wrapper">
+            <ComponentWrapper>
               <AboutARPI />
-            </div>
+            </ComponentWrapper>
           );
           
         case "footer":
           return (
-            <div className="admin-preview-wrapper">
+            <ComponentWrapper>
               <Footer />
-            </div>
+            </ComponentWrapper>
           );
           
         default:
@@ -116,7 +128,7 @@ export const StaticPreview: React.FC<StaticPreviewProps> = ({
         </div>
       );
     }
-  };
+  }, [section, content]); // Re-render when content changes
 
   if (!isVisible) return null;
 
@@ -133,6 +145,15 @@ export const StaticPreview: React.FC<StaticPreviewProps> = ({
         </div>
         
         <div className="flex items-center space-x-2">
+          {/* Manual Refresh Button */}
+          <button
+            onClick={triggerUpdate}
+            className="flex items-center space-x-1 px-2 py-1 text-xs text-gray-500 hover:text-gray-700 transition-colors rounded-md hover:bg-gray-100"
+            title="Refresh preview"
+          >
+            <Eye className="w-3 h-3" />
+          </button>
+
           {/* Viewport Selector */}
           <div className="flex items-center bg-gray-100 rounded-lg p-1">
             {viewportOptions.map((viewport) => (
@@ -187,7 +208,7 @@ export const StaticPreview: React.FC<StaticPreviewProps> = ({
           >
             {/* LIVE Content from Landing Page Components */}
             <div className="relative admin-preview-container">
-              {renderLivePreview()}
+              {renderLivePreview}
             </div>
           </div>
         </div>
@@ -205,14 +226,14 @@ export const StaticPreview: React.FC<StaticPreviewProps> = ({
         </div>
       </div>
 
-      {/* Admin Preview Styles */}
+      {/* Admin Preview Styles - Disable animations for better performance */}
       <style jsx global>{`
         .admin-preview-container {
-          /* Disable animations in admin preview */
+          /* Disable animations in admin preview for performance */
           * {
             animation-duration: 0s !important;
             animation-delay: 0s !important;
-            transition-duration: 0s !important;
+            transition-duration: 0.1s !important;
             transition-delay: 0s !important;
           }
           
@@ -221,6 +242,11 @@ export const StaticPreview: React.FC<StaticPreviewProps> = ({
             transform: none !important;
             opacity: 1 !important;
           }
+          
+          /* Disable hover effects */
+          *:hover {
+            transform: none !important;
+          }
         }
         
         .admin-preview-wrapper {
@@ -228,8 +254,12 @@ export const StaticPreview: React.FC<StaticPreviewProps> = ({
           transform-origin: top left;
           width: 100%;
           overflow: hidden;
+          /* Disable pointer events to prevent interactions */
+          pointer-events: none;
         }
       `}</style>
     </div>
   );
-};
+});
+
+StaticPreview.displayName = 'StaticPreview';

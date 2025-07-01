@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { memo } from "react";
 import { motion } from "framer-motion";
 import {
   Bell,
@@ -15,6 +15,8 @@ import {
   Clock,
   CheckCircle,
   ChevronDown,
+  AlertCircle,
+  Loader2,
 } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
 
@@ -24,14 +26,18 @@ interface AdminHeaderProps {
   onSave?: () => void;
   onPreview?: () => void;
   lastSaved?: Date | null;
+  isLoading?: boolean;
+  saveError?: string | null;
 }
 
-export const AdminHeader: React.FC<AdminHeaderProps> = ({
+export const AdminHeader: React.FC<AdminHeaderProps> = memo(({
   activeSection,
   onToggleSidebar,
   onSave,
   onPreview,
   lastSaved,
+  isLoading = false,
+  saveError = null,
 }) => {
   const getSectionTitle = (section: AdminSection) => {
     const titles = {
@@ -63,12 +69,39 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
     return date.toLocaleDateString();
   };
 
+  const getStatusIndicator = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center space-x-2 text-blue-600">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span className="text-sm">Saving...</span>
+        </div>
+      );
+    }
+
+    if (saveError) {
+      return (
+        <div className="flex items-center space-x-2 text-red-600">
+          <AlertCircle className="w-4 h-4" />
+          <span className="text-sm">Save failed</span>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex items-center space-x-2 text-green-600">
+        <CheckCircle className="w-4 h-4" />
+        <span className="text-sm">All changes saved</span>
+      </div>
+    );
+  };
+
   return (
     <motion.header
       className="h-16 bg-white border-b border-gray-200 px-6 flex items-center justify-between"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
     >
       {/* Left Section */}
       <div className="flex items-center space-x-4">
@@ -89,13 +122,15 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           >
             {getSectionTitle(activeSection)}
           </motion.h1>
-          {lastSaved && (
-            <div className="flex items-center space-x-2 text-xs text-gray-500 mt-0.5">
-              <Clock className="w-3 h-3" />
-              <span>Last saved {formatLastSaved(lastSaved)}</span>
-              <CheckCircle className="w-3 h-3 text-green-500" />
-            </div>
-          )}
+          <div className="flex items-center space-x-4 text-xs text-gray-500 mt-0.5">
+            {lastSaved && (
+              <div className="flex items-center space-x-1">
+                <Clock className="w-3 h-3" />
+                <span>Last saved {formatLastSaved(lastSaved)}</span>
+              </div>
+            )}
+            {getStatusIndicator()}
+          </div>
         </div>
       </div>
 
@@ -105,7 +140,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search content..."
             className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
           />
         </div>
@@ -118,7 +153,8 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           <div className="hidden sm:flex items-center space-x-2">
             <motion.button
               onClick={onPreview}
-              className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+              disabled={isLoading}
+              className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 disabled:opacity-50"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -128,12 +164,17 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
 
             <motion.button
               onClick={onSave}
-              className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200"
+              disabled={isLoading}
+              className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:opacity-50"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <Save className="w-4 h-4" />
-              <span>Save</span>
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              <span>{isLoading ? 'Saving...' : 'Save'}</span>
             </motion.button>
           </div>
         )}
@@ -178,4 +219,6 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
       </div>
     </motion.header>
   );
-};
+});
+
+AdminHeader.displayName = 'AdminHeader';

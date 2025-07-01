@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback, memo } from "react";
 import {
   Save,
   Eye,
@@ -20,6 +20,8 @@ import {
   Redo,
   Copy,
   Trash2,
+  Loader2,
+  RefreshCw,
 } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
 import { RichTextEditor } from "./fields/RichTextEditor";
@@ -41,6 +43,151 @@ interface EnhancedContentEditorProps {
   lastSaved?: Date | null;
 }
 
+// Memoized field renderer to prevent unnecessary re-renders
+const FieldRenderer = memo(({ 
+  field, 
+  fieldValue, 
+  fieldErrors, 
+  onFieldChange, 
+  onArrayUpdate 
+}: {
+  field: FieldSchema;
+  fieldValue: any;
+  fieldErrors?: string[];
+  onFieldChange: (field: FieldSchema, value: any) => void;
+  onArrayUpdate: (field: FieldSchema, newArray: any[]) => void;
+}) => {
+  const FieldIcon = getIconComponent(
+    field.type === 'richtext' ? 'FileText' : 
+    field.type === 'email' || field.type === 'url' ? 'Link' : 
+    field.type === 'image' ? 'Image' : 
+    field.type === 'draggable' ? 'Settings' : 'Type'
+  );
+  
+  const commonProps = {
+    className: "space-y-2 transition-all duration-200",
+  };
+  
+  switch (field.type) {
+    case "text":
+    case "email":
+    case "url":
+      return (
+        <div {...commonProps}>
+          <div className="flex items-center space-x-2">
+            <FieldIcon className="w-4 h-4 text-gray-500" />
+            <label className="text-sm font-medium text-gray-900">
+              {field.label}
+              {field.required && <span className="text-red-500 ml-1">*</span>}
+            </label>
+          </div>
+          {field.description && (
+            <p className="text-xs text-gray-500">{field.description}</p>
+          )}
+          <input
+            type={field.type}
+            value={fieldValue || ''}
+            onChange={(e) => onFieldChange(field, e.target.value)}
+            placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
+            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm ${
+              fieldErrors ? 'border-red-300 bg-red-50' : 'border-gray-300'
+            }`}
+          />
+          {fieldErrors && fieldErrors.length > 0 && (
+            <div className="space-y-1">
+              {fieldErrors.map((error, index) => (
+                <p key={index} className="text-xs text-red-600 flex items-center space-x-1">
+                  <AlertCircle className="w-3 h-3" />
+                  <span>{error}</span>
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+
+    case "richtext":
+      return (
+        <div {...commonProps}>
+          <RichTextEditor
+            label={field.label + (field.required ? ' *' : '')}
+            value={fieldValue || ''}
+            onChange={(value) => onFieldChange(field, value)}
+            description={field.description}
+            placeholder={field.placeholder}
+          />
+          {fieldErrors && fieldErrors.length > 0 && (
+            <div className="mt-2 space-y-1">
+              {fieldErrors.map((error, index) => (
+                <p key={index} className="text-xs text-red-600 flex items-center space-x-1">
+                  <AlertCircle className="w-3 h-3" />
+                  <span>{error}</span>
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+
+    case "image":
+      return (
+        <div {...commonProps}>
+          <ImagePreview
+            label={field.label + (field.required ? ' *' : '')}
+            value={fieldValue || ''}
+            onChange={(value) => onFieldChange(field, value)}
+            description={field.description}
+            placeholder={field.placeholder}
+          />
+          {fieldErrors && fieldErrors.length > 0 && (
+            <div className="mt-2 space-y-1">
+              {fieldErrors.map((error, index) => (
+                <p key={index} className="text-xs text-red-600 flex items-center space-x-1">
+                  <AlertCircle className="w-3 h-3" />
+                  <span>{error}</span>
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+
+    case "draggable":
+      const items = fieldValue || [];
+      return (
+        <div {...commonProps}>
+          <DraggableList
+            label={field.label + (field.required ? ' *' : '')}
+            items={items}
+            itemFields={field.itemFields || []}
+            defaultItem={field.defaultItem || {}}
+            onUpdate={(newItems) => onArrayUpdate(field, newItems)}
+            description={field.description}
+          />
+          {fieldErrors && fieldErrors.length > 0 && (
+            <div className="mt-2 space-y-1">
+              {fieldErrors.map((error, index) => (
+                <p key={index} className="text-xs text-red-600 flex items-center space-x-1">
+                  <AlertCircle className="w-3 h-3" />
+                  <span>{error}</span>
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+
+    default:
+      return (
+        <div className="text-sm text-gray-500 italic">
+          Field type not implemented: {field.type}
+        </div>
+      );
+  }
+});
+
+FieldRenderer.displayName = 'FieldRenderer';
+
 export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({ 
   section, 
   initialContent, 
@@ -58,6 +205,7 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
   const [contentHistory, setContentHistory] = useState<any[]>([initialContent]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   const editorRefs = useRef<Record<string, HTMLElement>>({});
 
   // Toast notifications
@@ -67,18 +215,18 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
   // Get schema for current section
   const sectionSchema = getSectionSchema(section);
 
-  // Content history management functions - defined before useMemo
+  // Content history management functions
   const addToHistory = useCallback((content: any) => {
     setContentHistory(prev => {
       const newHistory = prev.slice(0, historyIndex + 1);
-      newHistory.push(content);
+      newHistory.push(JSON.parse(JSON.stringify(content))); // Deep clone
       
-      // Limit history to 50 items
-      if (newHistory.length > 50) {
+      // Limit history to 20 items for performance
+      if (newHistory.length > 20) {
         newHistory.shift();
         return newHistory;
       } else {
-        setHistoryIndex(historyIndex + 1);
+        setHistoryIndex(newHistory.length - 1);
         return newHistory;
       }
     });
@@ -89,6 +237,7 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
       const newIndex = historyIndex - 1;
       setHistoryIndex(newIndex);
       setLocalContent(contentHistory[newIndex]);
+      setIsDirty(true);
       toast.info("Undone");
     }
   }, [historyIndex, contentHistory, toast]);
@@ -98,6 +247,7 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
       const newIndex = historyIndex + 1;
       setHistoryIndex(newIndex);
       setLocalContent(contentHistory[newIndex]);
+      setIsDirty(true);
       toast.info("Redone");
     }
   }, [historyIndex, contentHistory, toast]);
@@ -106,6 +256,7 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
     setIsLoading(true);
     try {
       await onSave();
+      setIsDirty(false);
       toast.saveSuccess();
     } catch (error) {
       toast.saveError("Failed to save changes");
@@ -117,8 +268,8 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
   // Auto-save functionality with enhanced debouncing
   const autoSaveCallback = useCallback((content: any) => {
     onContentChange(content);
-    toast.autoSaved();
-  }, [onContentChange, toast]);
+    setIsDirty(false);
+  }, [onContentChange]);
 
   const { isSaving, lastSaved: autoSaveLastSaved, saveError } = useAutoSave(
     localContent,
@@ -126,7 +277,7 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
     true
   );
 
-  // Enhanced keyboard shortcuts - now defined after the functions
+  // Enhanced keyboard shortcuts
   const shortcuts = useMemo(() => createAdminShortcuts({
     onSave: handleSave,
     onPreview,
@@ -147,6 +298,7 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
     setValidationErrors({});
     setContentHistory([initialContent]);
     setHistoryIndex(0);
+    setIsDirty(false);
   }, [initialContent]);
 
   // Show save error toast
@@ -156,11 +308,11 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
     }
   }, [saveError, toast]);
 
-  const getValueByPath = (obj: any, path: string) => {
+  const getValueByPath = useCallback((obj: any, path: string) => {
     return path.split('.').reduce((current, key) => current?.[key], obj) || '';
-  };
+  }, []);
 
-  const setValueByPath = (obj: any, path: string, value: any) => {
+  const setValueByPath = useCallback((obj: any, path: string, value: any) => {
     const keys = path.split('.');
     const lastKey = keys.pop()!;
     const target = keys.reduce((current, key) => {
@@ -168,9 +320,9 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
       return current[key];
     }, obj);
     target[lastKey] = value;
-  };
+  }, []);
 
-  const handleFieldChange = (field: FieldSchema, value: any) => {
+  const handleFieldChange = useCallback((field: FieldSchema, value: any) => {
     // Validate field
     const fieldErrors = validateFieldValue(value, field);
     setValidationErrors(prev => ({
@@ -183,50 +335,54 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
     }
 
     setLocalContent((prev: any) => {
-      const newContent = { ...prev };
+      const newContent = JSON.parse(JSON.stringify(prev)); // Deep clone
       setValueByPath(newContent, field.path, value);
       
-      // Add to history for undo/redo
-      addToHistory(newContent);
+      // Add to history for undo/redo (debounced)
+      setTimeout(() => addToHistory(newContent), 100);
       
+      setIsDirty(true);
       return newContent;
     });
-  };
+  }, [addToHistory, toast]);
 
-  const handleArrayUpdate = (field: FieldSchema, newArray: any[]) => {
+  const handleArrayUpdate = useCallback((field: FieldSchema, newArray: any[]) => {
     setLocalContent((prev: any) => {
-      const newContent = { ...prev };
+      const newContent = JSON.parse(JSON.stringify(prev)); // Deep clone
       setValueByPath(newContent, field.path, newArray);
       
-      // Add to history for undo/redo
-      addToHistory(newContent);
+      // Add to history for undo/redo (debounced)
+      setTimeout(() => addToHistory(newContent), 100);
       
+      setIsDirty(true);
       return newContent;
     });
-  };
+  }, [addToHistory]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setLocalContent(initialContent);
     setValidationErrors({});
     setContentHistory([initialContent]);
     setHistoryIndex(0);
+    setIsDirty(false);
     toast.info("Content reset to last saved version");
-  };
+  }, [initialContent, toast]);
 
-  const handleDuplicateSection = () => {
+  const handleDuplicateSection = useCallback(() => {
     const duplicatedContent = JSON.parse(JSON.stringify(localContent));
     setLocalContent(duplicatedContent);
     addToHistory(duplicatedContent);
+    setIsDirty(true);
     toast.success("Section duplicated");
-  };
+  }, [localContent, addToHistory, toast]);
 
-  const toggleSection = (sectionId: string) => {
+  const toggleSection = useCallback((sectionId: string) => {
     setExpandedSections((prev) =>
       prev.includes(sectionId)
         ? prev.filter((id) => id !== sectionId)
         : [...prev, sectionId]
     );
-  };
+  }, []);
 
   // Filter fields based on search query
   const filteredSections = useMemo(() => {
@@ -240,136 +396,6 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
       )
     })).filter(section => section.fields.length > 0);
   }, [sectionSchema.sections, searchQuery]);
-
-  const renderField = (field: FieldSchema) => {
-    const FieldIcon = getIconComponent(field.type === 'richtext' ? 'FileText' : field.type === 'email' || field.type === 'url' ? 'Link' : field.type === 'image' ? 'Image' : field.type === 'draggable' ? 'Settings' : 'Type');
-    const fieldErrors = validationErrors[field.id];
-    const fieldValue = getValueByPath(localContent, field.path);
-    
-    const commonProps = {
-      ref: (el: HTMLElement | null) => { 
-        if (el) editorRefs.current[field.id] = el; 
-      },
-      className: "space-y-2 transition-all duration-200",
-    };
-    
-    switch (field.type) {
-      case "text":
-      case "email":
-      case "url":
-        return (
-          <div {...commonProps}>
-            <div className="flex items-center space-x-2">
-              <FieldIcon className="w-4 h-4 text-gray-500" />
-              <label className="text-sm font-medium text-gray-900">
-                {field.label}
-                {field.required && <span className="text-red-500 ml-1">*</span>}
-              </label>
-            </div>
-            {field.description && (
-              <p className="text-xs text-gray-500">{field.description}</p>
-            )}
-            <input
-              type={field.type}
-              value={fieldValue}
-              onChange={(e) => handleFieldChange(field, e.target.value)}
-              placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm ${
-                fieldErrors ? 'border-red-300 bg-red-50' : 'border-gray-300'
-              }`}
-            />
-            {fieldErrors && fieldErrors.length > 0 && (
-              <div className="space-y-1">
-                {fieldErrors.map((error, index) => (
-                  <p key={index} className="text-xs text-red-600 flex items-center space-x-1">
-                    <AlertCircle className="w-3 h-3" />
-                    <span>{error}</span>
-                  </p>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-
-      case "richtext":
-        return (
-          <div {...commonProps}>
-            <RichTextEditor
-              label={field.label + (field.required ? ' *' : '')}
-              value={fieldValue}
-              onChange={(value) => handleFieldChange(field, value)}
-              description={field.description}
-              placeholder={field.placeholder}
-            />
-            {fieldErrors && fieldErrors.length > 0 && (
-              <div className="mt-2 space-y-1">
-                {fieldErrors.map((error, index) => (
-                  <p key={index} className="text-xs text-red-600 flex items-center space-x-1">
-                    <AlertCircle className="w-3 h-3" />
-                    <span>{error}</span>
-                  </p>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-
-      case "image":
-        return (
-          <div {...commonProps}>
-            <ImagePreview
-              label={field.label + (field.required ? ' *' : '')}
-              value={fieldValue}
-              onChange={(value) => handleFieldChange(field, value)}
-              description={field.description}
-              placeholder={field.placeholder}
-            />
-            {fieldErrors && fieldErrors.length > 0 && (
-              <div className="mt-2 space-y-1">
-                {fieldErrors.map((error, index) => (
-                  <p key={index} className="text-xs text-red-600 flex items-center space-x-1">
-                    <AlertCircle className="w-3 h-3" />
-                    <span>{error}</span>
-                  </p>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-
-      case "draggable":
-        const items = fieldValue || [];
-        return (
-          <div {...commonProps}>
-            <DraggableList
-              label={field.label + (field.required ? ' *' : '')}
-              items={items}
-              itemFields={field.itemFields || []}
-              defaultItem={field.defaultItem || {}}
-              onUpdate={(newItems) => handleArrayUpdate(field, newItems)}
-              description={field.description}
-            />
-            {fieldErrors && fieldErrors.length > 0 && (
-              <div className="mt-2 space-y-1">
-                {fieldErrors.map((error, index) => (
-                  <p key={index} className="text-xs text-red-600 flex items-center space-x-1">
-                    <AlertCircle className="w-3 h-3" />
-                    <span>{error}</span>
-                  </p>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-
-      default:
-        return (
-          <div className="text-sm text-gray-500 italic">
-            Field type not implemented: {field.type}
-          </div>
-        );
-    }
-  };
 
   const hasErrors = Object.values(validationErrors).some(errors => errors && errors.length > 0);
   const SectionIcon = getIconComponent(sectionSchema.icon);
@@ -467,7 +493,11 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
                       : 'bg-blue-600 border-blue-600 hover:bg-blue-700'
                   }`}
                 >
-                  <Save className="w-4 h-4" />
+                  {isLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Save className="w-4 h-4" />
+                  )}
                   <span>{isLoading ? 'Saving...' : 'Save'}</span>
                 </button>
               </div>
@@ -501,8 +531,13 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
               <div className="flex items-center space-x-4">
                 {isSaving ? (
                   <div className="flex items-center space-x-2 text-blue-600">
-                    <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
                     <span className="text-sm">Auto-saving...</span>
+                  </div>
+                ) : isDirty ? (
+                  <div className="flex items-center space-x-2 text-amber-600">
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="text-sm">Unsaved changes</span>
                   </div>
                 ) : (
                   <div className="flex items-center space-x-2 text-green-600">
@@ -577,9 +612,14 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
                       <div className="p-4">
                         <div className="space-y-6">
                           {schemaSection.fields.map((field) => (
-                            <div key={field.id}>
-                              {renderField(field)}
-                            </div>
+                            <FieldRenderer
+                              key={field.id}
+                              field={field}
+                              fieldValue={getValueByPath(localContent, field.path)}
+                              fieldErrors={validationErrors[field.id]}
+                              onFieldChange={handleFieldChange}
+                              onArrayUpdate={handleArrayUpdate}
+                            />
                           ))}
                         </div>
                       </div>

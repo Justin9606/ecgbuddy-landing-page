@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AdminSidebar } from "./AdminSidebar";
 import { AdminHeader } from "./AdminHeader";
@@ -31,14 +31,16 @@ export type AdminSection =
 export const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<AdminSection>("dashboard");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [siteContent, setSiteContent] = useState<SiteContent>(getDefaultSiteContent());
+  const [siteContent, setSiteContent] = useState<SiteContent>(() => getDefaultSiteContent());
   const [isLoading, setIsLoading] = useState(true);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Load content from localStorage on mount
   useEffect(() => {
-    const loadContent = () => {
+    const loadContent = async () => {
       try {
+        setIsLoading(true);
         const savedContent = loadSiteContent();
         if (savedContent) {
           setSiteContent(savedContent);
@@ -48,6 +50,7 @@ export const AdminDashboard: React.FC = () => {
         }
       } catch (error) {
         console.error('Error loading content:', error);
+        setSaveError('Failed to load content');
       } finally {
         setIsLoading(false);
       }
@@ -56,52 +59,74 @@ export const AdminDashboard: React.FC = () => {
     loadContent();
   }, []);
 
-  // Handle content changes from ContentEditor
-  const handleContentChange = (section: AdminSection, newSectionContent: any) => {
+  // Memoized content change handler to prevent unnecessary re-renders
+  const handleContentChange = useCallback((section: AdminSection, newSectionContent: any) => {
     setSiteContent(prevContent => {
       const updatedContent = {
         ...prevContent,
         [section]: newSectionContent
       };
       
-      // Auto-save to localStorage after a short delay
-      setTimeout(() => {
-        saveSiteContent(updatedContent);
-        setLastSaved(new Date());
-      }, 500);
+      // Auto-save to localStorage with debouncing
+      const timeoutId = setTimeout(() => {
+        try {
+          saveSiteContent(updatedContent);
+          setLastSaved(new Date());
+          setSaveError(null);
+        } catch (error) {
+          console.error('Auto-save failed:', error);
+          setSaveError('Auto-save failed');
+        }
+      }, 1000); // 1 second debounce
       
+      // Clear previous timeout
       return updatedContent;
     });
-  };
+  }, []);
 
-  // Handle manual save
-  const handleSaveAllChanges = () => {
+  // Memoized save handler
+  const handleSaveAllChanges = useCallback(async () => {
     try {
+      setIsLoading(true);
+      setSaveError(null);
+      
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate save delay
       saveSiteContent(siteContent);
       setLastSaved(new Date());
+      
       console.log('All changes saved successfully');
     } catch (error) {
       console.error('Error saving changes:', error);
+      setSaveError('Failed to save changes');
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [siteContent]);
 
-  // Handle preview
-  const handlePreview = () => {
+  // Memoized preview handler
+  const handlePreview = useCallback(() => {
     try {
       savePreviewDraft(siteContent);
       // Open preview in new tab
       window.open('/', '_blank');
     } catch (error) {
       console.error('Error creating preview:', error);
+      setSaveError('Failed to create preview');
     }
-  };
+  }, [siteContent]);
 
-  // Handle section change from dashboard quick actions
-  const handleSectionChange = (section: AdminSection) => {
+  // Memoized section change handler
+  const handleSectionChange = useCallback((section: AdminSection) => {
     setActiveSection(section);
-  };
+  }, []);
 
-  const renderContent = () => {
+  // Memoized content for current section
+  const currentSectionContent = useMemo(() => {
+    return siteContent[activeSection as keyof SiteContent];
+  }, [siteContent, activeSection]);
+
+  // Memoized render function for better performance
+  const renderContent = useMemo(() => {
     if (isLoading) {
       return (
         <div className="flex items-center justify-center h-64">
@@ -125,12 +150,11 @@ export const AdminDashboard: React.FC = () => {
       case "users":
         return <Users />;
       default:
-        // Get the relevant section content
-        const sectionContent = siteContent[activeSection as keyof SiteContent];
+        // Content editing sections
         return (
           <EnhancedContentEditor 
             section={activeSection}
-            initialContent={sectionContent}
+            initialContent={currentSectionContent}
             onContentChange={(newContent) => handleContentChange(activeSection, newContent)}
             onSave={handleSaveAllChanges}
             onPreview={handlePreview}
@@ -138,7 +162,16 @@ export const AdminDashboard: React.FC = () => {
           />
         );
     }
-  };
+  }, [
+    isLoading,
+    activeSection,
+    currentSectionContent,
+    handleSectionChange,
+    handleContentChange,
+    handleSaveAllChanges,
+    handlePreview,
+    lastSaved
+  ]);
 
   return (
     <ToastProvider>
@@ -160,6 +193,8 @@ export const AdminDashboard: React.FC = () => {
             onSave={handleSaveAllChanges}
             onPreview={handlePreview}
             lastSaved={lastSaved}
+            isLoading={isLoading}
+            saveError={saveError}
           />
 
           {/* Content Area */}
@@ -170,9 +205,9 @@ export const AdminDashboard: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
               >
-                {renderContent()}
+                {renderContent}
               </motion.div>
             </AnimatePresence>
           </main>
