@@ -27,6 +27,9 @@ import {
   Building2,
 } from "lucide-react";
 import { AdminSection } from "../AdminDashboard";
+import { RichTextEditor } from "../fields/RichTextEditor";
+import { ImagePreview } from "../fields/ImagePreview";
+import { DraggableList } from "../fields/DraggableList";
 
 interface ContentEditorProps {
   section: AdminSection;
@@ -48,11 +51,13 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
   const [localContent, setLocalContent] = useState(initialContent);
   const [expandedSections, setExpandedSections] = useState<string[]>(["basic-info"]);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   // Update local content when initialContent changes
   useEffect(() => {
     setLocalContent(initialContent);
     setHasUnsavedChanges(false);
+    setValidationErrors({});
   }, [initialContent]);
 
   // Propagate changes to parent
@@ -71,7 +76,36 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
     );
   };
 
-  const handleFieldChange = (fieldPath: string, value: any) => {
+  const validateField = (fieldPath: string, value: any, fieldType: string) => {
+    const errors: Record<string, string> = {};
+    
+    if (fieldType === "email" && value) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        errors[fieldPath] = "Please enter a valid email address";
+      }
+    }
+    
+    if (fieldType === "url" && value) {
+      try {
+        new URL(value);
+      } catch {
+        errors[fieldPath] = "Please enter a valid URL";
+      }
+    }
+    
+    return errors;
+  };
+
+  const handleFieldChange = (fieldPath: string, value: any, fieldType: string = "text") => {
+    // Validate field
+    const fieldErrors = validateField(fieldPath, value, fieldType);
+    setValidationErrors(prev => ({
+      ...prev,
+      ...fieldErrors,
+      [fieldPath]: fieldErrors[fieldPath] || undefined
+    }));
+
     setLocalContent((prev: any) => {
       const newContent = { ...prev };
       const pathArray = fieldPath.split('.');
@@ -111,45 +145,22 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
     });
   };
 
-  const handleAddArrayItem = (arrayPath: string, defaultItem: any) => {
+  const handleArrayUpdate = (arrayPath: string, newArray: any[]) => {
     setLocalContent((prev: any) => {
       const newContent = { ...prev };
       const pathArray = arrayPath.split('.');
       let current = newContent;
       
-      // Navigate to the array
-      for (const path of pathArray) {
-        if (!current[path]) {
-          current[path] = [];
+      // Navigate to the parent of the array
+      for (let i = 0; i < pathArray.length - 1; i++) {
+        if (!current[pathArray[i]]) {
+          current[pathArray[i]] = {};
         }
-        current = current[path];
+        current = current[pathArray[i]];
       }
       
-      // Add new item
-      if (Array.isArray(current)) {
-        current.push({ ...defaultItem });
-      }
-      
-      return newContent;
-    });
-  };
-
-  const handleRemoveArrayItem = (arrayPath: string, index: number) => {
-    setLocalContent((prev: any) => {
-      const newContent = { ...prev };
-      const pathArray = arrayPath.split('.');
-      let current = newContent;
-      
-      // Navigate to the array
-      for (const path of pathArray) {
-        current = current[path];
-      }
-      
-      // Remove item
-      if (Array.isArray(current)) {
-        current.splice(index, 1);
-      }
-      
+      // Set the new array
+      current[pathArray[pathArray.length - 1]] = newArray;
       return newContent;
     });
   };
@@ -157,6 +168,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
   const handleReset = () => {
     setLocalContent(initialContent);
     setHasUnsavedChanges(false);
+    setValidationErrors({});
   };
 
   const getSectionConfig = (section: AdminSection) => {
@@ -181,7 +193,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "tagline",
                 label: "Tagline",
-                type: "text",
+                type: "richtext",
                 path: "tagline",
                 description: "Short description below the logo",
               },
@@ -195,10 +207,10 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "nav-items",
                 label: "Navigation Items",
-                type: "repeatable",
+                type: "draggable",
                 path: "navigationItems",
-                itemFields: ["name", "href"],
-                defaultItem: { name: "New Item", href: "#new" },
+                itemFields: ["name", "href", "description"],
+                defaultItem: { name: "New Item", href: "#new", description: "Menu item description" },
                 description: "Main navigation menu items",
               },
             ],
@@ -218,7 +230,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "cta-link",
                 label: "Button Link",
-                type: "text",
+                type: "url",
                 path: "ctaButton.link",
                 description: "URL or anchor link for the button",
               },
@@ -253,7 +265,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "subtitle",
                 label: "Subtitle",
-                type: "textarea",
+                type: "richtext",
                 path: "subtitle",
                 description: "Supporting text below the main heading",
               },
@@ -267,7 +279,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "testimonial-list",
                 label: "Testimonials",
-                type: "repeatable",
+                type: "draggable",
                 path: "testimonials",
                 itemFields: ["text", "author", "role", "avatar", "hospital", "rating"],
                 defaultItem: {
@@ -318,14 +330,14 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "section-title",
                 label: "Section Title",
-                type: "textarea",
+                type: "richtext",
                 path: "sectionHeader.title",
                 description: "Main title for the features section",
               },
               {
                 id: "section-description",
                 label: "Section Description",
-                type: "textarea",
+                type: "richtext",
                 path: "sectionHeader.description",
                 description: "Description text for the features section",
               },
@@ -339,7 +351,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "features",
                 label: "Feature Items",
-                type: "repeatable",
+                type: "draggable",
                 path: "features",
                 itemFields: ["title", "description", "icon", "category", "badge"],
                 defaultItem: {
@@ -368,14 +380,14 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "section-title",
                 label: "Section Title",
-                type: "textarea",
+                type: "richtext",
                 path: "sectionHeader.title",
                 description: "Main title for the mobile download section",
               },
               {
                 id: "section-description",
                 label: "Section Description",
-                type: "textarea",
+                type: "richtext",
                 path: "sectionHeader.description",
                 description: "Description text for the mobile download section",
               },
@@ -389,7 +401,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "apps-list",
                 label: "App Information",
-                type: "repeatable",
+                type: "draggable",
                 path: "apps",
                 itemFields: ["name", "platform", "version", "storeLink"],
                 defaultItem: {
@@ -417,14 +429,14 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "section-title",
                 label: "Section Title",
-                type: "textarea",
+                type: "richtext",
                 path: "sectionHeader.title",
                 description: "Main title for the FAQ section",
               },
               {
                 id: "section-description",
                 label: "Section Description",
-                type: "textarea",
+                type: "richtext",
                 path: "sectionHeader.description",
                 description: "Description text for the FAQ section",
               },
@@ -438,7 +450,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "categories",
                 label: "FAQ Categories",
-                type: "repeatable",
+                type: "draggable",
                 path: "categories",
                 itemFields: ["title", "icon", "gradient"],
                 defaultItem: {
@@ -473,7 +485,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "company-description",
                 label: "Company Description",
-                type: "textarea",
+                type: "richtext",
                 path: "companyInfo.description",
                 description: "Brief description of the company",
               },
@@ -501,7 +513,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "team-list",
                 label: "Team Members",
-                type: "repeatable",
+                type: "draggable",
                 path: "team",
                 itemFields: ["name", "role", "bio"],
                 defaultItem: {
@@ -536,7 +548,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "company-description",
                 label: "Company Description",
-                type: "textarea",
+                type: "richtext",
                 path: "companyInfo.description",
                 description: "Brief company description in footer",
               },
@@ -592,11 +604,15 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
     switch (type) {
       case "text":
         return Type;
-      case "textarea":
+      case "richtext":
         return FileText;
       case "email":
         return Link;
-      case "repeatable":
+      case "url":
+        return Link;
+      case "image":
+        return Image;
+      case "draggable":
         return Settings;
       default:
         return Edit3;
@@ -605,6 +621,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
 
   const renderField = (field: any) => {
     const FieldIcon = getFieldIcon(field.type);
+    const fieldError = validationErrors[field.path];
     
     switch (field.type) {
       case "text":
@@ -622,36 +639,23 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
             <input
               type="text"
               value={getValueByPath(localContent, field.path)}
-              onChange={(e) => handleFieldChange(field.path, e.target.value)}
+              onChange={(e) => handleFieldChange(field.path, e.target.value, field.type)}
               placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm ${
+                fieldError ? 'border-red-300 bg-red-50' : 'border-gray-300'
+              }`}
             />
-          </div>
-        );
-
-      case "textarea":
-        return (
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <FieldIcon className="w-4 h-4 text-gray-500" />
-              <label className="text-sm font-medium text-gray-900">
-                {field.label}
-              </label>
-            </div>
-            {field.description && (
-              <p className="text-xs text-gray-500">{field.description}</p>
+            {fieldError && (
+              <p className="text-xs text-red-600 flex items-center space-x-1">
+                <AlertCircle className="w-3 h-3" />
+                <span>{fieldError}</span>
+              </p>
             )}
-            <textarea
-              value={getValueByPath(localContent, field.path)}
-              onChange={(e) => handleFieldChange(field.path, e.target.value)}
-              placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm resize-none"
-            />
           </div>
         );
 
       case "email":
+      case "url":
         return (
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
@@ -664,83 +668,56 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               <p className="text-xs text-gray-500">{field.description}</p>
             )}
             <input
-              type="email"
+              type={field.type}
               value={getValueByPath(localContent, field.path)}
-              onChange={(e) => handleFieldChange(field.path, e.target.value)}
+              onChange={(e) => handleFieldChange(field.path, e.target.value, field.type)}
               placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm ${
+                fieldError ? 'border-red-300 bg-red-50' : 'border-gray-300'
+              }`}
             />
+            {fieldError && (
+              <p className="text-xs text-red-600 flex items-center space-x-1">
+                <AlertCircle className="w-3 h-3" />
+                <span>{fieldError}</span>
+              </p>
+            )}
           </div>
         );
 
-      case "repeatable":
+      case "richtext":
+        return (
+          <RichTextEditor
+            label={field.label}
+            value={getValueByPath(localContent, field.path)}
+            onChange={(value) => handleFieldChange(field.path, value)}
+            description={field.description}
+            placeholder={field.placeholder}
+          />
+        );
+
+      case "image":
+        return (
+          <ImagePreview
+            label={field.label}
+            value={getValueByPath(localContent, field.path)}
+            onChange={(value) => handleFieldChange(field.path, value)}
+            description={field.description}
+            placeholder={field.placeholder}
+          />
+        );
+
+      case "draggable":
         const items = getValueByPath(localContent, field.path) || [];
         return (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <FieldIcon className="w-4 h-4 text-gray-500" />
-                <label className="text-sm font-medium text-gray-900">
-                  {field.label}
-                </label>
-              </div>
-              <span className="text-xs text-gray-500">{items.length} items</span>
-            </div>
-            {field.description && (
-              <p className="text-xs text-gray-500">{field.description}</p>
-            )}
-            
-            {items.map((item: any, index: number) => (
-              <div
-                key={index}
-                className="border border-gray-200 rounded-lg p-4 bg-gray-50"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center space-x-2">
-                    <GripVertical className="w-4 h-4 text-gray-400 cursor-move" />
-                    <span className="text-sm font-medium text-gray-700">
-                      {field.label.slice(0, -1)} {index + 1}
-                    </span>
-                  </div>
-                  <button 
-                    onClick={() => handleRemoveArrayItem(field.path, index)}
-                    className="p-1 text-red-500 hover:bg-red-50 rounded transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 gap-3">
-                  {field.itemFields.map((fieldName: string) => (
-                    <div key={fieldName}>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        {fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replace(/([A-Z])/g, " $1").trim()}
-                      </label>
-                      <input
-                        type={fieldName === 'rating' ? 'number' : fieldName === 'email' ? 'email' : 'text'}
-                        value={item[fieldName] || ''}
-                        onChange={(e) => handleArrayItemChange(
-                          field.path, 
-                          index, 
-                          fieldName, 
-                          fieldName === 'rating' ? parseInt(e.target.value) || 0 : e.target.value
-                        )}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            <button 
-              onClick={() => handleAddArrayItem(field.path, field.defaultItem)}
-              className="w-full flex items-center justify-center space-x-2 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 text-gray-600 hover:text-blue-600"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="text-sm font-medium">Add {field.label.slice(0, -1)}</span>
-            </button>
-          </div>
+          <DraggableList
+            label={field.label}
+            items={items}
+            itemFields={field.itemFields}
+            defaultItem={field.defaultItem}
+            onUpdate={(newItems) => handleArrayUpdate(field.path, newItems)}
+            description={field.description}
+          />
         );
 
       default:
@@ -753,6 +730,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
   };
 
   const config = getSectionConfig(section);
+  const hasErrors = Object.keys(validationErrors).some(key => validationErrors[key]);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -794,9 +772,14 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
 
             <motion.button
               onClick={onSave}
-              className="flex items-center space-x-2 px-4 py-1.5 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              disabled={hasErrors}
+              className={`flex items-center space-x-2 px-4 py-1.5 text-sm font-medium text-white border rounded-lg transition-all duration-200 ${
+                hasErrors 
+                  ? 'bg-gray-400 border-gray-400 cursor-not-allowed' 
+                  : 'bg-blue-600 border-blue-600 hover:bg-blue-700'
+              }`}
+              whileHover={!hasErrors ? { scale: 1.02 } : {}}
+              whileTap={!hasErrors ? { scale: 0.98 } : {}}
             >
               <Save className="w-4 h-4" />
               <span>Save</span>
@@ -805,18 +788,28 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
         </div>
 
         {/* Status */}
-        <div className="flex items-center space-x-4">
-          {hasUnsavedChanges ? (
-            <div className="flex items-center space-x-2 text-amber-600">
-              <AlertCircle className="w-4 h-4" />
-              <span className="text-sm">Unsaved changes</span>
-            </div>
-          ) : (
-            <div className="flex items-center space-x-2 text-green-600">
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm">All changes saved</span>
-            </div>
-          )}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            {hasUnsavedChanges ? (
+              <div className="flex items-center space-x-2 text-amber-600">
+                <AlertCircle className="w-4 h-4" />
+                <span className="text-sm">Unsaved changes</span>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2 text-green-600">
+                <CheckCircle className="w-4 h-4" />
+                <span className="text-sm">All changes saved</span>
+              </div>
+            )}
+            
+            {hasErrors && (
+              <div className="flex items-center space-x-2 text-red-600">
+                <AlertCircle className="w-4 h-4" />
+                <span className="text-sm">Please fix validation errors</span>
+              </div>
+            )}
+          </div>
+          
           {lastSaved && (
             <div className="text-xs text-gray-500">
               Last saved: {lastSaved.toLocaleTimeString()}
