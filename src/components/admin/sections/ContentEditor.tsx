@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Save,
@@ -25,8 +25,16 @@ import {
   Users,
   HelpCircle,
   Building2,
+  Layout,
+  Monitor,
+  Target,
+  Zap,
 } from "lucide-react";
 import { AdminSection } from "../AdminDashboard";
+import { RichTextEditor } from "../fields/RichTextEditor";
+import { ImagePreview } from "../fields/ImagePreview";
+import { DraggableList } from "../fields/DraggableList";
+import { SectionPreview } from "../SectionPreview";
 
 interface ContentEditorProps {
   section: AdminSection;
@@ -48,11 +56,16 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
   const [localContent, setLocalContent] = useState(initialContent);
   const [expandedSections, setExpandedSections] = useState<string[]>(["basic-info"]);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [showPreview, setShowPreview] = useState(true);
+  const [highlightedElement, setHighlightedElement] = useState<string | null>(null);
+  const editorRefs = useRef<Record<string, HTMLElement>>({});
 
   // Update local content when initialContent changes
   useEffect(() => {
     setLocalContent(initialContent);
     setHasUnsavedChanges(false);
+    setValidationErrors({});
   }, [initialContent]);
 
   // Propagate changes to parent
@@ -71,7 +84,36 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
     );
   };
 
-  const handleFieldChange = (fieldPath: string, value: any) => {
+  const validateField = (fieldPath: string, value: any, fieldType: string) => {
+    const errors: Record<string, string> = {};
+    
+    if (fieldType === "email" && value) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        errors[fieldPath] = "Please enter a valid email address";
+      }
+    }
+    
+    if (fieldType === "url" && value) {
+      try {
+        new URL(value);
+      } catch {
+        errors[fieldPath] = "Please enter a valid URL";
+      }
+    }
+    
+    return errors;
+  };
+
+  const handleFieldChange = (fieldPath: string, value: any, fieldType: string = "text") => {
+    // Validate field
+    const fieldErrors = validateField(fieldPath, value, fieldType);
+    setValidationErrors(prev => ({
+      ...prev,
+      ...fieldErrors,
+      [fieldPath]: fieldErrors[fieldPath] || undefined
+    }));
+
     setLocalContent((prev: any) => {
       const newContent = { ...prev };
       const pathArray = fieldPath.split('.');
@@ -91,65 +133,22 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
     });
   };
 
-  const handleArrayItemChange = (arrayPath: string, index: number, field: string, value: any) => {
+  const handleArrayUpdate = (arrayPath: string, newArray: any[]) => {
     setLocalContent((prev: any) => {
       const newContent = { ...prev };
       const pathArray = arrayPath.split('.');
       let current = newContent;
       
-      // Navigate to the array
-      for (const path of pathArray) {
-        current = current[path];
-      }
-      
-      // Update the specific item
-      if (current && Array.isArray(current) && current[index]) {
-        current[index] = { ...current[index], [field]: value };
-      }
-      
-      return newContent;
-    });
-  };
-
-  const handleAddArrayItem = (arrayPath: string, defaultItem: any) => {
-    setLocalContent((prev: any) => {
-      const newContent = { ...prev };
-      const pathArray = arrayPath.split('.');
-      let current = newContent;
-      
-      // Navigate to the array
-      for (const path of pathArray) {
-        if (!current[path]) {
-          current[path] = [];
+      // Navigate to the parent of the array
+      for (let i = 0; i < pathArray.length - 1; i++) {
+        if (!current[pathArray[i]]) {
+          current[pathArray[i]] = {};
         }
-        current = current[path];
+        current = current[pathArray[i]];
       }
       
-      // Add new item
-      if (Array.isArray(current)) {
-        current.push({ ...defaultItem });
-      }
-      
-      return newContent;
-    });
-  };
-
-  const handleRemoveArrayItem = (arrayPath: string, index: number) => {
-    setLocalContent((prev: any) => {
-      const newContent = { ...prev };
-      const pathArray = arrayPath.split('.');
-      let current = newContent;
-      
-      // Navigate to the array
-      for (const path of pathArray) {
-        current = current[path];
-      }
-      
-      // Remove item
-      if (Array.isArray(current)) {
-        current.splice(index, 1);
-      }
-      
+      // Set the new array
+      current[pathArray[pathArray.length - 1]] = newArray;
       return newContent;
     });
   };
@@ -157,6 +156,43 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
   const handleReset = () => {
     setLocalContent(initialContent);
     setHasUnsavedChanges(false);
+    setValidationErrors({});
+    setHighlightedElement(null);
+  };
+
+  // Handle element click from preview
+  const handleElementClick = (elementPath: string, elementType: string) => {
+    setHighlightedElement(elementPath);
+    
+    // Find and expand the relevant section
+    const config = getSectionConfig(section);
+    for (const configSection of config.sections) {
+      for (const field of configSection.fields) {
+        if (field.path.includes(elementPath) || elementPath.includes(field.path)) {
+          if (!expandedSections.includes(configSection.id)) {
+            setExpandedSections(prev => [...prev, configSection.id]);
+          }
+          
+          // Scroll to the field
+          setTimeout(() => {
+            const fieldElement = editorRefs.current[field.id];
+            if (fieldElement) {
+              fieldElement.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+              });
+              
+              // Add highlight effect
+              fieldElement.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2');
+              setTimeout(() => {
+                fieldElement.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-2');
+              }, 2000);
+            }
+          }, 300);
+          break;
+        }
+      }
+    }
   };
 
   const getSectionConfig = (section: AdminSection) => {
@@ -181,7 +217,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "tagline",
                 label: "Tagline",
-                type: "text",
+                type: "richtext",
                 path: "tagline",
                 description: "Short description below the logo",
               },
@@ -195,10 +231,10 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "nav-items",
                 label: "Navigation Items",
-                type: "repeatable",
+                type: "draggable",
                 path: "navigationItems",
-                itemFields: ["name", "href"],
-                defaultItem: { name: "New Item", href: "#new" },
+                itemFields: ["name", "href", "description"],
+                defaultItem: { name: "New Item", href: "#new", description: "Menu item description" },
                 description: "Main navigation menu items",
               },
             ],
@@ -206,7 +242,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
           {
             id: "cta-button",
             title: "Call-to-Action Button",
-            icon: Settings,
+            icon: Target,
             fields: [
               {
                 id: "cta-text",
@@ -218,7 +254,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "cta-link",
                 label: "Button Link",
-                type: "text",
+                type: "url",
                 path: "ctaButton.link",
                 description: "URL or anchor link for the button",
               },
@@ -229,7 +265,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
       hero: {
         title: "Hero Section",
         description: "Manage the main landing area content",
-        icon: Smartphone,
+        icon: Zap,
         sections: [
           {
             id: "basic-info",
@@ -253,7 +289,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "subtitle",
                 label: "Subtitle",
-                type: "textarea",
+                type: "richtext",
                 path: "subtitle",
                 description: "Supporting text below the main heading",
               },
@@ -267,7 +303,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "testimonial-list",
                 label: "Testimonials",
-                type: "repeatable",
+                type: "draggable",
                 path: "testimonials",
                 itemFields: ["text", "author", "role", "avatar", "hospital", "rating"],
                 defaultItem: {
@@ -285,7 +321,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
           {
             id: "cta-buttons",
             title: "Call-to-Action Buttons",
-            icon: Link,
+            icon: Target,
             fields: [
               {
                 id: "primary-cta",
@@ -318,14 +354,14 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "section-title",
                 label: "Section Title",
-                type: "textarea",
+                type: "richtext",
                 path: "sectionHeader.title",
                 description: "Main title for the features section",
               },
               {
                 id: "section-description",
                 label: "Section Description",
-                type: "textarea",
+                type: "richtext",
                 path: "sectionHeader.description",
                 description: "Description text for the features section",
               },
@@ -339,7 +375,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "features",
                 label: "Feature Items",
-                type: "repeatable",
+                type: "draggable",
                 path: "features",
                 itemFields: ["title", "description", "icon", "category", "badge"],
                 defaultItem: {
@@ -368,14 +404,14 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "section-title",
                 label: "Section Title",
-                type: "textarea",
+                type: "richtext",
                 path: "sectionHeader.title",
                 description: "Main title for the mobile download section",
               },
               {
                 id: "section-description",
                 label: "Section Description",
-                type: "textarea",
+                type: "richtext",
                 path: "sectionHeader.description",
                 description: "Description text for the mobile download section",
               },
@@ -389,7 +425,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "apps-list",
                 label: "App Information",
-                type: "repeatable",
+                type: "draggable",
                 path: "apps",
                 itemFields: ["name", "platform", "version", "storeLink"],
                 defaultItem: {
@@ -417,14 +453,14 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "section-title",
                 label: "Section Title",
-                type: "textarea",
+                type: "richtext",
                 path: "sectionHeader.title",
                 description: "Main title for the FAQ section",
               },
               {
                 id: "section-description",
                 label: "Section Description",
-                type: "textarea",
+                type: "richtext",
                 path: "sectionHeader.description",
                 description: "Description text for the FAQ section",
               },
@@ -438,7 +474,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "categories",
                 label: "FAQ Categories",
-                type: "repeatable",
+                type: "draggable",
                 path: "categories",
                 itemFields: ["title", "icon", "gradient"],
                 defaultItem: {
@@ -473,7 +509,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "company-description",
                 label: "Company Description",
-                type: "textarea",
+                type: "richtext",
                 path: "companyInfo.description",
                 description: "Brief description of the company",
               },
@@ -501,7 +537,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "team-list",
                 label: "Team Members",
-                type: "repeatable",
+                type: "draggable",
                 path: "team",
                 itemFields: ["name", "role", "bio"],
                 defaultItem: {
@@ -536,7 +572,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               {
                 id: "company-description",
                 label: "Company Description",
-                type: "textarea",
+                type: "richtext",
                 path: "companyInfo.description",
                 description: "Brief company description in footer",
               },
@@ -592,11 +628,15 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
     switch (type) {
       case "text":
         return Type;
-      case "textarea":
+      case "richtext":
         return FileText;
       case "email":
         return Link;
-      case "repeatable":
+      case "url":
+        return Link;
+      case "image":
+        return Image;
+      case "draggable":
         return Settings;
       default:
         return Edit3;
@@ -605,16 +645,26 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
 
   const renderField = (field: any) => {
     const FieldIcon = getFieldIcon(field.type);
+    const fieldError = validationErrors[field.path];
+    const isHighlighted = highlightedElement === field.path;
     
     switch (field.type) {
       case "text":
         return (
-          <div className="space-y-2">
+          <div 
+            className={`space-y-2 transition-all duration-300 ${isHighlighted ? 'ring-2 ring-blue-500 ring-offset-2 rounded-lg p-2' : ''}`}
+            ref={(el) => { if (el) editorRefs.current[field.id] = el; }}
+          >
             <div className="flex items-center space-x-2">
               <FieldIcon className="w-4 h-4 text-gray-500" />
               <label className="text-sm font-medium text-gray-900">
                 {field.label}
               </label>
+              {isHighlighted && (
+                <div className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
+                  Selected from preview
+                </div>
+              )}
             </div>
             {field.description && (
               <p className="text-xs text-gray-500">{field.description}</p>
@@ -622,124 +672,122 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
             <input
               type="text"
               value={getValueByPath(localContent, field.path)}
-              onChange={(e) => handleFieldChange(field.path, e.target.value)}
+              onChange={(e) => handleFieldChange(field.path, e.target.value, field.type)}
               placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm ${
+                fieldError ? 'border-red-300 bg-red-50' : 'border-gray-300'
+              }`}
             />
-          </div>
-        );
-
-      case "textarea":
-        return (
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <FieldIcon className="w-4 h-4 text-gray-500" />
-              <label className="text-sm font-medium text-gray-900">
-                {field.label}
-              </label>
-            </div>
-            {field.description && (
-              <p className="text-xs text-gray-500">{field.description}</p>
+            {fieldError && (
+              <p className="text-xs text-red-600 flex items-center space-x-1">
+                <AlertCircle className="w-3 h-3" />
+                <span>{fieldError}</span>
+              </p>
             )}
-            <textarea
-              value={getValueByPath(localContent, field.path)}
-              onChange={(e) => handleFieldChange(field.path, e.target.value)}
-              placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm resize-none"
-            />
           </div>
         );
 
       case "email":
+      case "url":
         return (
-          <div className="space-y-2">
+          <div 
+            className={`space-y-2 transition-all duration-300 ${isHighlighted ? 'ring-2 ring-blue-500 ring-offset-2 rounded-lg p-2' : ''}`}
+            ref={(el) => { if (el) editorRefs.current[field.id] = el; }}
+          >
             <div className="flex items-center space-x-2">
               <FieldIcon className="w-4 h-4 text-gray-500" />
               <label className="text-sm font-medium text-gray-900">
                 {field.label}
               </label>
+              {isHighlighted && (
+                <div className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
+                  Selected from preview
+                </div>
+              )}
             </div>
             {field.description && (
               <p className="text-xs text-gray-500">{field.description}</p>
             )}
             <input
-              type="email"
+              type={field.type}
               value={getValueByPath(localContent, field.path)}
-              onChange={(e) => handleFieldChange(field.path, e.target.value)}
+              onChange={(e) => handleFieldChange(field.path, e.target.value, field.type)}
               placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm ${
+                fieldError ? 'border-red-300 bg-red-50' : 'border-gray-300'
+              }`}
             />
+            {fieldError && (
+              <p className="text-xs text-red-600 flex items-center space-x-1">
+                <AlertCircle className="w-3 h-3" />
+                <span>{fieldError}</span>
+              </p>
+            )}
           </div>
         );
 
-      case "repeatable":
+      case "richtext":
+        return (
+          <div 
+            className={`transition-all duration-300 ${isHighlighted ? 'ring-2 ring-blue-500 ring-offset-2 rounded-lg p-2' : ''}`}
+            ref={(el) => { if (el) editorRefs.current[field.id] = el; }}
+          >
+            <RichTextEditor
+              label={field.label}
+              value={getValueByPath(localContent, field.path)}
+              onChange={(value) => handleFieldChange(field.path, value)}
+              description={field.description}
+              placeholder={field.placeholder}
+            />
+            {isHighlighted && (
+              <div className="mt-2 bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium inline-block">
+                Selected from preview
+              </div>
+            )}
+          </div>
+        );
+
+      case "image":
+        return (
+          <div 
+            className={`transition-all duration-300 ${isHighlighted ? 'ring-2 ring-blue-500 ring-offset-2 rounded-lg p-2' : ''}`}
+            ref={(el) => { if (el) editorRefs.current[field.id] = el; }}
+          >
+            <ImagePreview
+              label={field.label}
+              value={getValueByPath(localContent, field.path)}
+              onChange={(value) => handleFieldChange(field.path, value)}
+              description={field.description}
+              placeholder={field.placeholder}
+            />
+            {isHighlighted && (
+              <div className="mt-2 bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium inline-block">
+                Selected from preview
+              </div>
+            )}
+          </div>
+        );
+
+      case "draggable":
         const items = getValueByPath(localContent, field.path) || [];
         return (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <FieldIcon className="w-4 h-4 text-gray-500" />
-                <label className="text-sm font-medium text-gray-900">
-                  {field.label}
-                </label>
+          <div 
+            className={`transition-all duration-300 ${isHighlighted ? 'ring-2 ring-blue-500 ring-offset-2 rounded-lg p-2' : ''}`}
+            ref={(el) => { if (el) editorRefs.current[field.id] = el; }}
+          >
+            <DraggableList
+              label={field.label}
+              items={items}
+              itemFields={field.itemFields}
+              defaultItem={field.defaultItem}
+              onUpdate={(newItems) => handleArrayUpdate(field.path, newItems)}
+              description={field.description}
+            />
+            {isHighlighted && (
+              <div className="mt-2 bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium inline-block">
+                Selected from preview
               </div>
-              <span className="text-xs text-gray-500">{items.length} items</span>
-            </div>
-            {field.description && (
-              <p className="text-xs text-gray-500">{field.description}</p>
             )}
-            
-            {items.map((item: any, index: number) => (
-              <div
-                key={index}
-                className="border border-gray-200 rounded-lg p-4 bg-gray-50"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center space-x-2">
-                    <GripVertical className="w-4 h-4 text-gray-400 cursor-move" />
-                    <span className="text-sm font-medium text-gray-700">
-                      {field.label.slice(0, -1)} {index + 1}
-                    </span>
-                  </div>
-                  <button 
-                    onClick={() => handleRemoveArrayItem(field.path, index)}
-                    className="p-1 text-red-500 hover:bg-red-50 rounded transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 gap-3">
-                  {field.itemFields.map((fieldName: string) => (
-                    <div key={fieldName}>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        {fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replace(/([A-Z])/g, " $1").trim()}
-                      </label>
-                      <input
-                        type={fieldName === 'rating' ? 'number' : fieldName === 'email' ? 'email' : 'text'}
-                        value={item[fieldName] || ''}
-                        onChange={(e) => handleArrayItemChange(
-                          field.path, 
-                          index, 
-                          fieldName, 
-                          fieldName === 'rating' ? parseInt(e.target.value) || 0 : e.target.value
-                        )}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            <button 
-              onClick={() => handleAddArrayItem(field.path, field.defaultItem)}
-              className="w-full flex items-center justify-center space-x-2 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 text-gray-600 hover:text-blue-600"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="text-sm font-medium">Add {field.label.slice(0, -1)}</span>
-            </button>
           </div>
         );
 
@@ -753,131 +801,171 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
   };
 
   const config = getSectionConfig(section);
+  const hasErrors = Object.keys(validationErrors).some(key => validationErrors[key]);
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
-              <config.icon className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-semibold text-gray-900 mb-1">
-                {config.title}
-              </h1>
-              <p className="text-sm text-gray-600">{config.description}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <motion.button
-              onClick={handleReset}
-              className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <RotateCcw className="w-4 h-4" />
-              <span>Reset</span>
-            </motion.button>
-
-            <motion.button
-              onClick={onPreview}
-              className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Eye className="w-4 h-4" />
-              <span>Preview</span>
-            </motion.button>
-
-            <motion.button
-              onClick={onSave}
-              className="flex items-center space-x-2 px-4 py-1.5 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Save className="w-4 h-4" />
-              <span>Save</span>
-            </motion.button>
-          </div>
-        </div>
-
-        {/* Status */}
-        <div className="flex items-center space-x-4">
-          {hasUnsavedChanges ? (
-            <div className="flex items-center space-x-2 text-amber-600">
-              <AlertCircle className="w-4 h-4" />
-              <span className="text-sm">Unsaved changes</span>
-            </div>
-          ) : (
-            <div className="flex items-center space-x-2 text-green-600">
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm">All changes saved</span>
-            </div>
-          )}
-          {lastSaved && (
-            <div className="text-xs text-gray-500">
-              Last saved: {lastSaved.toLocaleTimeString()}
-            </div>
-          )}
+    <div className="h-full flex">
+      {/* Left Side - Live Preview */}
+      <div className="w-1/2 pr-3 border-r border-gray-200">
+        <div className="sticky top-0 h-full overflow-y-auto">
+          <SectionPreview
+            section={section}
+            isVisible={showPreview}
+            onToggleVisibility={() => setShowPreview(!showPreview)}
+            onElementClick={handleElementClick}
+          />
         </div>
       </div>
 
-      {/* Content Sections */}
-      <div className="space-y-6">
-        {config.sections.map((configSection, index) => (
-          <motion.div
-            key={configSection.id}
-            className="bg-white border border-gray-200 rounded-lg overflow-hidden"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-          >
-            {/* Section Header */}
-            <button
-              onClick={() => toggleSection(configSection.id)}
-              className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors border-b border-gray-200"
-            >
+      {/* Right Side - Content Editor */}
+      <div className="w-1/2 pl-3">
+        <div className="h-full overflow-y-auto">
+          {/* Header */}
+          <div className="mb-6 sticky top-0 bg-white z-10 pb-4 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
-                <configSection.icon className="w-4 h-4 text-gray-600" />
-                <h3 className="text-sm font-semibold text-gray-900">
-                  {configSection.title}
-                </h3>
-              </div>
-              {expandedSections.includes(configSection.id) ? (
-                <ChevronUp className="w-4 h-4 text-gray-500" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-gray-500" />
-              )}
-            </button>
-
-            {/* Section Content */}
-            {expandedSections.includes(configSection.id) && (
-              <motion.div
-                className="p-4"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="space-y-6">
-                  {configSection.fields.map((field, fieldIndex) => (
-                    <motion.div
-                      key={field.id}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: fieldIndex * 0.05 }}
-                    >
-                      {renderField(field)}
-                    </motion.div>
-                  ))}
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
+                  <config.icon className="w-6 h-6 text-white" />
                 </div>
+                <div>
+                  <h1 className="text-2xl font-semibold text-gray-900 mb-1">
+                    {config.title}
+                  </h1>
+                  <p className="text-sm text-gray-600">{config.description}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <motion.button
+                  onClick={handleReset}
+                  className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Reset</span>
+                </motion.button>
+
+                <motion.button
+                  onClick={onPreview}
+                  className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Monitor className="w-4 h-4" />
+                  <span>Full Preview</span>
+                </motion.button>
+
+                <motion.button
+                  onClick={onSave}
+                  disabled={hasErrors}
+                  className={`flex items-center space-x-2 px-4 py-1.5 text-sm font-medium text-white border rounded-lg transition-all duration-200 ${
+                    hasErrors 
+                      ? 'bg-gray-400 border-gray-400 cursor-not-allowed' 
+                      : 'bg-blue-600 border-blue-600 hover:bg-blue-700'
+                  }`}
+                  whileHover={!hasErrors ? { scale: 1.02 } : {}}
+                  whileTap={!hasErrors ? { scale: 0.98 } : {}}
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Save</span>
+                </motion.button>
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                {hasUnsavedChanges ? (
+                  <div className="flex items-center space-x-2 text-amber-600">
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="text-sm">Unsaved changes</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-2 text-green-600">
+                    <CheckCircle className="w-4 h-4" />
+                    <span className="text-sm">All changes saved</span>
+                  </div>
+                )}
+                
+                {hasErrors && (
+                  <div className="flex items-center space-x-2 text-red-600">
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="text-sm">Please fix validation errors</span>
+                  </div>
+                )}
+
+                {highlightedElement && (
+                  <div className="flex items-center space-x-2 text-blue-600">
+                    <Target className="w-4 h-4" />
+                    <span className="text-sm">Element selected from preview</span>
+                  </div>
+                )}
+              </div>
+              
+              {lastSaved && (
+                <div className="text-xs text-gray-500">
+                  Last saved: {lastSaved.toLocaleTimeString()}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Content Sections */}
+          <div className="space-y-6 pb-8">
+            {config.sections.map((configSection, index) => (
+              <motion.div
+                key={configSection.id}
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                {/* Section Header */}
+                <button
+                  onClick={() => toggleSection(configSection.id)}
+                  className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors border-b border-gray-200"
+                >
+                  <div className="flex items-center space-x-3">
+                    <configSection.icon className="w-4 h-4 text-gray-600" />
+                    <h3 className="text-sm font-semibold text-gray-900">
+                      {configSection.title}
+                    </h3>
+                  </div>
+                  {expandedSections.includes(configSection.id) ? (
+                    <ChevronUp className="w-4 h-4 text-gray-500" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                  )}
+                </button>
+
+                {/* Section Content */}
+                {expandedSections.includes(configSection.id) && (
+                  <motion.div
+                    className="p-4"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="space-y-6">
+                      {configSection.fields.map((field, fieldIndex) => (
+                        <motion.div
+                          key={field.id}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: fieldIndex * 0.05 }}
+                        >
+                          {renderField(field)}
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
-            )}
-          </motion.div>
-        ))}
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
