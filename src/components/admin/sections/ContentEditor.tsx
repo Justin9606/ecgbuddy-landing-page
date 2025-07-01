@@ -19,6 +19,12 @@ import {
   FileText,
   Image,
   Link,
+  Palette,
+  Globe,
+  Smartphone,
+  Users,
+  HelpCircle,
+  Building2,
 } from "lucide-react";
 import { AdminSection } from "../AdminDashboard";
 
@@ -158,6 +164,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
       header: {
         title: "Header",
         description: "Manage navigation, logo, and header elements",
+        icon: Globe,
         sections: [
           {
             id: "basic-info",
@@ -222,6 +229,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
       hero: {
         title: "Hero Section",
         description: "Manage the main landing area content",
+        icon: Smartphone,
         sections: [
           {
             id: "basic-info",
@@ -254,7 +262,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
           {
             id: "testimonials",
             title: "Testimonials",
-            icon: FileText,
+            icon: Users,
             fields: [
               {
                 id: "testimonial-list",
@@ -300,6 +308,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
       features: {
         title: "Features",
         description: "Manage product features and capabilities",
+        icon: Settings,
         sections: [
           {
             id: "basic-info",
@@ -346,12 +355,230 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
           },
         ],
       },
+      "mobile-download": {
+        title: "Mobile Apps",
+        description: "Manage mobile app download section",
+        icon: Smartphone,
+        sections: [
+          {
+            id: "basic-info",
+            title: "Section Header",
+            icon: Edit3,
+            fields: [
+              {
+                id: "section-title",
+                label: "Section Title",
+                type: "textarea",
+                path: "sectionHeader.title",
+                description: "Main title for the mobile download section",
+              },
+              {
+                id: "section-description",
+                label: "Section Description",
+                type: "textarea",
+                path: "sectionHeader.description",
+                description: "Description text for the mobile download section",
+              },
+            ],
+          },
+          {
+            id: "apps",
+            title: "Mobile Apps",
+            icon: Smartphone,
+            fields: [
+              {
+                id: "apps-list",
+                label: "App Information",
+                type: "repeatable",
+                path: "apps",
+                itemFields: ["name", "platform", "version", "storeLink"],
+                defaultItem: {
+                  name: "New App",
+                  platform: "Platform",
+                  version: "v1.0.0",
+                  storeLink: "#",
+                },
+                description: "Mobile app download information",
+              },
+            ],
+          },
+        ],
+      },
+      faq: {
+        title: "FAQ",
+        description: "Manage frequently asked questions",
+        icon: HelpCircle,
+        sections: [
+          {
+            id: "basic-info",
+            title: "Section Header",
+            icon: Edit3,
+            fields: [
+              {
+                id: "section-title",
+                label: "Section Title",
+                type: "textarea",
+                path: "sectionHeader.title",
+                description: "Main title for the FAQ section",
+              },
+              {
+                id: "section-description",
+                label: "Section Description",
+                type: "textarea",
+                path: "sectionHeader.description",
+                description: "Description text for the FAQ section",
+              },
+            ],
+          },
+          {
+            id: "faq-categories",
+            title: "FAQ Categories",
+            icon: HelpCircle,
+            fields: [
+              {
+                id: "categories",
+                label: "FAQ Categories",
+                type: "repeatable",
+                path: "categories",
+                itemFields: ["title", "icon", "gradient"],
+                defaultItem: {
+                  title: "New Category",
+                  icon: "HelpCircle",
+                  gradient: "from-blue-500 to-blue-600",
+                  questions: [],
+                },
+                description: "FAQ category groups",
+              },
+            ],
+          },
+        ],
+      },
+      "about-arpi": {
+        title: "About ARPI",
+        description: "Manage company information and team details",
+        icon: Building2,
+        sections: [
+          {
+            id: "basic-info",
+            title: "Company Information",
+            icon: Building2,
+            fields: [
+              {
+                id: "company-name",
+                label: "Company Name",
+                type: "text",
+                path: "companyInfo.name",
+                description: "Official company name",
+              },
+              {
+                id: "company-description",
+                label: "Company Description",
+                type: "textarea",
+                path: "companyInfo.description",
+                description: "Brief description of the company",
+              },
+              {
+                id: "founded",
+                label: "Founded Year",
+                type: "text",
+                path: "companyInfo.founded",
+                description: "Year the company was founded",
+              },
+              {
+                id: "location",
+                label: "Location",
+                type: "text",
+                path: "companyInfo.location",
+                description: "Company headquarters location",
+              },
+            ],
+          },
+          {
+            id: "team",
+            title: "Team Members",
+            icon: Users,
+            fields: [
+              {
+                id: "team-list",
+                label: "Team Members",
+                type: "repeatable",
+                path: "team",
+                itemFields: ["name", "role", "bio"],
+                defaultItem: {
+                  name: "Team Member",
+                  role: "Position",
+                  bio: "Brief bio",
+                  avatar: "👤",
+                },
+                description: "Company team members",
+              },
+            ],
+          },
+        ],
+      },
+      footer: {
+        title: "Footer",
+        description: "Manage footer content and links",
+        icon: FileText,
+        sections: [
+          {
+            id: "basic-info",
+            title: "Company Information",
+            icon: Building2,
+            fields: [
+              {
+                id: "company-name",
+                label: "Company Name",
+                type: "text",
+                path: "companyInfo.name",
+                description: "Company name in footer",
+              },
+              {
+                id: "company-description",
+                label: "Company Description",
+                type: "textarea",
+                path: "companyInfo.description",
+                description: "Brief company description in footer",
+              },
+            ],
+          },
+          {
+            id: "contact",
+            title: "Contact Information",
+            icon: Link,
+            fields: [
+              {
+                id: "email",
+                label: "Email Address",
+                type: "email",
+                path: "contactInfo.email",
+                description: "Contact email address",
+              },
+              {
+                id: "phone",
+                label: "Phone Number",
+                type: "text",
+                path: "contactInfo.phone",
+                description: "Contact phone number",
+              },
+              {
+                id: "address",
+                label: "Address",
+                type: "text",
+                path: "contactInfo.address",
+                description: "Company address",
+              },
+            ],
+          },
+        ],
+      },
     };
 
     return (
       configs[section] || {
         title: "Content",
         description: "Manage this section's content",
+        icon: Edit3,
         sections: [],
       }
     );
@@ -367,6 +594,8 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
         return Type;
       case "textarea":
         return FileText;
+      case "email":
+        return Link;
       case "repeatable":
         return Settings;
       default:
@@ -422,6 +651,28 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
           </div>
         );
 
+      case "email":
+        return (
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <FieldIcon className="w-4 h-4 text-gray-500" />
+              <label className="text-sm font-medium text-gray-900">
+                {field.label}
+              </label>
+            </div>
+            {field.description && (
+              <p className="text-xs text-gray-500">{field.description}</p>
+            )}
+            <input
+              type="email"
+              value={getValueByPath(localContent, field.path)}
+              onChange={(e) => handleFieldChange(field.path, e.target.value)}
+              placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+            />
+          </div>
+        );
+
       case "repeatable":
         const items = getValueByPath(localContent, field.path) || [];
         return (
@@ -466,7 +717,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
                         {fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replace(/([A-Z])/g, " $1").trim()}
                       </label>
                       <input
-                        type={fieldName === 'rating' ? 'number' : 'text'}
+                        type={fieldName === 'rating' ? 'number' : fieldName === 'email' ? 'email' : 'text'}
                         value={item[fieldName] || ''}
                         onChange={(e) => handleArrayItemChange(
                           field.path, 
@@ -508,11 +759,16 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900 mb-1">
-              {config.title}
-            </h1>
-            <p className="text-sm text-gray-600">{config.description}</p>
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
+              <config.icon className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-900 mb-1">
+                {config.title}
+              </h1>
+              <p className="text-sm text-gray-600">{config.description}</p>
+            </div>
           </div>
 
           <div className="flex items-center space-x-3">
@@ -559,6 +815,11 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
             <div className="flex items-center space-x-2 text-green-600">
               <CheckCircle className="w-4 h-4" />
               <span className="text-sm">All changes saved</span>
+            </div>
+          )}
+          {lastSaved && (
+            <div className="text-xs text-gray-500">
+              Last saved: {lastSaved.toLocaleTimeString()}
             </div>
           )}
         </div>

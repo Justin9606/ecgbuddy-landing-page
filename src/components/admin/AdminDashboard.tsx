@@ -10,14 +10,11 @@ import { PageBuilder } from "./sections/PageBuilder";
 import { MediaLibrary } from "./sections/MediaLibrary";
 import { Settings } from "./sections/Settings";
 import { Users } from "./sections/Users";
-import { LiveEditingDashboard } from "./sections/LiveEditingDashboard";
-import { LiveEditingInterface } from "./LiveEditingInterface";
 import { SiteContent } from "@/lib/admin/types";
 import { loadSiteContent, saveSiteContent, getDefaultSiteContent, savePreviewDraft } from "@/lib/admin/storage";
 
 export type AdminSection = 
   | "dashboard" 
-  | "live-editor"
   | "header" 
   | "hero" 
   | "features" 
@@ -36,7 +33,6 @@ export const AdminDashboard: React.FC = () => {
   const [siteContent, setSiteContent] = useState<SiteContent>(getDefaultSiteContent());
   const [isLoading, setIsLoading] = useState(true);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [isLiveEditing, setIsLiveEditing] = useState(false);
 
   // Load content from localStorage on mount
   useEffect(() => {
@@ -77,34 +73,6 @@ export const AdminDashboard: React.FC = () => {
     });
   };
 
-  // Handle live editing content changes
-  const handleLiveContentChange = (path: string, value: any) => {
-    setSiteContent(prevContent => {
-      const pathArray = path.split('.');
-      const updatedContent = { ...prevContent };
-      let current: any = updatedContent;
-      
-      // Navigate to the parent of the field to be changed
-      for (let i = 0; i < pathArray.length - 1; i++) {
-        if (!current[pathArray[i]]) {
-          current[pathArray[i]] = {};
-        }
-        current = current[pathArray[i]];
-      }
-      
-      // Set the value
-      current[pathArray[pathArray.length - 1]] = value;
-      
-      // Auto-save to localStorage after a short delay
-      setTimeout(() => {
-        saveSiteContent(updatedContent);
-        setLastSaved(new Date());
-      }, 500);
-      
-      return updatedContent;
-    });
-  };
-
   // Handle manual save
   const handleSaveAllChanges = () => {
     try {
@@ -132,29 +100,6 @@ export const AdminDashboard: React.FC = () => {
     setActiveSection(section);
   };
 
-  // Start live editing
-  const handleStartLiveEditing = () => {
-    setIsLiveEditing(true);
-  };
-
-  // Exit live editing
-  const handleExitLiveEditing = () => {
-    setIsLiveEditing(false);
-  };
-
-  // If in live editing mode, show the live editing interface
-  if (isLiveEditing) {
-    return (
-      <LiveEditingInterface
-        siteContent={siteContent}
-        onContentChange={handleLiveContentChange}
-        onSave={handleSaveAllChanges}
-        onPreview={handlePreview}
-        onClose={handleExitLiveEditing}
-      />
-    );
-  }
-
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -170,8 +115,6 @@ export const AdminDashboard: React.FC = () => {
     switch (activeSection) {
       case "dashboard":
         return <DashboardHome onSectionChange={handleSectionChange} />;
-      case "live-editor":
-        return <LiveEditingDashboard onStartLiveEditing={handleStartLiveEditing} />;
       case "page-builder":
         return <PageBuilder />;
       case "media-library":
