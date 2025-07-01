@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Save,
@@ -27,6 +27,8 @@ import {
   Building2,
   Layout,
   Monitor,
+  Target,
+  Zap,
 } from "lucide-react";
 import { AdminSection } from "../AdminDashboard";
 import { RichTextEditor } from "../fields/RichTextEditor";
@@ -56,6 +58,8 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [showPreview, setShowPreview] = useState(true);
+  const [highlightedElement, setHighlightedElement] = useState<string | null>(null);
+  const editorRefs = useRef<Record<string, HTMLElement>>({});
 
   // Update local content when initialContent changes
   useEffect(() => {
@@ -153,6 +157,42 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
     setLocalContent(initialContent);
     setHasUnsavedChanges(false);
     setValidationErrors({});
+    setHighlightedElement(null);
+  };
+
+  // Handle element click from preview
+  const handleElementClick = (elementPath: string, elementType: string) => {
+    setHighlightedElement(elementPath);
+    
+    // Find and expand the relevant section
+    const config = getSectionConfig(section);
+    for (const configSection of config.sections) {
+      for (const field of configSection.fields) {
+        if (field.path.includes(elementPath) || elementPath.includes(field.path)) {
+          if (!expandedSections.includes(configSection.id)) {
+            setExpandedSections(prev => [...prev, configSection.id]);
+          }
+          
+          // Scroll to the field
+          setTimeout(() => {
+            const fieldElement = editorRefs.current[field.id];
+            if (fieldElement) {
+              fieldElement.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+              });
+              
+              // Add highlight effect
+              fieldElement.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2');
+              setTimeout(() => {
+                fieldElement.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-2');
+              }, 2000);
+            }
+          }, 300);
+          break;
+        }
+      }
+    }
   };
 
   const getSectionConfig = (section: AdminSection) => {
@@ -202,7 +242,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
           {
             id: "cta-button",
             title: "Call-to-Action Button",
-            icon: Settings,
+            icon: Target,
             fields: [
               {
                 id: "cta-text",
@@ -225,7 +265,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
       hero: {
         title: "Hero Section",
         description: "Manage the main landing area content",
-        icon: Smartphone,
+        icon: Zap,
         sections: [
           {
             id: "basic-info",
@@ -281,7 +321,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
           {
             id: "cta-buttons",
             title: "Call-to-Action Buttons",
-            icon: Link,
+            icon: Target,
             fields: [
               {
                 id: "primary-cta",
@@ -606,16 +646,25 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
   const renderField = (field: any) => {
     const FieldIcon = getFieldIcon(field.type);
     const fieldError = validationErrors[field.path];
+    const isHighlighted = highlightedElement === field.path;
     
     switch (field.type) {
       case "text":
         return (
-          <div className="space-y-2">
+          <div 
+            className={`space-y-2 transition-all duration-300 ${isHighlighted ? 'ring-2 ring-blue-500 ring-offset-2 rounded-lg p-2' : ''}`}
+            ref={(el) => { if (el) editorRefs.current[field.id] = el; }}
+          >
             <div className="flex items-center space-x-2">
               <FieldIcon className="w-4 h-4 text-gray-500" />
               <label className="text-sm font-medium text-gray-900">
                 {field.label}
               </label>
+              {isHighlighted && (
+                <div className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
+                  Selected from preview
+                </div>
+              )}
             </div>
             {field.description && (
               <p className="text-xs text-gray-500">{field.description}</p>
@@ -641,12 +690,20 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
       case "email":
       case "url":
         return (
-          <div className="space-y-2">
+          <div 
+            className={`space-y-2 transition-all duration-300 ${isHighlighted ? 'ring-2 ring-blue-500 ring-offset-2 rounded-lg p-2' : ''}`}
+            ref={(el) => { if (el) editorRefs.current[field.id] = el; }}
+          >
             <div className="flex items-center space-x-2">
               <FieldIcon className="w-4 h-4 text-gray-500" />
               <label className="text-sm font-medium text-gray-900">
                 {field.label}
               </label>
+              {isHighlighted && (
+                <div className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
+                  Selected from preview
+                </div>
+              )}
             </div>
             {field.description && (
               <p className="text-xs text-gray-500">{field.description}</p>
@@ -671,37 +728,67 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
 
       case "richtext":
         return (
-          <RichTextEditor
-            label={field.label}
-            value={getValueByPath(localContent, field.path)}
-            onChange={(value) => handleFieldChange(field.path, value)}
-            description={field.description}
-            placeholder={field.placeholder}
-          />
+          <div 
+            className={`transition-all duration-300 ${isHighlighted ? 'ring-2 ring-blue-500 ring-offset-2 rounded-lg p-2' : ''}`}
+            ref={(el) => { if (el) editorRefs.current[field.id] = el; }}
+          >
+            <RichTextEditor
+              label={field.label}
+              value={getValueByPath(localContent, field.path)}
+              onChange={(value) => handleFieldChange(field.path, value)}
+              description={field.description}
+              placeholder={field.placeholder}
+            />
+            {isHighlighted && (
+              <div className="mt-2 bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium inline-block">
+                Selected from preview
+              </div>
+            )}
+          </div>
         );
 
       case "image":
         return (
-          <ImagePreview
-            label={field.label}
-            value={getValueByPath(localContent, field.path)}
-            onChange={(value) => handleFieldChange(field.path, value)}
-            description={field.description}
-            placeholder={field.placeholder}
-          />
+          <div 
+            className={`transition-all duration-300 ${isHighlighted ? 'ring-2 ring-blue-500 ring-offset-2 rounded-lg p-2' : ''}`}
+            ref={(el) => { if (el) editorRefs.current[field.id] = el; }}
+          >
+            <ImagePreview
+              label={field.label}
+              value={getValueByPath(localContent, field.path)}
+              onChange={(value) => handleFieldChange(field.path, value)}
+              description={field.description}
+              placeholder={field.placeholder}
+            />
+            {isHighlighted && (
+              <div className="mt-2 bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium inline-block">
+                Selected from preview
+              </div>
+            )}
+          </div>
         );
 
       case "draggable":
         const items = getValueByPath(localContent, field.path) || [];
         return (
-          <DraggableList
-            label={field.label}
-            items={items}
-            itemFields={field.itemFields}
-            defaultItem={field.defaultItem}
-            onUpdate={(newItems) => handleArrayUpdate(field.path, newItems)}
-            description={field.description}
-          />
+          <div 
+            className={`transition-all duration-300 ${isHighlighted ? 'ring-2 ring-blue-500 ring-offset-2 rounded-lg p-2' : ''}`}
+            ref={(el) => { if (el) editorRefs.current[field.id] = el; }}
+          >
+            <DraggableList
+              label={field.label}
+              items={items}
+              itemFields={field.itemFields}
+              defaultItem={field.defaultItem}
+              onUpdate={(newItems) => handleArrayUpdate(field.path, newItems)}
+              description={field.description}
+            />
+            {isHighlighted && (
+              <div className="mt-2 bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium inline-block">
+                Selected from preview
+              </div>
+            )}
+          </div>
         );
 
       default:
@@ -726,6 +813,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
             content={localContent}
             isVisible={showPreview}
             onToggleVisibility={() => setShowPreview(!showPreview)}
+            onElementClick={handleElementClick}
           />
         </div>
       </div>
@@ -805,6 +893,13 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
                   <div className="flex items-center space-x-2 text-red-600">
                     <AlertCircle className="w-4 h-4" />
                     <span className="text-sm">Please fix validation errors</span>
+                  </div>
+                )}
+
+                {highlightedElement && (
+                  <div className="flex items-center space-x-2 text-blue-600">
+                    <Target className="w-4 h-4" />
+                    <span className="text-sm">Element selected from preview</span>
                   </div>
                 )}
               </div>

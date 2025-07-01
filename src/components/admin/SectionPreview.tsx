@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
-import { Eye, EyeOff } from "lucide-react";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Eye, EyeOff, MousePointer, Edit3, Layers } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
 
 // Import section components
@@ -19,14 +19,101 @@ interface SectionPreviewProps {
   content: any;
   isVisible?: boolean;
   onToggleVisibility?: () => void;
+  onElementClick?: (elementPath: string, elementType: string) => void;
 }
+
+interface HighlightableElementProps {
+  children: React.ReactNode;
+  elementPath: string;
+  elementType: string;
+  label: string;
+  onElementClick?: (elementPath: string, elementType: string) => void;
+  className?: string;
+}
+
+const HighlightableElement: React.FC<HighlightableElementProps> = ({
+  children,
+  elementPath,
+  elementType,
+  label,
+  onElementClick,
+  className = "",
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onElementClick) {
+      onElementClick(elementPath, elementType);
+    }
+  };
+
+  return (
+    <div
+      className={`relative group cursor-pointer transition-all duration-200 ${className} ${
+        isHovered ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+      }`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={handleClick}
+    >
+      {children}
+      
+      {/* Hover Overlay */}
+      <AnimatePresence>
+        {isHovered && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-blue-500/10 border-2 border-blue-500 rounded-lg pointer-events-none"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Edit Label */}
+      <AnimatePresence>
+        {isHovered && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 10 }}
+            className="absolute -top-8 left-0 bg-blue-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-lg z-50 whitespace-nowrap"
+          >
+            <Edit3 className="w-3 h-3 inline mr-1" />
+            Edit {label}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 export const SectionPreview: React.FC<SectionPreviewProps> = ({
   section,
   content,
   isVisible = true,
   onToggleVisibility,
+  onElementClick,
 }) => {
+  const [highlightMode, setHighlightMode] = useState(true);
+
+  const wrapWithHighlight = (element: React.ReactElement, path: string, type: string, label: string) => {
+    if (!highlightMode) return element;
+    
+    return (
+      <HighlightableElement
+        elementPath={path}
+        elementType={type}
+        label={label}
+        onElementClick={onElementClick}
+      >
+        {element}
+      </HighlightableElement>
+    );
+  };
+
   const renderSectionComponent = () => {
     // Ensure content exists
     if (!content) {
@@ -45,21 +132,62 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
         case "header":
           return (
             <div className="bg-white">
-              <Header isAdminView={true} content={content} />
+              {wrapWithHighlight(
+                <Header isAdminView={true} content={content} />,
+                "header",
+                "navigation",
+                "Header Navigation"
+              )}
             </div>
           );
         case "hero":
-          return <Hero isAdminView={true} content={content} />;
+          return (
+            <div className="space-y-4">
+              {wrapWithHighlight(
+                <div>
+                  <Hero isAdminView={true} content={content} />
+                </div>,
+                "hero",
+                "hero-section",
+                "Hero Section"
+              )}
+            </div>
+          );
         case "features":
-          return <Features isAdminView={true} content={content} />;
+          return wrapWithHighlight(
+            <Features isAdminView={true} content={content} />,
+            "features",
+            "features-section",
+            "Features Section"
+          );
         case "mobile-download":
-          return <MobileDownload isAdminView={true} content={content} />;
+          return wrapWithHighlight(
+            <MobileDownload isAdminView={true} content={content} />,
+            "mobile-download",
+            "mobile-section",
+            "Mobile Download Section"
+          );
         case "faq":
-          return <FAQ isAdminView={true} content={content} />;
+          return wrapWithHighlight(
+            <FAQ isAdminView={true} content={content} />,
+            "faq",
+            "faq-section",
+            "FAQ Section"
+          );
         case "about-arpi":
-          return <AboutARPI isAdminView={true} content={content} />;
+          return wrapWithHighlight(
+            <AboutARPI isAdminView={true} content={content} />,
+            "about-arpi",
+            "about-section",
+            "About ARPI Section"
+          );
         case "footer":
-          return <Footer isAdminView={true} content={content} />;
+          return wrapWithHighlight(
+            <Footer isAdminView={true} content={content} />,
+            "footer",
+            "footer-section",
+            "Footer Section"
+          );
         default:
           return (
             <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
@@ -87,32 +215,52 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
     <div className="space-y-4">
       {/* Preview Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
           <Eye className="w-4 h-4 text-gray-500" />
           <h3 className="text-sm font-semibold text-gray-900">Live Preview</h3>
           <div className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-medium">
             Static Mode
           </div>
+          {highlightMode && (
+            <div className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium flex items-center space-x-1">
+              <MousePointer className="w-3 h-3" />
+              <span>Interactive</span>
+            </div>
+          )}
         </div>
         
-        {onToggleVisibility && (
+        <div className="flex items-center space-x-2">
           <button
-            onClick={onToggleVisibility}
-            className="flex items-center space-x-1 text-xs text-gray-500 hover:text-gray-700 transition-colors"
+            onClick={() => setHighlightMode(!highlightMode)}
+            className={`flex items-center space-x-1 text-xs px-2 py-1 rounded-md font-medium transition-colors ${
+              highlightMode 
+                ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
           >
-            {isVisible ? (
-              <>
-                <EyeOff className="w-3 h-3" />
-                <span>Hide Preview</span>
-              </>
-            ) : (
-              <>
-                <Eye className="w-3 h-3" />
-                <span>Show Preview</span>
-              </>
-            )}
+            <Layers className="w-3 h-3" />
+            <span>{highlightMode ? 'Disable' : 'Enable'} Highlights</span>
           </button>
-        )}
+          
+          {onToggleVisibility && (
+            <button
+              onClick={onToggleVisibility}
+              className="flex items-center space-x-1 text-xs text-gray-500 hover:text-gray-700 transition-colors px-2 py-1 rounded-md hover:bg-gray-100"
+            >
+              {isVisible ? (
+                <>
+                  <EyeOff className="w-3 h-3" />
+                  <span>Hide</span>
+                </>
+              ) : (
+                <>
+                  <Eye className="w-3 h-3" />
+                  <span>Show</span>
+                </>
+              )}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Preview Container */}
@@ -128,12 +276,18 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
             <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm">
               Preview Mode
             </div>
+            {highlightMode && (
+              <div className="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm flex items-center space-x-1">
+                <MousePointer className="w-3 h-3" />
+                <span>Click to Edit</span>
+              </div>
+            )}
           </div>
 
           {/* Section Content */}
           <div className="relative">
-            {/* Disable all interactions in preview */}
-            <div className="pointer-events-none select-none">
+            {/* Enable interactions for highlighting */}
+            <div className={highlightMode ? 'pointer-events-auto' : 'pointer-events-none select-none'}>
               {renderSectionComponent()}
             </div>
           </div>
@@ -150,7 +304,7 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
             ✨ This preview shows how your content will appear on the live site
           </span>
           <span className="font-medium">
-            Animations disabled for editing
+            {highlightMode ? 'Click elements to edit them' : 'Animations disabled for editing'}
           </span>
         </div>
       </div>
