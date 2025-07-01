@@ -43,7 +43,11 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
     try {
       switch (section) {
         case "header":
-          return <Header isAdminView={true} content={content} />;
+          return (
+            <div className="bg-white">
+              <Header isAdminView={true} content={content} />
+            </div>
+          );
         case "hero":
           return <Hero isAdminView={true} content={content} />;
         case "features":
