@@ -1,7 +1,7 @@
 "use client";
 
 import React, { memo, useMemo } from "react";
-import { Eye, EyeOff, Monitor, Smartphone, Tablet, RefreshCw } from "lucide-react";
+import { Eye, EyeOff, Monitor, Smartphone, Tablet, RefreshCw, Target } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
 import { useAdminContentData } from "@/lib/admin/contentProvider";
 
