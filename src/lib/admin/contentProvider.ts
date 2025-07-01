@@ -1,5 +1,5 @@
 // Optimized content provider with proper caching and performance
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 import { SiteContent, getDefaultSiteContent, loadSiteContent, loadPreviewDraft } from './storage';
 
 // Cache for content to avoid repeated parsing
