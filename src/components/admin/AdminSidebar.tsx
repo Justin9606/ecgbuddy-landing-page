@@ -7,7 +7,7 @@ import {
   Layout,
   Heart,
   Sparkles,
-  Download,
+  Smartphone,
   HelpCircle,
   Building2,
   Menu,
@@ -19,10 +19,6 @@ import {
   Activity,
   FileText,
   Globe,
-  Smartphone,
-  Monitor,
-  Target,
-  Zap,
 } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
 
@@ -65,9 +61,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       category: "content",
     },
     {
-      id: "download-app" as AdminSection,
-      label: "Download App",
-      icon: Download,
+      id: "mobile-download" as AdminSection,
+      label: "Mobile Apps",
+      icon: Smartphone,
       category: "content",
     },
     {

@@ -18,7 +18,7 @@ export type AdminSection =
   | "header" 
   | "hero" 
   | "features" 
-  | "download-app" 
+  | "mobile-download" 
   | "faq" 
   | "about-arpi" 
   | "footer"
@@ -26,21 +26,6 @@ export type AdminSection =
   | "media-library"
   | "settings"
   | "users";
-
-// Deep merge function to merge saved content with default content
-const deepMerge = (target: any, source: any): any => {
-  const result = { ...target };
-  
-  for (const key in source) {
-    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-      result[key] = deepMerge(result[key] || {}, source[key]);
-    } else if (result[key] === undefined) {
-      result[key] = source[key];
-    }
-  }
-  
-  return result;
-};
 
 export const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<AdminSection>("dashboard");
@@ -54,21 +39,14 @@ export const AdminDashboard: React.FC = () => {
     const loadContent = () => {
       try {
         const savedContent = loadSiteContent();
-        const defaultContent = getDefaultSiteContent();
-        
         if (savedContent) {
-          // Deep merge saved content with default content to ensure all properties exist
-          const mergedContent = deepMerge(savedContent, defaultContent);
-          setSiteContent(mergedContent);
-          console.log('Loaded existing content from localStorage and merged with defaults');
+          setSiteContent(savedContent);
+          console.log('Loaded existing content from localStorage');
         } else {
-          setSiteContent(defaultContent);
           console.log('No existing content found, using defaults');
         }
       } catch (error) {
         console.error('Error loading content:', error);
-        // Fallback to default content if loading fails
-        setSiteContent(getDefaultSiteContent());
       } finally {
         setIsLoading(false);
       }
@@ -82,7 +60,7 @@ export const AdminDashboard: React.FC = () => {
     setSiteContent(prevContent => {
       const updatedContent = {
         ...prevContent,
-        [section === "download-app" ? "downloadApp" : section]: newSectionContent
+        [section]: newSectionContent
       };
       
       // Auto-save to localStorage after a short delay
@@ -147,8 +125,7 @@ export const AdminDashboard: React.FC = () => {
         return <Users />;
       default:
         // Get the relevant section content
-        const contentKey = activeSection === "download-app" ? "downloadApp" : activeSection;
-        const sectionContent = siteContent[contentKey as keyof SiteContent];
+        const sectionContent = siteContent[activeSection as keyof SiteContent];
         return (
           <ContentEditor 
             section={activeSection}
@@ -173,7 +150,7 @@ export const AdminDashboard: React.FC = () => {
       />
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+      <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'ml-20' : 'ml-80'}`}>
         {/* Header */}
         <AdminHeader 
           activeSection={activeSection}
