@@ -7,7 +7,7 @@ import {
   Layout,
   Heart,
   Sparkles,
-  Smartphone,
+  Download,
   HelpCircle,
   Building2,
   Menu,
@@ -19,6 +19,10 @@ import {
   Activity,
   FileText,
   Globe,
+  Monitor,
+  Target,
+  Zap,
+  Brain,
 } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
 
@@ -62,8 +66,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     },
     {
       id: "mobile-download" as AdminSection,
-      label: "Mobile Apps",
-      icon: Smartphone,
+      label: "Download App",
+      icon: Download,
       category: "content",
     },
     {
@@ -118,30 +122,22 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   ];
 
   return (
-    <motion.div
+    <div
       className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 z-50 transition-all duration-300 ${
         isCollapsed ? "w-20" : "w-64"
       }`}
-      initial={{ x: -100 }}
-      animate={{ x: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
     >
       {/* Header */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
         {!isCollapsed && (
-          <motion.div
-            className="flex items-center space-x-3"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
+          <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <Building2 className="w-4 h-4 text-white" />
             </div>
             <div>
               <h1 className="text-sm font-semibold text-gray-900">ARPI Admin</h1>
             </div>
-          </motion.div>
+          </div>
         )}
         <button
           onClick={onToggleCollapse}
@@ -161,20 +157,15 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           return (
             <div key={category.id} className="mb-6">
               {!isCollapsed && (
-                <motion.div
-                  className="px-4 mb-2"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
+                <div className="px-4 mb-2">
                   <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     {category.label}
                   </h3>
-                </motion.div>
+                </div>
               )}
               <div className="space-y-1 px-2">
-                {categoryItems.map((item, index) => (
-                  <motion.button
+                {categoryItems.map((item) => (
+                  <button
                     key={item.id}
                     onClick={() => onSectionChange(item.id)}
                     className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 group ${
@@ -182,10 +173,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                         ? "bg-blue-50 text-blue-700 border-r-2 border-blue-600"
                         : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                     }`}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    whileHover={{ x: 2 }}
                   >
                     <item.icon 
                       className={`w-4 h-4 mr-3 ${
@@ -200,7 +187,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                         )}
                       </>
                     )}
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             </div>
@@ -217,6 +204,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           </div>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };

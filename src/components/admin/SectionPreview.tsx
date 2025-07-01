@@ -61,31 +61,17 @@ const HighlightableElement: React.FC<HighlightableElementProps> = ({
       {children}
       
       {/* Hover Overlay */}
-      <AnimatePresence>
-        {isHovered && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-blue-500/10 border-2 border-blue-500 rounded-lg pointer-events-none z-10"
-          />
-        )}
-      </AnimatePresence>
+      {isHovered && (
+        <div className="absolute inset-0 bg-blue-500/10 border-2 border-blue-500 rounded-lg pointer-events-none z-10" />
+      )}
 
       {/* Edit Label */}
-      <AnimatePresence>
-        {isHovered && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 10 }}
-            className="absolute -top-8 left-0 bg-blue-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-lg z-50 whitespace-nowrap"
-          >
-            <Edit3 className="w-3 h-3 inline mr-1" />
-            Edit {label}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isHovered && (
+        <div className="absolute -top-8 left-0 bg-blue-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-lg z-50 whitespace-nowrap">
+          <Edit3 className="w-3 h-3 inline mr-1" />
+          Edit {label}
+        </div>
+      )}
     </div>
   );
 };
@@ -236,7 +222,7 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
             <MobileDownload />,
             "mobile-download",
             "mobile-section",
-            "Mobile Download Section"
+            "Download App Section"
           );
           
         case "faq":
@@ -368,12 +354,7 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
 
       {/* Preview Container */}
       {isVisible && (
-        <motion.div
-          className="relative bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
-        >
+        <div className="relative bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
           {/* Preview Overlay */}
           <div className="absolute inset-0 pointer-events-none z-20">
             <div className="absolute top-3 left-3 bg-blue-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm">
@@ -412,7 +393,7 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
 
           {/* Preview Footer */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/10 to-transparent h-6 pointer-events-none" />
-        </motion.div>
+        </div>
       )}
 
       {/* Preview Info */}

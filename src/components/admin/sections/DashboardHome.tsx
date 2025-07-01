@@ -10,7 +10,7 @@ import {
   Clock,
   Edit,
   Globe,
-  Smartphone,
+  Download,
   Heart,
   Sparkles,
   Calendar,
@@ -76,10 +76,10 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange })
       color: "purple",
     },
     {
-      action: "Updated Mobile App Links",
+      action: "Updated Download App Section",
       user: "Admin User",
       time: "1 hour ago",
-      icon: Smartphone,
+      icon: Download,
       color: "blue",
     },
     {
@@ -107,9 +107,9 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange })
       action: "features" as AdminSection,
     },
     {
-      title: "Update Mobile Apps",
+      title: "Update Download App",
       description: "Modify app download section",
-      icon: Smartphone,
+      icon: Download,
       color: "blue",
       action: "mobile-download" as AdminSection,
     },
@@ -125,12 +125,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange })
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <motion.div
-        className="bg-white border border-gray-200 rounded-lg p-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-1">
@@ -149,17 +144,14 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange })
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
-          <motion.div
+          <div
             key={stat.label}
             className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
           >
             <div className="flex items-center justify-between mb-3">
               <div className={`w-8 h-8 bg-${stat.color}-100 rounded-lg flex items-center justify-center`}>
@@ -182,19 +174,14 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange })
               {stat.value}
             </div>
             <div className="text-sm text-gray-600">{stat.label}</div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activity */}
-        <motion.div
-          className="lg:col-span-2 bg-white border border-gray-200 rounded-lg"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
+        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-lg">
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-gray-900 flex items-center">
@@ -210,12 +197,9 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange })
           <div className="p-4">
             <div className="space-y-3">
               {recentActivity.map((activity, index) => (
-                <motion.div
+                <div
                   key={index}
                   className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.6 + index * 0.1 }}
                 >
                   <div className={`w-8 h-8 bg-${activity.color}-100 rounded-lg flex items-center justify-center`}>
                     <activity.icon className={`w-4 h-4 text-${activity.color}-600`} />
@@ -228,19 +212,14 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange })
                       by {activity.user} • {activity.time}
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Quick Actions */}
-        <motion.div
-          className="bg-white border border-gray-200 rounded-lg"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-        >
+        <div className="bg-white border border-gray-200 rounded-lg">
           <div className="p-4 border-b border-gray-200">
             <h3 className="text-sm font-semibold text-gray-900 flex items-center">
               <Sparkles className="w-4 h-4 mr-2 text-gray-500" />
@@ -251,14 +230,10 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange })
           <div className="p-4">
             <div className="space-y-2">
               {quickActions.map((action, index) => (
-                <motion.button
+                <button
                   key={action.title}
                   onClick={() => onSectionChange(action.action)}
                   className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors group"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 + index * 0.1 }}
-                  whileHover={{ x: 2 }}
                 >
                   <div className={`w-8 h-8 bg-${action.color}-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}>
                     <action.icon className={`w-4 h-4 text-${action.color}-600`} />
@@ -272,20 +247,15 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange })
                     </div>
                   </div>
                   <ArrowUpRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </motion.button>
+                </button>
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Site Status */}
-      <motion.div
-        className="bg-white border border-gray-200 rounded-lg p-4"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.8 }}
-      >
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-gray-900 flex items-center">
             <Globe className="w-4 h-4 mr-2 text-gray-500" />
@@ -310,7 +280,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({ onSectionChange })
             <div className="text-xs text-gray-600">Performance Score</div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

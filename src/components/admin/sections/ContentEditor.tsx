@@ -21,7 +21,7 @@ import {
   Link,
   Palette,
   Globe,
-  Smartphone,
+  Download,
   Users,
   HelpCircle,
   Building2,
@@ -392,9 +392,9 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
         ],
       },
       "mobile-download": {
-        title: "Mobile Apps",
-        description: "Manage mobile app download section",
-        icon: Smartphone,
+        title: "Download App",
+        description: "Manage app download section",
+        icon: Download,
         sections: [
           {
             id: "basic-info",
@@ -406,21 +406,21 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
                 label: "Section Title",
                 type: "richtext",
                 path: "sectionHeader.title",
-                description: "Main title for the mobile download section",
+                description: "Main title for the app download section",
               },
               {
                 id: "section-description",
                 label: "Section Description",
                 type: "richtext",
                 path: "sectionHeader.description",
-                description: "Description text for the mobile download section",
+                description: "Description text for the app download section",
               },
             ],
           },
           {
             id: "apps",
             title: "Mobile Apps",
-            icon: Smartphone,
+            icon: Download,
             fields: [
               {
                 id: "apps-list",
@@ -836,27 +836,23 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
               </div>
 
               <div className="flex items-center space-x-3">
-                <motion.button
+                <button
                   onClick={handleReset}
                   className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                 >
                   <RotateCcw className="w-4 h-4" />
                   <span>Reset</span>
-                </motion.button>
+                </button>
 
-                <motion.button
+                <button
                   onClick={onPreview}
                   className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                 >
                   <Monitor className="w-4 h-4" />
                   <span>Full Preview</span>
-                </motion.button>
+                </button>
 
-                <motion.button
+                <button
                   onClick={onSave}
                   disabled={hasErrors}
                   className={`flex items-center space-x-2 px-4 py-1.5 text-sm font-medium text-white border rounded-lg transition-all duration-200 ${
@@ -864,12 +860,10 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
                       ? 'bg-gray-400 border-gray-400 cursor-not-allowed' 
                       : 'bg-blue-600 border-blue-600 hover:bg-blue-700'
                   }`}
-                  whileHover={!hasErrors ? { scale: 1.02 } : {}}
-                  whileTap={!hasErrors ? { scale: 0.98 } : {}}
                 >
                   <Save className="w-4 h-4" />
                   <span>Save</span>
-                </motion.button>
+                </button>
               </div>
             </div>
 
@@ -914,12 +908,9 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
           {/* Content Sections */}
           <div className="space-y-6 pb-8">
             {config.sections.map((configSection, index) => (
-              <motion.div
+              <div
                 key={configSection.id}
                 className="bg-white border border-gray-200 rounded-lg overflow-hidden"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
               >
                 {/* Section Header */}
                 <button
@@ -941,28 +932,17 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
 
                 {/* Section Content */}
                 {expandedSections.includes(configSection.id) && (
-                  <motion.div
-                    className="p-4"
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <div className="p-4">
                     <div className="space-y-6">
                       {configSection.fields.map((field, fieldIndex) => (
-                        <motion.div
-                          key={field.id}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: fieldIndex * 0.05 }}
-                        >
+                        <div key={field.id}>
                           {renderField(field)}
-                        </motion.div>
+                        </div>
                       ))}
                     </div>
-                  </motion.div>
+                  </div>
                 )}
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
