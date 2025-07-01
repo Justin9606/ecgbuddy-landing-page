@@ -20,10 +20,75 @@ import {
   CheckCircle,
   Star,
 } from "lucide-react";
+import { getSectionContent } from "@/lib/admin/contentProvider";
+import type { HeroContent } from "@/lib/admin/types";
 
 const Hero = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [heroContent, setHeroContent] = useState<HeroContent | null>(null);
+
+  // Load content from admin or use defaults
+  useEffect(() => {
+    const loadContent = () => {
+      try {
+        const content = getSectionContent<HeroContent>('hero');
+        setHeroContent(content);
+      } catch (error) {
+        console.error('Error loading hero content:', error);
+        // Fallback to default content
+        setHeroContent({
+          mainHeading: {
+            line1: "Revolutionize",
+            line2: "ECG Analysis",
+          },
+          subtitle: "Transform complex cardiac data into clear, actionable insights with our AI-powered platform trusted by healthcare professionals worldwide.",
+          testimonials: [
+            {
+              text: "ECG Buddy has revolutionized our emergency department workflow",
+              author: "Dr. Sarah Kim",
+              role: "Emergency Medicine, Seoul National University Hospital",
+              avatar: "👩‍⚕️",
+              hospital: "Seoul National University Hospital",
+              rating: 5,
+            },
+          ],
+          ctaButtons: {
+            primary: { text: "Start Analysis", link: "#mobile-download" },
+            secondary: { text: "Watch Demo", link: "#demo" },
+          },
+          metrics: [
+            { label: "Analyses Today", value: "1,247", icon: "Activity", color: "red" },
+            { label: "Active Users", value: "892", icon: "Users", color: "pink" },
+            { label: "Accuracy Rate", value: "99.2%", icon: "Target", color: "rose" },
+          ],
+          trustIndicators: [
+            {
+              icon: "Award",
+              text: "FDA Approved",
+              subtext: "Medical Device",
+              gradient: "from-emerald-500 to-teal-600",
+            },
+          ],
+        });
+      }
+    };
+
+    loadContent();
+
+    // Listen for content updates
+    const handleContentUpdate = () => {
+      loadContent();
+    };
+
+    window.addEventListener('adminContentUpdate', handleContentUpdate);
+    window.addEventListener('storage', handleContentUpdate);
+
+    return () => {
+      window.removeEventListener('adminContentUpdate', handleContentUpdate);
+      window.removeEventListener('storage', handleContentUpdate);
+    };
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -35,11 +100,13 @@ const Hero = () => {
 
   // Testimonial rotation with user controls
   useEffect(() => {
+    if (!heroContent?.testimonials?.length) return;
+    
     const interval = window.setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+      setCurrentTestimonial((prev) => (prev + 1) % heroContent.testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [heroContent?.testimonials?.length]);
 
   const handleStartAnalysis = () => {
     const element = document.getElementById("mobile-download");
@@ -51,54 +118,56 @@ const Hero = () => {
     }
   };
 
-  const testimonials = [
-    {
-      text: "ECG Buddy has revolutionized our emergency department workflow",
-      author: "Dr. Sarah Kim",
-      role: "Emergency Medicine, Seoul National University Hospital",
-      avatar: "👩‍⚕️",
-      hospital: "Seoul National University Hospital",
-      rating: 5,
-    },
-    {
-      text: "The AI accuracy is remarkable - it's like having a cardiologist available 24/7",
-      author: "Dr. Michael Chen",
-      role: "Cardiology, Samsung Medical Center",
-      avatar: "👨‍⚕️",
-      hospital: "Samsung Medical Center",
-      rating: 5,
-    },
-    {
-      text: "Integration with our EMR system was seamless and intuitive",
-      author: "Dr. Lisa Park",
-      role: "Internal Medicine, Asan Medical Center",
-      avatar: "👩‍⚕️",
-      hospital: "Asan Medical Center",
-      rating: 5,
-    },
-  ];
+  // Show loading state while content loads
+  if (!heroContent) {
+    return (
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-red-50/30 via-white to-pink-50/20 pt-24">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading content...</p>
+        </div>
+      </section>
+    );
+  }
+
+  const testimonials = heroContent.testimonials || [];
+  const currentTestimonialData = testimonials[currentTestimonial] || testimonials[0];
 
   // COMPLETELY STATIC metrics - no animation at all
-  const staticMetrics = [
+  const staticMetrics = heroContent.metrics || [
     {
       label: "Analyses Today",
       value: "1,247",
-      icon: Activity,
+      icon: "Activity",
       color: "red",
     },
     {
       label: "Active Users",
       value: "892",
-      icon: Users,
+      icon: "Users",
       color: "pink",
     },
     {
       label: "Accuracy Rate",
       value: "99.2%",
-      icon: Target,
+      icon: "Target",
       color: "rose",
     },
   ];
+
+  const getIconComponent = (iconName: string) => {
+    const icons: Record<string, React.ComponentType<any>> = {
+      Activity,
+      Users,
+      Target,
+      Heart,
+      Clock,
+      Shield,
+      Award,
+      TrendingUp,
+    };
+    return icons[iconName] || Activity;
+  };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-red-50/30 via-white to-pink-50/20 pt-24">
@@ -209,7 +278,7 @@ const Hero = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
-                Revolutionize
+                {heroContent.mainHeading.line1}
               </motion.span>
               <motion.span
                 className="block bg-gradient-to-r from-red-600 via-red-500 to-pink-600 bg-clip-text text-transparent"
@@ -217,7 +286,7 @@ const Hero = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
               >
-                ECG Analysis
+                {heroContent.mainHeading.line2}
               </motion.span>
             </h1>
             <motion.div
@@ -229,93 +298,85 @@ const Hero = () => {
           </motion.div>
 
           {/* Enhanced Subtitle */}
-          <motion.p
+          <motion.div
             className="text-xl md:text-2xl text-slate-600 mb-8 max-w-4xl mx-auto leading-relaxed font-light"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-          >
-            Transform complex cardiac data into clear, actionable insights with
-            our
-            <span className="font-medium text-slate-800">
-              {" "}
-              AI-powered platform
-            </span>{" "}
-            trusted by
-            <span className="font-medium text-red-600">
-              {" "}
-              healthcare professionals worldwide
-            </span>
-            .
-          </motion.p>
+            dangerouslySetInnerHTML={{ __html: heroContent.subtitle }}
+          />
 
           {/* Interactive Testimonial Carousel */}
-          <motion.div
-            className="mb-12 max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
-          >
-            <div className="bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-2xl p-6 shadow-[0_8px_32px_rgba(255,63,74,0.08)] transition-all duration-500">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentTestimonial}
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.5 }}
-                  className="flex items-center justify-center space-x-4 mb-4"
-                >
-                  <span className="text-2xl">
-                    {testimonials[currentTestimonial].avatar}
-                  </span>
-                  <div className="text-left">
-                    <p className="text-slate-700 font-medium italic">
-                      "{testimonials[currentTestimonial].text}"
-                    </p>
-                    <div className="text-sm text-slate-500 mt-2 flex items-center space-x-2">
-                      <span className="font-semibold">
-                        {testimonials[currentTestimonial].author}
+          {testimonials.length > 0 && (
+            <motion.div
+              className="mb-12 max-w-3xl mx-auto"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1 }}
+            >
+              <div className="bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-2xl p-6 shadow-[0_8px_32px_rgba(255,63,74,0.08)] transition-all duration-500">
+                <AnimatePresence mode="wait">
+                  {currentTestimonialData && (
+                    <motion.div
+                      key={currentTestimonial}
+                      initial={{ opacity: 0, x: 50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -50 }}
+                      transition={{ duration: 0.5 }}
+                      className="flex items-center justify-center space-x-4 mb-4"
+                    >
+                      <span className="text-2xl">
+                        {currentTestimonialData.avatar}
                       </span>
-                      <span>•</span>
-                      <span>{testimonials[currentTestimonial].role}</span>
-                      <div className="flex items-center ml-2">
-                        {[
-                          ...Array(testimonials[currentTestimonial].rating),
-                        ].map((_, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, scale: 0 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: i * 0.1 }}
-                          >
-                            <Sparkles className="w-3 h-3 text-yellow-500 fill-current" />
-                          </motion.div>
-                        ))}
+                      <div className="text-left">
+                        <p className="text-slate-700 font-medium italic">
+                          "{currentTestimonialData.text}"
+                        </p>
+                        <div className="text-sm text-slate-500 mt-2 flex items-center space-x-2">
+                          <span className="font-semibold">
+                            {currentTestimonialData.author}
+                          </span>
+                          <span>•</span>
+                          <span>{currentTestimonialData.role}</span>
+                          <div className="flex items-center ml-2">
+                            {[...Array(currentTestimonialData.rating || 5)].map((_, i) => (
+                              <motion.div
+                                key={i}
+                                initial={{ opacity: 0, scale: 0 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: i * 0.1 }}
+                              >
+                                <Sparkles className="w-3 h-3 text-yellow-500 fill-current" />
+                              </motion.div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-              {/* Interactive Navigation Dots */}
-              <div className="flex justify-center space-x-2">
-                {testimonials.map((_, index) => (
-                  <motion.button
-                    key={index}
-                    onClick={() => setCurrentTestimonial(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === currentTestimonial
-                        ? "bg-red-500"
-                        : "bg-slate-300 hover:bg-slate-400"
-                    }`}
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.9 }}
-                  />
-                ))}
+                {/* Interactive Navigation Dots */}
+                {testimonials.length > 1 && (
+                  <div className="flex justify-center space-x-2">
+                    {testimonials.map((_, index) => (
+                      <motion.button
+                        key={index}
+                        onClick={() => setCurrentTestimonial(index)}
+                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                          index === currentTestimonial
+                            ? "bg-red-500"
+                            : "bg-slate-300 hover:bg-slate-400"
+                        }`}
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          )}
 
           {/* COMPLETELY STATIC Metrics Dashboard - NO ANIMATION */}
           <motion.div
@@ -325,28 +386,31 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 1.2 }}
           >
             <div className="grid grid-cols-3 gap-6">
-              {staticMetrics.map((metric, index) => (
-                <motion.div
-                  key={`static-metric-${index}`}
-                  className="bg-white/30 backdrop-blur-2xl border border-red-100/50 rounded-2xl p-4 text-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.4 + index * 0.1 }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <div className="flex items-center justify-center mb-2">
-                    <metric.icon
-                      className={`w-5 h-5 text-${metric.color}-500`}
-                    />
-                  </div>
-                  <div
-                    className={`text-2xl font-bold text-${metric.color}-600`}
+              {staticMetrics.map((metric, index) => {
+                const IconComponent = getIconComponent(metric.icon);
+                return (
+                  <motion.div
+                    key={`static-metric-${index}`}
+                    className="bg-white/30 backdrop-blur-2xl border border-red-100/50 rounded-2xl p-4 text-center"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.4 + index * 0.1 }}
+                    whileHover={{ scale: 1.05 }}
                   >
-                    {metric.value}
-                  </div>
-                  <div className="text-sm text-slate-600">{metric.label}</div>
-                </motion.div>
-              ))}
+                    <div className="flex items-center justify-center mb-2">
+                      <IconComponent
+                        className={`w-5 h-5 text-${metric.color}-500`}
+                      />
+                    </div>
+                    <div
+                      className={`text-2xl font-bold text-${metric.color}-600`}
+                    >
+                      {metric.value}
+                    </div>
+                    <div className="text-sm text-slate-600">{metric.label}</div>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
 
@@ -366,7 +430,7 @@ const Hero = () => {
               {/* Glassy hover effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
-              <span className="relative z-10">Start Analysis</span>
+              <span className="relative z-10">{heroContent.ctaButtons.primary.text}</span>
               <motion.div
                 animate={{ x: [0, 5, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
@@ -384,7 +448,7 @@ const Hero = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
               <Play className="w-5 h-5 transition-transform duration-300 relative z-10" />
-              <span className="relative z-10">Watch Demo</span>
+              <span className="relative z-10">{heroContent.ctaButtons.secondary.text}</span>
             </motion.button>
           </motion.div>
 
@@ -472,87 +536,65 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 2.5 }}
           >
-            {[
-              {
-                icon: Award,
-                text: "FDA Approved",
-                subtext: "Medical Device",
-                gradient: "from-emerald-500 to-teal-600",
-                bgGradient: "from-emerald-50/50 to-teal-50/50",
-                borderColor: "emerald-200/50",
-              },
-              {
-                icon: Shield,
-                text: "HIPAA Compliant",
-                subtext: "Enterprise Security",
-                gradient: "from-blue-500 to-indigo-600",
-                bgGradient: "from-blue-50/50 to-indigo-50/50",
-                borderColor: "blue-200/50",
-              },
-              {
-                icon: Users,
-                text: "10,000+ Users",
-                subtext: "Healthcare Professionals",
-                gradient: "from-purple-500 to-violet-600",
-                bgGradient: "from-purple-50/50 to-violet-50/50",
-                borderColor: "purple-200/50",
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                className={`group relative bg-gradient-to-br ${item.bgGradient} backdrop-blur-2xl border border-${item.borderColor} rounded-2xl p-6 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] overflow-hidden cursor-pointer min-w-[200px]`}
-                initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{
-                  delay: 2.7 + index * 0.1,
-                  duration: 0.6,
-                  ease: "easeOut",
-                }}
-                whileHover={{ y: -5, scale: 1.02 }}
-              >
-                {/* Glassy hover effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
-
-                {/* Certification Badge */}
-                <div className="relative flex items-center space-x-4">
-                  <motion.div
-                    className={`w-12 h-12 bg-gradient-to-br ${item.gradient} rounded-xl flex items-center justify-center shadow-lg transition-all duration-300`}
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                  >
-                    <item.icon className="w-6 h-6 text-white" />
-                  </motion.div>
-                  <div className="flex-1">
-                    <div className="font-bold text-slate-800 text-sm mb-1 group-hover:text-slate-900 transition-colors">
-                      {item.text}
-                    </div>
-                    <div className="text-xs text-slate-600 group-hover:text-slate-700 transition-colors">
-                      {item.subtext}
-                    </div>
-                  </div>
-                  <motion.div
-                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    whileHover={{ scale: 1.2 }}
-                  >
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                  </motion.div>
-                </div>
-
-                {/* Verification Indicator */}
+            {(heroContent.trustIndicators || []).map((item, index) => {
+              const IconComponent = getIconComponent(item.icon);
+              return (
                 <motion.div
-                  className="absolute top-2 right-2 w-3 h-3 bg-green-400 rounded-full shadow-sm"
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.7, 1, 0.7],
-                  }}
+                  key={index}
+                  className={`group relative bg-gradient-to-br from-emerald-50/50 to-teal-50/50 backdrop-blur-2xl border border-emerald-200/50 rounded-2xl p-6 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] overflow-hidden cursor-pointer min-w-[200px]`}
+                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: index * 0.5,
+                    delay: 2.7 + index * 0.1,
+                    duration: 0.6,
+                    ease: "easeOut",
                   }}
-                />
-              </motion.div>
-            ))}
+                  whileHover={{ y: -5, scale: 1.02 }}
+                >
+                  {/* Glassy hover effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+
+                  {/* Certification Badge */}
+                  <div className="relative flex items-center space-x-4">
+                    <motion.div
+                      className={`w-12 h-12 bg-gradient-to-br ${item.gradient} rounded-xl flex items-center justify-center shadow-lg transition-all duration-300`}
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                    >
+                      <IconComponent className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <div className="font-bold text-slate-800 text-sm mb-1 group-hover:text-slate-900 transition-colors">
+                        {item.text}
+                      </div>
+                      <div className="text-xs text-slate-600 group-hover:text-slate-700 transition-colors">
+                        {item.subtext}
+                      </div>
+                    </div>
+                    <motion.div
+                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      whileHover={{ scale: 1.2 }}
+                    >
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                    </motion.div>
+                  </div>
+
+                  {/* Verification Indicator */}
+                  <motion.div
+                    className="absolute top-2 right-2 w-3 h-3 bg-green-400 rounded-full shadow-sm"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [0.7, 1, 0.7],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: index * 0.5,
+                    }}
+                  />
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </div>
