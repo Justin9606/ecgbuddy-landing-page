@@ -3,16 +3,15 @@
 import React from "react";
 import { Eye, EyeOff, Monitor, Smartphone, Tablet } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
-import { getSectionContent } from "@/lib/admin/contentProvider";
 
-// Import section components - we'll create static versions
-import { StaticHero } from "./preview/StaticHero";
-import { StaticFeatures } from "./preview/StaticFeatures";
-import { StaticMobileDownload } from "./preview/StaticMobileDownload";
-import { StaticFAQ } from "./preview/StaticFAQ";
-import { StaticAboutARPI } from "./preview/StaticAboutARPI";
-import { StaticHeader } from "./preview/StaticHeader";
-import { StaticFooter } from "./preview/StaticFooter";
+// Import ACTUAL landing page components
+import Hero from "@/components/sections/Hero";
+import Features from "@/components/sections/Features";
+import MobileDownload from "@/components/sections/MobileDownload";
+import FAQ from "@/components/sections/FAQ";
+import AboutARPI from "@/components/sections/AboutARPI";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 interface StaticPreviewProps {
   section: AdminSection;
@@ -44,29 +43,57 @@ export const StaticPreview: React.FC<StaticPreviewProps> = ({
     { id: "mobile", name: "Mobile", icon: Smartphone },
   ];
 
-  const renderStaticPreview = () => {
+  const renderLivePreview = () => {
     try {
       switch (section) {
         case "header":
-          return <StaticHeader />;
+          return (
+            <div className="admin-preview-wrapper">
+              <Header />
+            </div>
+          );
           
         case "hero":
-          return <StaticHero />;
+          return (
+            <div className="admin-preview-wrapper">
+              <Hero />
+            </div>
+          );
           
         case "features":
-          return <StaticFeatures />;
+          return (
+            <div className="admin-preview-wrapper">
+              <Features />
+            </div>
+          );
           
         case "mobile-download":
-          return <StaticMobileDownload />;
+          return (
+            <div className="admin-preview-wrapper">
+              <MobileDownload />
+            </div>
+          );
           
         case "faq":
-          return <StaticFAQ />;
+          return (
+            <div className="admin-preview-wrapper">
+              <FAQ />
+            </div>
+          );
           
         case "about-arpi":
-          return <StaticAboutARPI />;
+          return (
+            <div className="admin-preview-wrapper">
+              <AboutARPI />
+            </div>
+          );
           
         case "footer":
-          return <StaticFooter />;
+          return (
+            <div className="admin-preview-wrapper">
+              <Footer />
+            </div>
+          );
           
         default:
           return (
@@ -99,9 +126,9 @@ export const StaticPreview: React.FC<StaticPreviewProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <Eye className="w-4 h-4 text-gray-500" />
-          <h3 className="text-sm font-semibold text-gray-900">Static Preview</h3>
-          <div className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
-            Admin Mode
+          <h3 className="text-sm font-semibold text-gray-900">Live Preview</h3>
+          <div className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-medium">
+            Real-time
           </div>
         </div>
         
@@ -136,12 +163,12 @@ export const StaticPreview: React.FC<StaticPreviewProps> = ({
         </div>
       </div>
 
-      {/* Static Preview Container */}
+      {/* Live Preview Container */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
         {/* Preview Overlay */}
         <div className="relative">
-          <div className="absolute top-3 left-3 bg-blue-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm z-10">
-            Static Preview
+          <div className="absolute top-3 left-3 bg-green-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm z-10">
+            Live Preview
           </div>
           <div className="absolute bottom-3 left-3 bg-gray-800 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm z-10">
             {viewportMode.charAt(0).toUpperCase() + viewportMode.slice(1)} View
@@ -158,9 +185,9 @@ export const StaticPreview: React.FC<StaticPreviewProps> = ({
               minHeight: section === "header" ? "auto" : "400px"
             }}
           >
-            {/* Static Content - NO ANIMATIONS */}
-            <div className="relative">
-              {renderStaticPreview()}
+            {/* LIVE Content from Landing Page Components */}
+            <div className="relative admin-preview-container">
+              {renderLivePreview()}
             </div>
           </div>
         </div>
@@ -170,13 +197,39 @@ export const StaticPreview: React.FC<StaticPreviewProps> = ({
       <div className="text-xs text-gray-500 bg-gray-50 rounded-lg p-3">
         <div className="flex items-center justify-between">
           <span>
-            ⚡ Static preview - optimized for admin editing
+            🔴 Live preview from actual landing page components
           </span>
           <span className="font-medium">
-            No animations for better performance
+            Real-time content updates
           </span>
         </div>
       </div>
+
+      {/* Admin Preview Styles */}
+      <style jsx global>{`
+        .admin-preview-container {
+          /* Disable animations in admin preview */
+          * {
+            animation-duration: 0s !important;
+            animation-delay: 0s !important;
+            transition-duration: 0s !important;
+            transition-delay: 0s !important;
+          }
+          
+          /* Disable framer-motion animations */
+          [data-framer-motion] {
+            transform: none !important;
+            opacity: 1 !important;
+          }
+        }
+        
+        .admin-preview-wrapper {
+          /* Ensure proper scaling */
+          transform-origin: top left;
+          width: 100%;
+          overflow: hidden;
+        }
+      `}</style>
     </div>
   );
 };

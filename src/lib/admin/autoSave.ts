@@ -105,6 +105,7 @@ export const useAutoSave = (
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const autoSaveManager = useRef<AutoSaveManager | null>(null);
+  const lastContentRef = useRef<any>(null);
 
   useEffect(() => {
     if (!enabled) return;
@@ -132,7 +133,9 @@ export const useAutoSave = (
 
   // Schedule auto-save when content changes
   useEffect(() => {
-    if (autoSaveManager.current && content) {
+    if (autoSaveManager.current && content && 
+        JSON.stringify(content) !== JSON.stringify(lastContentRef.current)) {
+      lastContentRef.current = content;
       autoSaveManager.current.scheduleAutoSave(content);
     }
   }, [content]);

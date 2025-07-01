@@ -35,7 +35,37 @@ export const getSectionContent = <T>(sectionKey: keyof SiteContent): T => {
 };
 
 /**
- * Hook to get content with real-time updates
+ * Hook to get content with real-time updates for admin preview
+ */
+export const useAdminContentData = () => {
+  const [content, setContent] = React.useState<SiteContent>(getLandingPageContent());
+
+  React.useEffect(() => {
+    const handleStorageChange = () => {
+      setContent(getLandingPageContent());
+    };
+
+    // Listen for localStorage changes
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for custom events (for same-tab updates)
+    window.addEventListener('adminContentUpdate', handleStorageChange);
+
+    // Poll for changes every 100ms for real-time admin preview
+    const interval = setInterval(handleStorageChange, 100);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('adminContentUpdate', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
+
+  return content;
+};
+
+/**
+ * Hook to get content with real-time updates for landing page
  */
 export const useContentData = () => {
   const [content, setContent] = React.useState<SiteContent>(getLandingPageContent());

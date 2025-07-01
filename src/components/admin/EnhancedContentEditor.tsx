@@ -15,6 +15,11 @@ import {
   Search,
   Filter,
   Keyboard,
+  Clock,
+  Undo,
+  Redo,
+  Copy,
+  Trash2,
 } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
 import { RichTextEditor } from "./fields/RichTextEditor";
@@ -50,6 +55,9 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
   const [showPreview, setShowPreview] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
+  const [contentHistory, setContentHistory] = useState<any[]>([initialContent]);
+  const [historyIndex, setHistoryIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const editorRefs = useRef<Record<string, HTMLElement>>({});
 
   // Toast notifications
@@ -59,7 +67,7 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
   // Get schema for current section
   const sectionSchema = getSectionSchema(section);
 
-  // Auto-save functionality
+  // Auto-save functionality with enhanced debouncing
   const { isSaving, lastSaved: autoSaveLastSaved, saveError } = useAutoSave(
     localContent,
     (content) => {
@@ -69,13 +77,14 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
     true
   );
 
-  // Keyboard shortcuts
+  // Enhanced keyboard shortcuts
   const shortcuts = useMemo(() => createAdminShortcuts({
     onSave: () => {
-      onSave();
-      toast.saveSuccess();
+      handleSave();
     },
     onPreview,
+    onUndo: handleUndo,
+    onRedo: handleRedo,
     onSearch: () => {
       const searchInput = document.querySelector('[data-search-input]') as HTMLInputElement;
       searchInput?.focus();
@@ -89,6 +98,8 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
   useEffect(() => {
     setLocalContent(initialContent);
     setValidationErrors({});
+    setContentHistory([initialContent]);
+    setHistoryIndex(0);
   }, [initialContent]);
 
   // Show save error toast
@@ -97,6 +108,39 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
       toast.saveError(saveError);
     }
   }, [saveError]);
+
+  // Content history management
+  const addToHistory = (content: any) => {
+    const newHistory = contentHistory.slice(0, historyIndex + 1);
+    newHistory.push(content);
+    
+    // Limit history to 50 items
+    if (newHistory.length > 50) {
+      newHistory.shift();
+    } else {
+      setHistoryIndex(historyIndex + 1);
+    }
+    
+    setContentHistory(newHistory);
+  };
+
+  const handleUndo = () => {
+    if (historyIndex > 0) {
+      const newIndex = historyIndex - 1;
+      setHistoryIndex(newIndex);
+      setLocalContent(contentHistory[newIndex]);
+      toast.info("Undone");
+    }
+  };
+
+  const handleRedo = () => {
+    if (historyIndex < contentHistory.length - 1) {
+      const newIndex = historyIndex + 1;
+      setHistoryIndex(newIndex);
+      setLocalContent(contentHistory[newIndex]);
+      toast.info("Redone");
+    }
+  };
 
   const getValueByPath = (obj: any, path: string) => {
     return path.split('.').reduce((current, key) => current?.[key], obj) || '';
@@ -127,6 +171,10 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
     setLocalContent((prev: any) => {
       const newContent = { ...prev };
       setValueByPath(newContent, field.path, value);
+      
+      // Add to history for undo/redo
+      addToHistory(newContent);
+      
       return newContent;
     });
   };
@@ -135,14 +183,39 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
     setLocalContent((prev: any) => {
       const newContent = { ...prev };
       setValueByPath(newContent, field.path, newArray);
+      
+      // Add to history for undo/redo
+      addToHistory(newContent);
+      
       return newContent;
     });
+  };
+
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      await onSave();
+      toast.saveSuccess();
+    } catch (error) {
+      toast.saveError("Failed to save changes");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleReset = () => {
     setLocalContent(initialContent);
     setValidationErrors({});
+    setContentHistory([initialContent]);
+    setHistoryIndex(0);
     toast.info("Content reset to last saved version");
+  };
+
+  const handleDuplicateSection = () => {
+    const duplicatedContent = JSON.parse(JSON.stringify(localContent));
+    setLocalContent(duplicatedContent);
+    addToHistory(duplicatedContent);
+    toast.success("Section duplicated");
   };
 
   const toggleSection = (sectionId: string) => {
@@ -301,7 +374,7 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
 
   return (
     <div className="h-full flex">
-      {/* Left Side - Static Preview */}
+      {/* Left Side - Live Preview */}
       <div className="w-1/2 pr-3 border-r border-gray-200">
         <div className="sticky top-0 h-full overflow-y-auto">
           <StaticPreview
@@ -331,6 +404,34 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
               </div>
 
               <div className="flex items-center space-x-2">
+                {/* Undo/Redo */}
+                <button
+                  onClick={handleUndo}
+                  disabled={historyIndex <= 0}
+                  className="flex items-center space-x-1 px-2 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Undo (Ctrl+Z)"
+                >
+                  <Undo className="w-3 h-3" />
+                </button>
+
+                <button
+                  onClick={handleRedo}
+                  disabled={historyIndex >= contentHistory.length - 1}
+                  className="flex items-center space-x-1 px-2 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Redo (Ctrl+Y)"
+                >
+                  <Redo className="w-3 h-3" />
+                </button>
+
+                {/* Utility Actions */}
+                <button
+                  onClick={handleDuplicateSection}
+                  className="flex items-center space-x-1 px-2 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+                  title="Duplicate Section"
+                >
+                  <Copy className="w-3 h-3" />
+                </button>
+
                 <button
                   onClick={() => setShowKeyboardHelp(true)}
                   className="flex items-center space-x-1 px-2 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
@@ -356,19 +457,16 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
                 </button>
 
                 <button
-                  onClick={() => {
-                    onSave();
-                    toast.saveSuccess();
-                  }}
-                  disabled={hasErrors}
+                  onClick={handleSave}
+                  disabled={hasErrors || isLoading}
                   className={`flex items-center space-x-2 px-4 py-1.5 text-sm font-medium text-white border rounded-lg transition-all duration-200 ${
-                    hasErrors 
+                    hasErrors || isLoading
                       ? 'bg-gray-400 border-gray-400 cursor-not-allowed' 
                       : 'bg-blue-600 border-blue-600 hover:bg-blue-700'
                   }`}
                 >
                   <Save className="w-4 h-4" />
-                  <span>Save</span>
+                  <span>{isLoading ? 'Saving...' : 'Save'}</span>
                 </button>
               </div>
             </div>
@@ -417,6 +515,14 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
                     <span className="text-sm">Please fix validation errors</span>
                   </div>
                 )}
+
+                {/* History Status */}
+                <div className="flex items-center space-x-2 text-gray-500">
+                  <Clock className="w-4 h-4" />
+                  <span className="text-sm">
+                    {historyIndex + 1}/{contentHistory.length} changes
+                  </span>
+                </div>
               </div>
               
               {(lastSaved || autoSaveLastSaved) && (
