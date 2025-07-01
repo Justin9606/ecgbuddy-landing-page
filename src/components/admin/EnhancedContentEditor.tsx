@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import {
   Save,
   Eye,
@@ -67,21 +67,68 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
   // Get schema for current section
   const sectionSchema = getSectionSchema(section);
 
+  // Content history management functions - defined before useMemo
+  const addToHistory = useCallback((content: any) => {
+    setContentHistory(prev => {
+      const newHistory = prev.slice(0, historyIndex + 1);
+      newHistory.push(content);
+      
+      // Limit history to 50 items
+      if (newHistory.length > 50) {
+        newHistory.shift();
+        return newHistory;
+      } else {
+        setHistoryIndex(historyIndex + 1);
+        return newHistory;
+      }
+    });
+  }, [historyIndex]);
+
+  const handleUndo = useCallback(() => {
+    if (historyIndex > 0) {
+      const newIndex = historyIndex - 1;
+      setHistoryIndex(newIndex);
+      setLocalContent(contentHistory[newIndex]);
+      toast.info("Undone");
+    }
+  }, [historyIndex, contentHistory, toast]);
+
+  const handleRedo = useCallback(() => {
+    if (historyIndex < contentHistory.length - 1) {
+      const newIndex = historyIndex + 1;
+      setHistoryIndex(newIndex);
+      setLocalContent(contentHistory[newIndex]);
+      toast.info("Redone");
+    }
+  }, [historyIndex, contentHistory, toast]);
+
+  const handleSave = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      await onSave();
+      toast.saveSuccess();
+    } catch (error) {
+      toast.saveError("Failed to save changes");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [onSave, toast]);
+
   // Auto-save functionality with enhanced debouncing
+  const autoSaveCallback = useCallback((content: any) => {
+    onContentChange(content);
+    toast.autoSaved();
+  }, [onContentChange, toast]);
+
   const { isSaving, lastSaved: autoSaveLastSaved, saveError } = useAutoSave(
     localContent,
-    (content) => {
-      onContentChange(content);
-      toast.autoSaved();
-    },
+    autoSaveCallback,
     true
   );
 
-  // Enhanced keyboard shortcuts
+  // Enhanced keyboard shortcuts - now defined after the functions
   const shortcuts = useMemo(() => createAdminShortcuts({
-    onSave: () => {
-      handleSave();
-    },
+    onSave: handleSave,
     onPreview,
     onUndo: handleUndo,
     onRedo: handleRedo,
@@ -90,7 +137,7 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
       searchInput?.focus();
     },
     onHelp: () => setShowKeyboardHelp(true),
-  }), [onSave, onPreview]);
+  }), [handleSave, onPreview, handleUndo, handleRedo]);
 
   useKeyboardShortcuts(shortcuts);
 
@@ -107,40 +154,7 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
     if (saveError) {
       toast.saveError(saveError);
     }
-  }, [saveError]);
-
-  // Content history management
-  const addToHistory = (content: any) => {
-    const newHistory = contentHistory.slice(0, historyIndex + 1);
-    newHistory.push(content);
-    
-    // Limit history to 50 items
-    if (newHistory.length > 50) {
-      newHistory.shift();
-    } else {
-      setHistoryIndex(historyIndex + 1);
-    }
-    
-    setContentHistory(newHistory);
-  };
-
-  const handleUndo = () => {
-    if (historyIndex > 0) {
-      const newIndex = historyIndex - 1;
-      setHistoryIndex(newIndex);
-      setLocalContent(contentHistory[newIndex]);
-      toast.info("Undone");
-    }
-  };
-
-  const handleRedo = () => {
-    if (historyIndex < contentHistory.length - 1) {
-      const newIndex = historyIndex + 1;
-      setHistoryIndex(newIndex);
-      setLocalContent(contentHistory[newIndex]);
-      toast.info("Redone");
-    }
-  };
+  }, [saveError, toast]);
 
   const getValueByPath = (obj: any, path: string) => {
     return path.split('.').reduce((current, key) => current?.[key], obj) || '';
@@ -189,18 +203,6 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
       
       return newContent;
     });
-  };
-
-  const handleSave = async () => {
-    setIsLoading(true);
-    try {
-      await onSave();
-      toast.saveSuccess();
-    } catch (error) {
-      toast.saveError("Failed to save changes");
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const handleReset = () => {
