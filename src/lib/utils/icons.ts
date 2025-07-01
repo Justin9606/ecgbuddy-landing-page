@@ -35,6 +35,11 @@ import {
   Apple,
   Play,
   Monitor,
+  Download,
+  Home,
+  Layout,
+  Layers,
+  BarChart3,
 } from "lucide-react";
 
 // Icon mapping for dynamic rendering
@@ -74,6 +79,11 @@ export const iconMap = {
   Apple,
   Play,
   Monitor,
+  Download,
+  Home,
+  Layout,
+  Layers,
+  BarChart3,
 } as const;
 
 export type IconName = keyof typeof iconMap;
