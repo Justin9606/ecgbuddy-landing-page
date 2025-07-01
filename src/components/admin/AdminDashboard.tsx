@@ -18,7 +18,7 @@ export type AdminSection =
   | "header" 
   | "hero" 
   | "features" 
-  | "mobile-download" 
+  | "download-app" 
   | "faq" 
   | "about-arpi" 
   | "footer"
@@ -60,7 +60,7 @@ export const AdminDashboard: React.FC = () => {
     setSiteContent(prevContent => {
       const updatedContent = {
         ...prevContent,
-        [section]: newSectionContent
+        [section === "download-app" ? "downloadApp" : section]: newSectionContent
       };
       
       // Auto-save to localStorage after a short delay
@@ -125,7 +125,8 @@ export const AdminDashboard: React.FC = () => {
         return <Users />;
       default:
         // Get the relevant section content
-        const sectionContent = siteContent[activeSection as keyof SiteContent];
+        const contentKey = activeSection === "download-app" ? "downloadApp" : activeSection;
+        const sectionContent = siteContent[contentKey as keyof SiteContent];
         return (
           <ContentEditor 
             section={activeSection}
@@ -150,7 +151,7 @@ export const AdminDashboard: React.FC = () => {
       />
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'ml-20' : 'ml-80'}`}>
+      <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
         {/* Header */}
         <AdminHeader 
           activeSection={activeSection}

@@ -29,6 +29,8 @@ import {
   Monitor,
   Target,
   Zap,
+  Download,
+  Heart,
 } from "lucide-react";
 import { AdminSection } from "../AdminDashboard";
 import { RichTextEditor } from "../fields/RichTextEditor";
@@ -265,7 +267,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
       hero: {
         title: "Hero Section",
         description: "Manage the main landing area content",
-        icon: Zap,
+        icon: Heart,
         sections: [
           {
             id: "basic-info",
@@ -391,10 +393,10 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
           },
         ],
       },
-      "mobile-download": {
-        title: "Mobile Apps",
-        description: "Manage mobile app download section",
-        icon: Smartphone,
+      "download-app": {
+        title: "Download App",
+        description: "Manage app download section for all platforms",
+        icon: Download,
         sections: [
           {
             id: "basic-info",
@@ -406,20 +408,20 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
                 label: "Section Title",
                 type: "richtext",
                 path: "sectionHeader.title",
-                description: "Main title for the mobile download section",
+                description: "Main title for the download app section",
               },
               {
                 id: "section-description",
                 label: "Section Description",
                 type: "richtext",
                 path: "sectionHeader.description",
-                description: "Description text for the mobile download section",
+                description: "Description text for the download app section",
               },
             ],
           },
           {
             id: "apps",
-            title: "Mobile Apps",
+            title: "Mobile & Desktop Apps",
             icon: Smartphone,
             fields: [
               {
@@ -427,14 +429,36 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
                 label: "App Information",
                 type: "draggable",
                 path: "apps",
-                itemFields: ["name", "platform", "version", "storeLink"],
+                itemFields: ["name", "platform", "version", "storeLink", "features"],
                 defaultItem: {
                   name: "New App",
                   platform: "Platform",
                   version: "v1.0.0",
                   storeLink: "#",
+                  features: ["Feature 1", "Feature 2"],
                 },
-                description: "Mobile app download information",
+                description: "iOS, Android, and Windows app information",
+              },
+            ],
+          },
+          {
+            id: "cross-platform",
+            title: "Cross-Platform Features",
+            icon: Globe,
+            fields: [
+              {
+                id: "cross-platform-features",
+                label: "Universal Features",
+                type: "draggable",
+                path: "crossPlatformFeatures",
+                itemFields: ["title", "description", "icon", "gradient"],
+                defaultItem: {
+                  title: "New Feature",
+                  description: "Feature description",
+                  icon: "Smartphone",
+                  gradient: "from-blue-500 to-indigo-600",
+                },
+                description: "Features available across all platforms",
               },
             ],
           },

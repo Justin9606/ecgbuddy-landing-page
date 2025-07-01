@@ -5,10 +5,10 @@ import {
   Footer,
   Hero,
   Features,
-  MobileDownload,
   FAQ,
   AboutARPI,
 } from "@/components";
+import DownloadApp from "@/components/sections/DownloadApp";
 
 export default function HomePage() {
   return (
@@ -16,7 +16,7 @@ export default function HomePage() {
       <Header isAdminView={false} />
       <Hero isAdminView={false} />
       <Features isAdminView={false} />
-      <MobileDownload isAdminView={false} />
+      <DownloadApp isAdminView={false} />
       <FAQ isAdminView={false} />
       <AboutARPI isAdminView={false} />
       <Footer isAdminView={false} />

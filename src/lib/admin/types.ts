@@ -105,7 +105,7 @@ export interface FeatureContent {
   }>;
 }
 
-export interface MobileDownloadContent {
+export interface DownloadAppContent {
   sectionHeader: {
     title: string;
     description: string;
@@ -120,16 +120,24 @@ export interface MobileDownloadContent {
     rating: string;
     downloads: string;
     gradient: string;
-    qrPlaceholder: string;
+    qrCode: string;
     storeLink: string;
     features: string[];
+    systemRequirements: string[];
+    releaseNotes: string;
   }>;
-  bottomFeatures: Array<{
+  crossPlatformFeatures: Array<{
     icon: string;
     title: string;
     description: string;
     gradient: string;
   }>;
+  downloadStats: {
+    totalDownloads: string;
+    activeUsers: string;
+    averageRating: string;
+    supportedCountries: string;
+  };
 }
 
 export interface FAQContent {
@@ -224,7 +232,7 @@ export interface SiteContent {
   header: HeaderContent;
   hero: HeroContent;
   features: FeatureContent;
-  mobileDownload: MobileDownloadContent;
+  downloadApp: DownloadAppContent;
   faq: FAQContent;
   aboutARPI: AboutARPIContent;
   footer: FooterContent;
