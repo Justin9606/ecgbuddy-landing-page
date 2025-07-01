@@ -22,8 +22,10 @@ import {
   HelpCircle,
   Building2,
 } from "lucide-react";
+import { useLanguage } from "@/lib/constants";
 
 const Header = () => {
+  const { language, setLanguage, t } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -358,7 +360,7 @@ const Header = () => {
                                     <div className="flex-1 min-w-0">
                                       <div className="font-medium text-sm mb-1 flex items-center">
                                         {item.name}
-                                        {item.badge && (
+                                        {"badge" in item && item.badge && (
                                           <span className="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full animate-pulse">
                                             {item.badge}
                                           </span>
@@ -408,28 +410,51 @@ const Header = () => {
               {/* FAQ Navigation - Direct Click with focus state */}
               <button
                 onClick={() => scrollToSection("faq-section")}
-                className="flex items-center space-x-1 px-4 py-2 text-slate-700 hover:text-slate-900 transition-all duration-200 font-medium rounded-lg hover:bg-red-50/50 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:bg-red-50/50"
+                className="flex items-center justify-center w-16 px-4 py-2 text-slate-700 hover:text-slate-900 transition-all duration-200 font-medium rounded-lg hover:bg-red-50/50 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:bg-red-50/50"
               >
-                <span>FAQ</span>
+                <span className="truncate">{t.header.navigation.faq}</span>
               </button>
 
-              {/* About ARPI Navigation - Direct Click with focus state */}
+              {/* About ARPI Navigation - Auto width with min-width to prevent shaking */}
               <button
                 onClick={() => scrollToSection("about-arpi-section")}
-                className="flex items-center space-x-1 px-4 py-2 text-slate-700 hover:text-slate-900 transition-all duration-200 font-medium rounded-lg hover:bg-red-50/50 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:bg-red-50/50"
+                className="flex items-center justify-center min-w-24 px-4 py-2 text-slate-700 hover:text-slate-900 transition-all duration-200 font-medium rounded-lg hover:bg-red-50/50 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:bg-red-50/50"
               >
-                <span>About Us</span>
+                <span className="whitespace-nowrap">
+                  {t.header.navigation.about}
+                </span>
               </button>
             </nav>
 
             {/* Right Side Actions with improved states */}
             <div className="hidden lg:flex items-center space-x-4">
-              {/* Enhanced Language Toggle */}
-              <div className="flex items-center bg-red-50/50 backdrop-blur-sm rounded-full p-1 border border-red-100/50 hover:bg-red-50/70 transition-all duration-300">
-                <button className="px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-pink-600 rounded-full shadow-sm transition-all duration-300 hover:shadow-md">
+              {/* Enhanced Language Toggle with Smooth Animations */}
+              <div className="relative flex items-center bg-red-50/50 backdrop-blur-sm rounded-full p-1 border border-red-100/50 hover:bg-red-50/70 transition-all duration-300">
+                {/* Animated Background Slider */}
+                <div
+                  className={`absolute top-1 bottom-1 w-12 bg-gradient-to-r from-red-500 to-pink-600 rounded-full shadow-sm transition-all duration-300 ease-out transform ${
+                    language === "ko" ? "translate-x-0" : "translate-x-12"
+                  }`}
+                />
+
+                <button
+                  onClick={() => setLanguage("ko")}
+                  className={`relative z-10 w-12 py-1.5 text-sm font-medium rounded-full transition-all duration-300 ${
+                    language === "ko"
+                      ? "text-white"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
                   KOR
                 </button>
-                <button className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-full hover:bg-white/50">
+                <button
+                  onClick={() => setLanguage("en")}
+                  className={`relative z-10 w-12 py-1.5 text-sm font-medium rounded-full transition-all duration-300 ${
+                    language === "en"
+                      ? "text-white"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
                   ENG
                 </button>
               </div>
@@ -442,7 +467,9 @@ const Header = () => {
                 {/* Glassy hover effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
-                <span className="relative z-10">Try ECG Buddy</span>
+                <span className="relative z-10">
+                  {t.header.cta.tryEcgBuddy}
+                </span>
               </button>
             </div>
 
@@ -501,7 +528,7 @@ const Header = () => {
                             <div className="flex-1">
                               <div className="font-medium text-sm flex items-center">
                                 {item.name}
-                                {item.badge && (
+                                {"badge" in item && item.badge && (
                                   <span className="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
                                     {item.badge}
                                   </span>
@@ -528,7 +555,7 @@ const Header = () => {
                   }}
                   className="w-full text-left font-semibold text-slate-900 mb-3 flex items-center p-2 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500/20"
                 >
-                  FAQ
+                  {t.header.navigation.faq}
                   <HelpCircle className="w-4 h-4 ml-2 text-slate-500" />
                 </button>
               </div>
@@ -542,7 +569,7 @@ const Header = () => {
                   }}
                   className="w-full text-left font-semibold text-slate-900 mb-3 flex items-center p-2 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500/20"
                 >
-                  About Us
+                  {t.header.navigation.about}
                   <Building2 className="w-4 h-4 ml-2 text-slate-500" />
                 </button>
               </div>
@@ -559,7 +586,9 @@ const Header = () => {
                   {/* Glassy hover effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
-                  <span className="relative z-10">Try ECG Buddy</span>
+                  <span className="relative z-10">
+                    {t.header.cta.tryEcgBuddy}
+                  </span>
                 </button>
               </div>
             </div>
