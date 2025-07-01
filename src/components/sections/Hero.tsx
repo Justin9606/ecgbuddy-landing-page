@@ -35,7 +35,7 @@ const Hero = () => {
 
   // Testimonial rotation with user controls
   useEffect(() => {
-    const interval = setInterval(() => {
+    const interval = window.setInterval(() => {
       setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
