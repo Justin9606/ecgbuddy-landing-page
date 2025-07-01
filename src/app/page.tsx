@@ -13,13 +13,13 @@ import {
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
-      <Header isAdminView={false} />
-      <Hero isAdminView={false} />
-      <Features isAdminView={false} />
-      <MobileDownload isAdminView={false} />
-      <FAQ isAdminView={false} />
-      <AboutARPI isAdminView={false} />
-      <Footer isAdminView={false} />
+      <Header />
+      <Hero />
+      <Features />
+      <MobileDownload />
+      <FAQ />
+      <AboutARPI />
+      <Footer />
     </div>
   );
 }

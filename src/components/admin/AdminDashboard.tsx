@@ -64,7 +64,7 @@ export const AdminDashboard: React.FC = () => {
       };
       
       // Auto-save to localStorage after a short delay
-      window.setTimeout(() => {
+      setTimeout(() => {
         saveSiteContent(updatedContent);
         setLastSaved(new Date());
       }, 500);

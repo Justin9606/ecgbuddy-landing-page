@@ -13,84 +13,9 @@ import {
   Sparkles,
   Building2,
 } from "lucide-react";
-import { getSectionContent } from "@/lib/admin/contentProvider";
-import type { FooterContent } from "@/lib/admin/types";
 
-interface FooterProps {
-  isAdminView?: boolean;
-  content?: FooterContent;
-}
-
-const Footer: React.FC<FooterProps> = ({ isAdminView = false, content }) => {
-  const [footerContent, setFooterContent] = React.useState<FooterContent | null>(content || null);
-
-  // Load content from admin or use defaults (only if not in admin view)
-  React.useEffect(() => {
-    if (isAdminView || content) {
-      setFooterContent(content || null);
-      return;
-    }
-
-    const loadContent = () => {
-      try {
-        const loadedContent = getSectionContent<FooterContent>('footer');
-        setFooterContent(loadedContent);
-      } catch (error) {
-        console.error('Error loading footer content:', error);
-        // Fallback to default content
-        setFooterContent({
-          companyInfo: {
-            name: "ARPI Inc.",
-            description: "Empowering healthcare professionals with AI-driven ECG analysis for better patient outcomes and streamlined cardiac care.",
-            logo: "Building2",
-          },
-          contactInfo: {
-            email: "contact@ecgbuddy.ai",
-            phone: "+82 (0)2-1234-5678",
-            address: "Seoul, South Korea",
-          },
-          sections: [
-            {
-              title: "Product",
-              links: [
-                { name: "ECG Analysis", href: "#analysis", description: "AI-powered diagnostics" },
-                { name: "Features", href: "#features", description: "Complete feature set" },
-              ],
-            },
-          ],
-          socialLinks: [
-            { platform: "Twitter", href: "#twitter", icon: "Twitter" },
-            { platform: "LinkedIn", href: "#linkedin", icon: "Linkedin" },
-            { platform: "GitHub", href: "#github", icon: "Github" },
-          ],
-          legal: {
-            copyright: "© 2024 ARPI Inc. All rights reserved.",
-            privacyPolicy: "#privacy",
-            termsOfService: "#terms",
-          },
-        });
-      }
-    };
-
-    loadContent();
-
-    // Listen for content updates (only if not in admin view)
-    const handleContentUpdate = () => {
-      loadContent();
-    };
-
-    window.addEventListener('adminContentUpdate', handleContentUpdate);
-    window.addEventListener('storage', handleContentUpdate);
-
-    return () => {
-      window.removeEventListener('adminContentUpdate', handleContentUpdate);
-      window.removeEventListener('storage', handleContentUpdate);
-    };
-  }, [isAdminView, content]);
-
+const Footer = () => {
   const scrollToSection = (sectionId: string) => {
-    if (isAdminView) return;
-    
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({
@@ -100,40 +25,90 @@ const Footer: React.FC<FooterProps> = ({ isAdminView = false, content }) => {
     }
   };
 
-  // Show loading state while content loads (only if not in admin view)
-  if (!footerContent && !isAdminView) {
-    return (
-      <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <div className="text-center py-20">
-          <div className="w-8 h-8 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading footer content...</p>
-        </div>
-      </footer>
-    );
-  }
-
-  // Use default content if none provided
-  const defaultContent: FooterContent = {
-    companyInfo: {
-      name: "ARPI Inc.",
-      description: "Healthcare technology company.",
-      logo: "Building2",
+  const footerSections = [
+    {
+      title: "Product",
+      links: [
+        {
+          name: "ECG Analysis",
+          href: "#analysis",
+          description: "AI-powered diagnostics",
+        },
+        {
+          name: "Features",
+          href: "#features",
+          description: "Complete feature set",
+        },
+        { name: "Pricing", href: "#pricing", description: "Flexible plans" },
+        {
+          name: "API Documentation",
+          href: "#api",
+          description: "Developer resources",
+        },
+      ],
     },
-    contactInfo: {
-      email: "contact@ecgbuddy.ai",
-      phone: "+82 (0)2-1234-5678",
-      address: "Seoul, South Korea",
+    {
+      title: "Research",
+      links: [
+        {
+          name: "Published Papers",
+          href: "#papers",
+          description: "Scientific publications",
+        },
+        {
+          name: "Clinical Studies",
+          href: "#studies",
+          description: "Research findings",
+        },
+        {
+          name: "Research Network",
+          href: "#network",
+          description: "Collaboration hub",
+        },
+        {
+          name: "Collaboration",
+          href: "#collaborate",
+          description: "Partner with us",
+        },
+      ],
     },
-    sections: [],
-    socialLinks: [],
-    legal: {
-      copyright: "© 2024 ARPI Inc. All rights reserved.",
-      privacyPolicy: "#privacy",
-      termsOfService: "#terms",
+    {
+      title: "Support",
+      links: [
+        { name: "Help Center", href: "#help", description: "Get assistance" },
+        { name: "Contact Us", href: "#contact", description: "Reach our team" },
+        {
+          name: "System Status",
+          href: "#status",
+          description: "Service health",
+        },
+        {
+          name: "Privacy Policy",
+          href: "#privacy",
+          description: "Data protection",
+        },
+      ],
     },
-  };
-
-  const activeContent = footerContent || defaultContent;
+    {
+      title: "Company",
+      links: [
+        {
+          name: "About ARPI",
+          href: "#about-arpi-section",
+          description: "Our mission",
+          onClick: () => scrollToSection("about-arpi-section"),
+        },
+        { name: "Careers", href: "#careers", description: "Join our team" },
+        { name: "Press Kit", href: "#press", description: "Media resources" },
+        {
+          name: "Blog",
+          href: "https://ecgbuddy.tistory.com",
+          description: "Latest insights",
+          external: true,
+        },
+      ],
+    },
+  ];
 
   return (
     <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
@@ -159,9 +134,9 @@ const Footer: React.FC<FooterProps> = ({ isAdminView = false, content }) => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
         {/* Main Footer Content */}
-        <div className={`grid grid-cols-1 ${isAdminView ? 'lg:grid-cols-3' : 'lg:grid-cols-5'} gap-12 mb-16`}>
-          {/* Brand Section */}
-          <div className={isAdminView ? 'lg:col-span-1' : 'lg:col-span-2'}>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 mb-16">
+          {/* Brand Section - Updated to ARPI Inc. */}
+          <div className="lg:col-span-2">
             <div className="flex items-center space-x-3 mb-8 group cursor-pointer">
               <div className="relative">
                 <div className="w-12 h-12 bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-500/25 group-hover:shadow-slate-500/40 transition-all duration-300 group-hover:scale-110">
@@ -169,11 +144,12 @@ const Footer: React.FC<FooterProps> = ({ isAdminView = false, content }) => {
                 </div>
                 <div className="absolute -inset-1 bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 rounded-2xl opacity-20 blur group-hover:opacity-30 transition-opacity duration-300"></div>
               </div>
-              <span className="text-3xl font-bold text-white">{activeContent.companyInfo.name}</span>
+              <span className="text-3xl font-bold text-white">ARPI Inc.</span>
             </div>
 
             <p className="text-slate-300 text-lg leading-relaxed mb-8 max-w-md">
-              {activeContent.companyInfo.description}
+              Empowering healthcare professionals with AI-driven ECG analysis
+              for better patient outcomes and streamlined cardiac care.
             </p>
 
             {/* Contact Info */}
@@ -181,19 +157,15 @@ const Footer: React.FC<FooterProps> = ({ isAdminView = false, content }) => {
               {[
                 {
                   icon: Mail,
-                  text: activeContent.contactInfo.email,
-                  href: `mailto:${activeContent.contactInfo.email}`,
+                  text: "contact@ecgbuddy.ai",
+                  href: "mailto:contact@ecgbuddy.ai",
                 },
                 {
                   icon: Phone,
-                  text: activeContent.contactInfo.phone,
-                  href: `tel:${activeContent.contactInfo.phone.replace(/\s/g, '')}`,
+                  text: "+82 (0)2-1234-5678",
+                  href: "tel:+82212345678",
                 },
-                { 
-                  icon: MapPin, 
-                  text: activeContent.contactInfo.address, 
-                  href: "#location" 
-                },
+                { icon: MapPin, text: "Seoul, South Korea", href: "#location" },
               ].map((contact, index) => (
                 <a
                   key={index}
@@ -210,7 +182,7 @@ const Footer: React.FC<FooterProps> = ({ isAdminView = false, content }) => {
           </div>
 
           {/* Footer Links */}
-          {activeContent.sections.map((section, index) => (
+          {footerSections.map((section, index) => (
             <div key={index}>
               <h3 className="text-white font-bold text-lg mb-8 flex items-center">
                 {section.title}
@@ -219,9 +191,9 @@ const Footer: React.FC<FooterProps> = ({ isAdminView = false, content }) => {
               <ul className="space-y-4">
                 {section.links.map((link, linkIndex) => (
                   <li key={linkIndex}>
-                    {link.href.startsWith('#about-arpi-section') ? (
+                    {link.onClick ? (
                       <button
-                        onClick={() => scrollToSection('about-arpi-section')}
+                        onClick={link.onClick}
                         className="group flex items-start justify-between text-slate-400 hover:text-red-400 transition-all duration-300 w-full text-left"
                       >
                         <div>
@@ -267,34 +239,29 @@ const Footer: React.FC<FooterProps> = ({ isAdminView = false, content }) => {
         <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-slate-700/50">
           <div className="text-slate-400 mb-6 md:mb-0 text-center md:text-left">
             <div className="font-medium">
-              {activeContent.legal.copyright}
+              © 2024 ARPI Inc. All rights reserved.
             </div>
             <div className="text-sm text-slate-500 mt-1">
-              ECG Buddy is a product of {activeContent.companyInfo.name}.
+              ECG Buddy is a product of ARPI Inc.
             </div>
           </div>
 
           {/* Social Links */}
           <div className="flex items-center space-x-4">
-            {activeContent.socialLinks.map((social, index) => {
-              const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-                Twitter,
-                Linkedin,
-                Github,
-              };
-              const IconComponent = iconMap[social.icon] || Github;
-              
-              return (
-                <a
-                  key={index}
-                  href={social.href}
-                  aria-label={social.platform}
-                  className="group w-12 h-12 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-all duration-300 hover:scale-110"
-                >
-                  <IconComponent className="w-5 h-5" />
-                </a>
-              );
-            })}
+            {[
+              { icon: Twitter, href: "#twitter", label: "Twitter" },
+              { icon: Linkedin, href: "#linkedin", label: "LinkedIn" },
+              { icon: Github, href: "#github", label: "GitHub" },
+            ].map((social, index) => (
+              <a
+                key={index}
+                href={social.href}
+                aria-label={social.label}
+                className="group w-12 h-12 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-all duration-300 hover:scale-110"
+              >
+                <social.icon className="w-5 h-5" />
+              </a>
+            ))}
           </div>
         </div>
       </div>

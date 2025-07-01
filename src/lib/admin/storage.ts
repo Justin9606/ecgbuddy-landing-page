@@ -11,9 +11,6 @@ export const saveSiteContent = (content: SiteContent): void => {
     const serializedContent = JSON.stringify(content);
     localStorage.setItem(STORAGE_KEY, serializedContent);
     console.log('Site content saved to localStorage');
-    
-    // Trigger content update event
-    window.dispatchEvent(new CustomEvent('adminContentUpdate'));
   } catch (error) {
     console.error('Failed to save site content:', error);
   }
@@ -43,9 +40,6 @@ export const savePreviewDraft = (content: SiteContent): void => {
     const serializedContent = JSON.stringify(content);
     localStorage.setItem(PREVIEW_STORAGE_KEY, serializedContent);
     console.log('Preview draft saved to localStorage');
-    
-    // Trigger content update event
-    window.dispatchEvent(new CustomEvent('adminContentUpdate'));
   } catch (error) {
     console.error('Failed to save preview draft:', error);
   }
@@ -74,9 +68,6 @@ export const clearPreviewDraft = (): void => {
   try {
     localStorage.removeItem(PREVIEW_STORAGE_KEY);
     console.log('Preview draft cleared from localStorage');
-    
-    // Trigger content update event
-    window.dispatchEvent(new CustomEvent('adminContentUpdate'));
   } catch (error) {
     console.error('Failed to clear preview draft:', error);
   }

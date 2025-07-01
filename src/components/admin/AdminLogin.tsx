@@ -28,7 +28,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     setIsLoading(true);
     
     // Simulate authentication
-    window.setTimeout(() => {
+    setTimeout(() => {
       setIsLoading(false);
       onLogin();
     }, 1500);
