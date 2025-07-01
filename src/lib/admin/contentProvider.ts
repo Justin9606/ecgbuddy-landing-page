@@ -1,4 +1,5 @@
 // Content provider to bridge admin data with landing page components
+import React from 'react';
 import { SiteContent, getDefaultSiteContent, loadSiteContent, loadPreviewDraft } from './storage';
 
 /**

@@ -25,11 +25,14 @@ import {
   Users,
   HelpCircle,
   Building2,
+  Layout,
+  Monitor,
 } from "lucide-react";
 import { AdminSection } from "../AdminDashboard";
 import { RichTextEditor } from "../fields/RichTextEditor";
 import { ImagePreview } from "../fields/ImagePreview";
 import { DraggableList } from "../fields/DraggableList";
+import { SectionPreview } from "../SectionPreview";
 
 interface ContentEditorProps {
   section: AdminSection;
@@ -52,6 +55,7 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
   const [expandedSections, setExpandedSections] = useState<string[]>(["basic-info"]);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [showPreview, setShowPreview] = useState(true);
 
   // Update local content when initialContent changes
   useEffect(() => {
@@ -121,26 +125,6 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
       
       // Set the value
       current[pathArray[pathArray.length - 1]] = value;
-      return newContent;
-    });
-  };
-
-  const handleArrayItemChange = (arrayPath: string, index: number, field: string, value: any) => {
-    setLocalContent((prev: any) => {
-      const newContent = { ...prev };
-      const pathArray = arrayPath.split('.');
-      let current = newContent;
-      
-      // Navigate to the array
-      for (const path of pathArray) {
-        current = current[path];
-      }
-      
-      // Update the specific item
-      if (current && Array.isArray(current) && current[index]) {
-        current[index] = { ...current[index], [field]: value };
-      }
-      
       return newContent;
     });
   };
@@ -733,144 +717,161 @@ export const ContentEditor: React.FC<ContentEditorProps> = ({
   const hasErrors = Object.keys(validationErrors).some(key => validationErrors[key]);
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
-              <config.icon className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-semibold text-gray-900 mb-1">
-                {config.title}
-              </h1>
-              <p className="text-sm text-gray-600">{config.description}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <motion.button
-              onClick={handleReset}
-              className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <RotateCcw className="w-4 h-4" />
-              <span>Reset</span>
-            </motion.button>
-
-            <motion.button
-              onClick={onPreview}
-              className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Eye className="w-4 h-4" />
-              <span>Preview</span>
-            </motion.button>
-
-            <motion.button
-              onClick={onSave}
-              disabled={hasErrors}
-              className={`flex items-center space-x-2 px-4 py-1.5 text-sm font-medium text-white border rounded-lg transition-all duration-200 ${
-                hasErrors 
-                  ? 'bg-gray-400 border-gray-400 cursor-not-allowed' 
-                  : 'bg-blue-600 border-blue-600 hover:bg-blue-700'
-              }`}
-              whileHover={!hasErrors ? { scale: 1.02 } : {}}
-              whileTap={!hasErrors ? { scale: 0.98 } : {}}
-            >
-              <Save className="w-4 h-4" />
-              <span>Save</span>
-            </motion.button>
-          </div>
-        </div>
-
-        {/* Status */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            {hasUnsavedChanges ? (
-              <div className="flex items-center space-x-2 text-amber-600">
-                <AlertCircle className="w-4 h-4" />
-                <span className="text-sm">Unsaved changes</span>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2 text-green-600">
-                <CheckCircle className="w-4 h-4" />
-                <span className="text-sm">All changes saved</span>
-              </div>
-            )}
-            
-            {hasErrors && (
-              <div className="flex items-center space-x-2 text-red-600">
-                <AlertCircle className="w-4 h-4" />
-                <span className="text-sm">Please fix validation errors</span>
-              </div>
-            )}
-          </div>
-          
-          {lastSaved && (
-            <div className="text-xs text-gray-500">
-              Last saved: {lastSaved.toLocaleTimeString()}
-            </div>
-          )}
+    <div className="h-full flex">
+      {/* Left Side - Live Preview */}
+      <div className="w-1/2 pr-3 border-r border-gray-200">
+        <div className="sticky top-0 h-full overflow-y-auto">
+          <SectionPreview
+            section={section}
+            content={localContent}
+            isVisible={showPreview}
+            onToggleVisibility={() => setShowPreview(!showPreview)}
+          />
         </div>
       </div>
 
-      {/* Content Sections */}
-      <div className="space-y-6">
-        {config.sections.map((configSection, index) => (
-          <motion.div
-            key={configSection.id}
-            className="bg-white border border-gray-200 rounded-lg overflow-hidden"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-          >
-            {/* Section Header */}
-            <button
-              onClick={() => toggleSection(configSection.id)}
-              className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors border-b border-gray-200"
-            >
+      {/* Right Side - Content Editor */}
+      <div className="w-1/2 pl-3">
+        <div className="h-full overflow-y-auto">
+          {/* Header */}
+          <div className="mb-6 sticky top-0 bg-white z-10 pb-4 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
-                <configSection.icon className="w-4 h-4 text-gray-600" />
-                <h3 className="text-sm font-semibold text-gray-900">
-                  {configSection.title}
-                </h3>
-              </div>
-              {expandedSections.includes(configSection.id) ? (
-                <ChevronUp className="w-4 h-4 text-gray-500" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-gray-500" />
-              )}
-            </button>
-
-            {/* Section Content */}
-            {expandedSections.includes(configSection.id) && (
-              <motion.div
-                className="p-4"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="space-y-6">
-                  {configSection.fields.map((field, fieldIndex) => (
-                    <motion.div
-                      key={field.id}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: fieldIndex * 0.05 }}
-                    >
-                      {renderField(field)}
-                    </motion.div>
-                  ))}
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
+                  <config.icon className="w-6 h-6 text-white" />
                 </div>
+                <div>
+                  <h1 className="text-2xl font-semibold text-gray-900 mb-1">
+                    {config.title}
+                  </h1>
+                  <p className="text-sm text-gray-600">{config.description}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <motion.button
+                  onClick={handleReset}
+                  className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Reset</span>
+                </motion.button>
+
+                <motion.button
+                  onClick={onPreview}
+                  className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Monitor className="w-4 h-4" />
+                  <span>Full Preview</span>
+                </motion.button>
+
+                <motion.button
+                  onClick={onSave}
+                  disabled={hasErrors}
+                  className={`flex items-center space-x-2 px-4 py-1.5 text-sm font-medium text-white border rounded-lg transition-all duration-200 ${
+                    hasErrors 
+                      ? 'bg-gray-400 border-gray-400 cursor-not-allowed' 
+                      : 'bg-blue-600 border-blue-600 hover:bg-blue-700'
+                  }`}
+                  whileHover={!hasErrors ? { scale: 1.02 } : {}}
+                  whileTap={!hasErrors ? { scale: 0.98 } : {}}
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Save</span>
+                </motion.button>
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                {hasUnsavedChanges ? (
+                  <div className="flex items-center space-x-2 text-amber-600">
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="text-sm">Unsaved changes</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-2 text-green-600">
+                    <CheckCircle className="w-4 h-4" />
+                    <span className="text-sm">All changes saved</span>
+                  </div>
+                )}
+                
+                {hasErrors && (
+                  <div className="flex items-center space-x-2 text-red-600">
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="text-sm">Please fix validation errors</span>
+                  </div>
+                )}
+              </div>
+              
+              {lastSaved && (
+                <div className="text-xs text-gray-500">
+                  Last saved: {lastSaved.toLocaleTimeString()}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Content Sections */}
+          <div className="space-y-6 pb-8">
+            {config.sections.map((configSection, index) => (
+              <motion.div
+                key={configSection.id}
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                {/* Section Header */}
+                <button
+                  onClick={() => toggleSection(configSection.id)}
+                  className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors border-b border-gray-200"
+                >
+                  <div className="flex items-center space-x-3">
+                    <configSection.icon className="w-4 h-4 text-gray-600" />
+                    <h3 className="text-sm font-semibold text-gray-900">
+                      {configSection.title}
+                    </h3>
+                  </div>
+                  {expandedSections.includes(configSection.id) ? (
+                    <ChevronUp className="w-4 h-4 text-gray-500" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                  )}
+                </button>
+
+                {/* Section Content */}
+                {expandedSections.includes(configSection.id) && (
+                  <motion.div
+                    className="p-4"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="space-y-6">
+                      {configSection.fields.map((field, fieldIndex) => (
+                        <motion.div
+                          key={field.id}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: fieldIndex * 0.05 }}
+                        >
+                          {renderField(field)}
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
-            )}
-          </motion.div>
-        ))}
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
