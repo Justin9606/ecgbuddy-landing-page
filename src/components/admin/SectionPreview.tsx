@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, EyeOff, MousePointer, Edit3, Layers } from "lucide-react";
+import { Eye, EyeOff, MousePointer, Edit3, Layers, Monitor, Smartphone, Tablet } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
 
 // Import section components
@@ -52,7 +52,7 @@ const HighlightableElement: React.FC<HighlightableElementProps> = ({
   return (
     <div
       className={`relative group cursor-pointer transition-all duration-200 ${className} ${
-        isHovered ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+        isHovered ? 'ring-2 ring-blue-500 ring-offset-2 rounded-lg' : ''
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -67,7 +67,7 @@ const HighlightableElement: React.FC<HighlightableElementProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-blue-500/10 border-2 border-blue-500 rounded-lg pointer-events-none"
+            className="absolute inset-0 bg-blue-500/10 border-2 border-blue-500 rounded-lg pointer-events-none z-10"
           />
         )}
       </AnimatePresence>
@@ -98,6 +98,7 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
   onElementClick,
 }) => {
   const [highlightMode, setHighlightMode] = useState(true);
+  const [viewportMode, setViewportMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
 
   const wrapWithHighlight = (element: React.ReactElement, path: string, type: string, label: string) => {
     if (!highlightMode) return element;
@@ -111,6 +112,93 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
       >
         {element}
       </HighlightableElement>
+    );
+  };
+
+  const getViewportWidth = () => {
+    switch (viewportMode) {
+      case "mobile":
+        return "375px";
+      case "tablet":
+        return "768px";
+      default:
+        return "100%";
+    }
+  };
+
+  const renderHeaderPreview = () => {
+    return (
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        {/* Header Preview Container */}
+        <div className="relative">
+          {/* Logo Section */}
+          {wrapWithHighlight(
+            <div className="p-4 border-b border-gray-100">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-red-400 via-red-500 to-pink-600 rounded-xl flex items-center justify-center">
+                  <span className="text-white text-sm">❤️</span>
+                </div>
+                <span className="text-xl font-bold text-slate-800">
+                  {content?.logoText || "ECG Buddy"}
+                </span>
+              </div>
+              {content?.tagline && (
+                <p className="text-sm text-gray-600 mt-2">{content.tagline}</p>
+              )}
+            </div>,
+            "logoText",
+            "logo",
+            "Logo & Tagline"
+          )}
+
+          {/* Navigation Section */}
+          {wrapWithHighlight(
+            <div className="p-4 border-b border-gray-100">
+              <div className="flex flex-wrap gap-2">
+                {(content?.navigationItems || []).map((item: any, index: number) => (
+                  <div
+                    key={index}
+                    className="px-3 py-1.5 bg-gray-100 rounded-full text-sm font-medium text-gray-700"
+                  >
+                    {item.name}
+                  </div>
+                ))}
+              </div>
+            </div>,
+            "navigationItems",
+            "navigation",
+            "Navigation Menu"
+          )}
+
+          {/* CTA Button Section */}
+          {wrapWithHighlight(
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  {(content?.languages || []).map((lang: any, index: number) => (
+                    <span
+                      key={index}
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        lang.isActive
+                          ? "bg-red-500 text-white"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {lang.name}
+                    </span>
+                  ))}
+                </div>
+                <button className="bg-gradient-to-r from-red-500 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-medium">
+                  {content?.ctaButton?.text || "Try ECG Buddy"}
+                </button>
+              </div>
+            </div>,
+            "ctaButton",
+            "cta",
+            "CTA Button"
+          )}
+        </div>
+      </div>
     );
   };
 
@@ -130,16 +218,8 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
     try {
       switch (section) {
         case "header":
-          return (
-            <div className="bg-white">
-              {wrapWithHighlight(
-                <Header isAdminView={true} content={content} />,
-                "header",
-                "navigation",
-                "Header Navigation"
-              )}
-            </div>
-          );
+          return renderHeaderPreview();
+          
         case "hero":
           return (
             <div className="space-y-4">
@@ -153,6 +233,7 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
               )}
             </div>
           );
+          
         case "features":
           return wrapWithHighlight(
             <Features isAdminView={true} content={content} />,
@@ -160,6 +241,7 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
             "features-section",
             "Features Section"
           );
+          
         case "mobile-download":
           return wrapWithHighlight(
             <MobileDownload isAdminView={true} content={content} />,
@@ -167,6 +249,7 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
             "mobile-section",
             "Mobile Download Section"
           );
+          
         case "faq":
           return wrapWithHighlight(
             <FAQ isAdminView={true} content={content} />,
@@ -174,6 +257,7 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
             "faq-section",
             "FAQ Section"
           );
+          
         case "about-arpi":
           return wrapWithHighlight(
             <AboutARPI isAdminView={true} content={content} />,
@@ -181,13 +265,19 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
             "about-section",
             "About ARPI Section"
           );
+          
         case "footer":
-          return wrapWithHighlight(
-            <Footer isAdminView={true} content={content} />,
-            "footer",
-            "footer-section",
-            "Footer Section"
+          return (
+            <div className="bg-gray-900 text-white rounded-lg overflow-hidden">
+              {wrapWithHighlight(
+                <Footer isAdminView={true} content={content} />,
+                "footer",
+                "footer-section",
+                "Footer Section"
+              )}
+            </div>
           );
+          
         default:
           return (
             <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
@@ -211,6 +301,12 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
     }
   };
 
+  const viewportOptions = [
+    { id: "desktop", name: "Desktop", icon: Monitor },
+    { id: "tablet", name: "Tablet", icon: Tablet },
+    { id: "mobile", name: "Mobile", icon: Smartphone },
+  ];
+
   return (
     <div className="space-y-4">
       {/* Preview Header */}
@@ -230,6 +326,24 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
         </div>
         
         <div className="flex items-center space-x-2">
+          {/* Viewport Selector */}
+          <div className="flex items-center bg-gray-100 rounded-lg p-1">
+            {viewportOptions.map((viewport) => (
+              <button
+                key={viewport.id}
+                onClick={() => setViewportMode(viewport.id as any)}
+                className={`flex items-center space-x-1 px-2 py-1 rounded-md text-xs font-medium transition-colors ${
+                  viewportMode === viewport.id
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                <viewport.icon className="w-3 h-3" />
+                <span className="hidden sm:inline">{viewport.name}</span>
+              </button>
+            ))}
+          </div>
+          
           <button
             onClick={() => setHighlightMode(!highlightMode)}
             className={`flex items-center space-x-1 text-xs px-2 py-1 rounded-md font-medium transition-colors ${
@@ -272,28 +386,43 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
           transition={{ duration: 0.3 }}
         >
           {/* Preview Overlay */}
-          <div className="absolute inset-0 pointer-events-none z-10">
-            <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm">
+          <div className="absolute inset-0 pointer-events-none z-20">
+            <div className="absolute top-3 left-3 bg-blue-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm">
               Preview Mode
             </div>
             {highlightMode && (
-              <div className="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm flex items-center space-x-1">
+              <div className="absolute top-3 right-3 bg-green-600 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm flex items-center space-x-1">
                 <MousePointer className="w-3 h-3" />
                 <span>Click to Edit</span>
               </div>
             )}
+            <div className="absolute bottom-3 left-3 bg-gray-800 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm">
+              {viewportMode.charAt(0).toUpperCase() + viewportMode.slice(1)} View
+            </div>
           </div>
 
-          {/* Section Content */}
-          <div className="relative">
-            {/* Enable interactions for highlighting */}
-            <div className={highlightMode ? 'pointer-events-auto' : 'pointer-events-none select-none'}>
-              {renderSectionComponent()}
+          {/* Viewport Container */}
+          <div className="flex justify-center bg-gray-100 p-4">
+            <div 
+              className="bg-white shadow-lg rounded-lg overflow-hidden transition-all duration-300"
+              style={{ 
+                width: getViewportWidth(),
+                maxWidth: "100%",
+                minHeight: section === "header" ? "auto" : "400px"
+              }}
+            >
+              {/* Section Content */}
+              <div className="relative">
+                {/* Enable interactions for highlighting */}
+                <div className={highlightMode ? 'pointer-events-auto' : 'pointer-events-none select-none'}>
+                  {renderSectionComponent()}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Preview Footer */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/20 to-transparent h-8 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/10 to-transparent h-6 pointer-events-none" />
         </motion.div>
       )}
 
