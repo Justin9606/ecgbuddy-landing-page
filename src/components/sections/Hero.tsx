@@ -20,8 +20,13 @@ import {
   CheckCircle,
   Star,
 } from "lucide-react";
+import { HighlightableElement, HighlightableArrayItem } from "@/components/admin/InteractivePreview";
 
-const Hero = () => {
+interface HeroProps {
+  onElementClick?: (elementPath: string, elementType: string) => void;
+}
+
+const Hero: React.FC<HeroProps> = ({ onElementClick }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
@@ -202,23 +207,39 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
           >
-            <h1 className="text-6xl md:text-8xl font-bold leading-none mb-4">
-              <motion.span
-                className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent"
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
+            <h1 className="text-4xl md:text-6xl font-bold leading-none mb-4">
+              <HighlightableElement
+                dataPath="mainHeading.line1"
+                elementType="text"
+                label="Main Heading Line 1"
+                onElementClick={onElementClick}
+                disabled={!onElementClick}
               >
-                Revolutionize
-              </motion.span>
-              <motion.span
-                className="block bg-gradient-to-r from-red-600 via-red-500 to-pink-600 bg-clip-text text-transparent"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
+                <motion.span
+                  className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent"
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                >
+                  Revolutionize
+                </motion.span>
+              </HighlightableElement>
+              <HighlightableElement
+                dataPath="mainHeading.line2"
+                elementType="text"
+                label="Main Heading Line 2"
+                onElementClick={onElementClick}
+                disabled={!onElementClick}
               >
-                ECG Analysis
-              </motion.span>
+                <motion.span
+                  className="block bg-gradient-to-r from-red-600 via-red-500 to-pink-600 bg-clip-text text-transparent"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.6 }}
+                >
+                  ECG Analysis
+                </motion.span>
+              </HighlightableElement>
             </h1>
             <motion.div
               className="h-1 w-32 bg-gradient-to-r from-red-500 to-pink-500 rounded-full mx-auto opacity-60"
@@ -229,73 +250,89 @@ const Hero = () => {
           </motion.div>
 
           {/* Enhanced Subtitle */}
-          <motion.p
-            className="text-xl md:text-2xl text-slate-600 mb-8 max-w-4xl mx-auto leading-relaxed font-light"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
+          <HighlightableElement
+            dataPath="subtitle"
+            elementType="richtext"
+            label="Subtitle"
+            onElementClick={onElementClick}
+            disabled={!onElementClick}
           >
-            Transform complex cardiac data into clear, actionable insights with
-            our
-            <span className="font-medium text-slate-800">
-              {" "}
-              AI-powered platform
-            </span>{" "}
-            trusted by
-            <span className="font-medium text-red-600">
-              {" "}
-              healthcare professionals worldwide
-            </span>
-            .
-          </motion.p>
+            <motion.p
+              className="text-xl md:text-2xl text-slate-600 mb-8 max-w-4xl mx-auto leading-relaxed font-light"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+            >
+              Transform complex cardiac data into clear, actionable insights with
+              our
+              <span className="font-medium text-slate-800">
+                {" "}
+                AI-powered platform
+              </span>{" "}
+              trusted by
+              <span className="font-medium text-red-600">
+                {" "}
+                healthcare professionals worldwide
+              </span>
+              .
+            </motion.p>
+          </HighlightableElement>
 
           {/* Interactive Testimonial Carousel */}
           <motion.div
-            className="mb-12 max-w-3xl mx-auto"
+            className="mb-8 max-w-3xl mx-auto"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
           >
             <div className="bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-2xl p-6 shadow-[0_8px_32px_rgba(255,63,74,0.08)] transition-all duration-500">
               <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentTestimonial}
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.5 }}
-                  className="flex items-center justify-center space-x-4 mb-4"
+                <HighlightableArrayItem
+                  dataPath="testimonials"
+                  index={currentTestimonial}
+                  label="Testimonial"
+                  onElementClick={onElementClick}
+                  disabled={!onElementClick}
                 >
-                  <span className="text-2xl">
-                    {testimonials[currentTestimonial].avatar}
-                  </span>
-                  <div className="text-left">
-                    <p className="text-slate-700 font-medium italic">
-                      "{testimonials[currentTestimonial].text}"
-                    </p>
-                    <div className="text-sm text-slate-500 mt-2 flex items-center space-x-2">
-                      <span className="font-semibold">
-                        {testimonials[currentTestimonial].author}
-                      </span>
-                      <span>•</span>
-                      <span>{testimonials[currentTestimonial].role}</span>
-                      <div className="flex items-center ml-2">
-                        {[
-                          ...Array(testimonials[currentTestimonial].rating),
-                        ].map((_, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, scale: 0 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: i * 0.1 }}
-                          >
-                            <Sparkles className="w-3 h-3 text-yellow-500 fill-current" />
-                          </motion.div>
-                        ))}
+                  <motion.div
+                    key={currentTestimonial}
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -50 }}
+                    transition={{ duration: 0.5 }}
+                    className="flex items-center justify-center space-x-4 mb-4"
+                  >
+                    <span className="text-2xl">
+                      {testimonials[currentTestimonial].avatar}
+                    </span>
+                    <div className="text-left">
+                      <p className="text-slate-700 font-medium italic">
+                        "{testimonials[currentTestimonial].text}"
+                      </p>
+                      <div className="text-sm text-slate-500 mt-2 flex items-center space-x-2">
+                        <span className="font-semibold">
+                          {testimonials[currentTestimonial].author}
+                        </span>
+                        <span>•</span>
+                        <span>{testimonials[currentTestimonial].role}</span>
+                        <div className="flex items-center ml-2">
+                          {[
+                            ...Array(testimonials[currentTestimonial].rating),
+                          ].map((_, i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, scale: 0 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: i * 0.1 }}
+                            >
+                              <Sparkles className="w-3 h-3 text-yellow-500 fill-current" />
+                            </motion.div>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
+                </HighlightableArrayItem>
               </AnimatePresence>
 
               {/* Interactive Navigation Dots */}
@@ -326,26 +363,34 @@ const Hero = () => {
           >
             <div className="grid grid-cols-3 gap-6">
               {staticMetrics.map((metric, index) => (
-                <motion.div
+                <HighlightableArrayItem
                   key={`static-metric-${index}`}
-                  className="bg-white/30 backdrop-blur-2xl border border-red-100/50 rounded-2xl p-4 text-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.4 + index * 0.1 }}
-                  whileHover={{ scale: 1.05 }}
+                  dataPath="metrics"
+                  index={index}
+                  label="Metric"
+                  onElementClick={onElementClick}
+                  disabled={!onElementClick}
                 >
-                  <div className="flex items-center justify-center mb-2">
-                    <metric.icon
-                      className={`w-5 h-5 text-${metric.color}-500`}
-                    />
-                  </div>
-                  <div
-                    className={`text-2xl font-bold text-${metric.color}-600`}
+                  <motion.div
+                    className="bg-white/30 backdrop-blur-2xl border border-red-100/50 rounded-2xl p-4 text-center"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.4 + index * 0.1 }}
+                    whileHover={{ scale: 1.05 }}
                   >
-                    {metric.value}
-                  </div>
-                  <div className="text-sm text-slate-600">{metric.label}</div>
-                </motion.div>
+                    <div className="flex items-center justify-center mb-2">
+                      <metric.icon
+                        className={`w-5 h-5 text-${metric.color}-500`}
+                      />
+                    </div>
+                    <div
+                      className={`text-2xl font-bold text-${metric.color}-600`}
+                    >
+                      {metric.value}
+                    </div>
+                    <div className="text-sm text-slate-600">{metric.label}</div>
+                  </motion.div>
+                </HighlightableArrayItem>
               ))}
             </div>
           </motion.div>
@@ -357,35 +402,51 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.4 }}
           >
-            <motion.button
-              onClick={handleStartAnalysis}
-              className="group relative bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white px-10 py-4 rounded-full font-semibold text-lg shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center space-x-3 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <HighlightableElement
+              dataPath="ctaButtons.primary"
+              elementType="button"
+              label="Primary CTA Button"
+              onElementClick={onElementClick}
+              disabled={!onElementClick}
             >
-              {/* Glassy hover effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-
-              <span className="relative z-10">Start Analysis</span>
-              <motion.div
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+              <motion.button
+                onClick={handleStartAnalysis}
+                className="group relative bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white px-10 py-4 rounded-full font-semibold text-lg shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center space-x-3 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <ArrowRight className="w-5 h-5 relative z-10" />
-              </motion.div>
-            </motion.button>
+                {/* Glassy hover effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
-            <motion.button
-              className="group relative bg-white/60 backdrop-blur-2xl border border-red-100/50 text-slate-700 px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 flex items-center space-x-3 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.12)] overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+                <span className="relative z-10">Start Analysis</span>
+                <motion.div
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <ArrowRight className="w-5 h-5 relative z-10" />
+                </motion.div>
+              </motion.button>
+            </HighlightableElement>
+
+            <HighlightableElement
+              dataPath="ctaButtons.secondary"
+              elementType="button"
+              label="Secondary CTA Button"
+              onElementClick={onElementClick}
+              disabled={!onElementClick}
             >
-              {/* Glassy hover effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+              <motion.button
+                className="group relative bg-white/60 backdrop-blur-2xl border border-red-100/50 text-slate-700 px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 flex items-center space-x-3 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.12)] overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {/* Glassy hover effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
-              <Play className="w-5 h-5 transition-transform duration-300 relative z-10" />
-              <span className="relative z-10">Watch Demo</span>
-            </motion.button>
+                <Play className="w-5 h-5 transition-transform duration-300 relative z-10" />
+                <span className="relative z-10">Watch Demo</span>
+              </motion.button>
+            </HighlightableElement>
           </motion.div>
 
           {/* Enhanced Stats Cards with Better Animations */}
@@ -498,60 +559,68 @@ const Hero = () => {
                 borderColor: "purple-200/50",
               },
             ].map((item, index) => (
-              <motion.div
+              <HighlightableArrayItem
                 key={index}
-                className={`group relative bg-gradient-to-br ${item.bgGradient} backdrop-blur-2xl border border-${item.borderColor} rounded-2xl p-6 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] overflow-hidden cursor-pointer min-w-[200px]`}
-                initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{
-                  delay: 2.7 + index * 0.1,
-                  duration: 0.6,
-                  ease: "easeOut",
-                }}
-                whileHover={{ y: -5, scale: 1.02 }}
+                dataPath="trustIndicators"
+                index={index}
+                label="Trust Indicator"
+                onElementClick={onElementClick}
+                disabled={!onElementClick}
               >
-                {/* Glassy hover effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
-
-                {/* Certification Badge */}
-                <div className="relative flex items-center space-x-4">
-                  <motion.div
-                    className={`w-12 h-12 bg-gradient-to-br ${item.gradient} rounded-xl flex items-center justify-center shadow-lg transition-all duration-300`}
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                  >
-                    <item.icon className="w-6 h-6 text-white" />
-                  </motion.div>
-                  <div className="flex-1">
-                    <div className="font-bold text-slate-800 text-sm mb-1 group-hover:text-slate-900 transition-colors">
-                      {item.text}
-                    </div>
-                    <div className="text-xs text-slate-600 group-hover:text-slate-700 transition-colors">
-                      {item.subtext}
-                    </div>
-                  </div>
-                  <motion.div
-                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    whileHover={{ scale: 1.2 }}
-                  >
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                  </motion.div>
-                </div>
-
-                {/* Verification Indicator */}
                 <motion.div
-                  className="absolute top-2 right-2 w-3 h-3 bg-green-400 rounded-full shadow-sm"
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.7, 1, 0.7],
-                  }}
+                  className={`group relative bg-gradient-to-br ${item.bgGradient} backdrop-blur-2xl border border-${item.borderColor} rounded-2xl p-6 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] overflow-hidden cursor-pointer min-w-[200px]`}
+                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: index * 0.5,
+                    delay: 2.7 + index * 0.1,
+                    duration: 0.6,
+                    ease: "easeOut",
                   }}
-                />
-              </motion.div>
+                  whileHover={{ y: -5, scale: 1.02 }}
+                >
+                  {/* Glassy hover effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+
+                  {/* Certification Badge */}
+                  <div className="relative flex items-center space-x-4">
+                    <motion.div
+                      className={`w-12 h-12 bg-gradient-to-br ${item.gradient} rounded-xl flex items-center justify-center shadow-lg transition-all duration-300`}
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                    >
+                      <item.icon className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <div className="font-bold text-slate-800 text-sm mb-1 group-hover:text-slate-900 transition-colors">
+                        {item.text}
+                      </div>
+                      <div className="text-xs text-slate-600 group-hover:text-slate-700 transition-colors">
+                        {item.subtext}
+                      </div>
+                    </div>
+                    <motion.div
+                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      whileHover={{ scale: 1.2 }}
+                    >
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                    </motion.div>
+                  </div>
+
+                  {/* Verification Indicator */}
+                  <motion.div
+                    className="absolute top-2 right-2 w-3 h-3 bg-green-400 rounded-full shadow-sm"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [0.7, 1, 0.7],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: index * 0.5,
+                    }}
+                  />
+                </motion.div>
+              </HighlightableArrayItem>
             ))}
           </motion.div>
         </div>

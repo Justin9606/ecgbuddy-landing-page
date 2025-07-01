@@ -27,7 +27,7 @@ import { AdminSection } from "./AdminDashboard";
 import { RichTextEditor } from "./fields/RichTextEditor";
 import { ImagePreview } from "./fields/ImagePreview";
 import { DraggableList } from "./fields/DraggableList";
-import { StaticPreview } from "./StaticPreview";
+import { LivePreview } from "./LivePreview";
 import { getSectionSchema, validateFieldValue, FieldSchema } from "@/lib/admin/contentSchemas";
 import { getIconComponent } from "@/lib/utils/icons";
 import { useAutoSave } from "@/lib/admin/autoSave";
@@ -49,13 +49,15 @@ const FieldRenderer = memo(({
   fieldValue, 
   fieldErrors, 
   onFieldChange, 
-  onArrayUpdate 
+  onArrayUpdate,
+  isHighlighted = false,
 }: {
   field: FieldSchema;
   fieldValue: any;
   fieldErrors?: string[];
   onFieldChange: (field: FieldSchema, value: any) => void;
   onArrayUpdate: (field: FieldSchema, newArray: any[]) => void;
+  isHighlighted?: boolean;
 }) => {
   const FieldIcon = getIconComponent(
     field.type === 'richtext' ? 'FileText' : 
@@ -65,7 +67,7 @@ const FieldRenderer = memo(({
   );
   
   const commonProps = {
-    className: "space-y-2 transition-all duration-200",
+    className: `space-y-2 transition-all duration-200 ${isHighlighted ? 'ring-2 ring-blue-500 ring-offset-2 rounded-lg p-2' : ''}`,
   };
   
   switch (field.type) {
@@ -80,6 +82,11 @@ const FieldRenderer = memo(({
               {field.label}
               {field.required && <span className="text-red-500 ml-1">*</span>}
             </label>
+            {isHighlighted && (
+              <div className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
+                Selected from preview
+              </div>
+            )}
           </div>
           {field.description && (
             <p className="text-xs text-gray-500">{field.description}</p>
@@ -116,6 +123,11 @@ const FieldRenderer = memo(({
             description={field.description}
             placeholder={field.placeholder}
           />
+          {isHighlighted && (
+            <div className="mt-2 bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium inline-block">
+              Selected from preview
+            </div>
+          )}
           {fieldErrors && fieldErrors.length > 0 && (
             <div className="mt-2 space-y-1">
               {fieldErrors.map((error, index) => (
@@ -139,6 +151,11 @@ const FieldRenderer = memo(({
             description={field.description}
             placeholder={field.placeholder}
           />
+          {isHighlighted && (
+            <div className="mt-2 bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium inline-block">
+              Selected from preview
+            </div>
+          )}
           {fieldErrors && fieldErrors.length > 0 && (
             <div className="mt-2 space-y-1">
               {fieldErrors.map((error, index) => (
@@ -164,6 +181,11 @@ const FieldRenderer = memo(({
             onUpdate={(newItems) => onArrayUpdate(field, newItems)}
             description={field.description}
           />
+          {isHighlighted && (
+            <div className="mt-2 bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium inline-block">
+              Selected from preview
+            </div>
+          )}
           {fieldErrors && fieldErrors.length > 0 && (
             <div className="mt-2 space-y-1">
               {fieldErrors.map((error, index) => (
@@ -206,6 +228,7 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
   const [historyIndex, setHistoryIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+  const [highlightedElement, setHighlightedElement] = useState<string | null>(null);
   const editorRefs = useRef<Record<string, HTMLElement>>({});
 
   // Toast notifications
@@ -277,6 +300,41 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
     true
   );
 
+  // Handle element click from preview
+  const handleElementClick = useCallback((elementPath: string, elementType: string) => {
+    setHighlightedElement(elementPath);
+    
+    // Find and expand the relevant section
+    for (const schemaSection of sectionSchema.sections) {
+      for (const field of schemaSection.fields) {
+        if (field.path.includes(elementPath) || elementPath.includes(field.path)) {
+          if (!expandedSections.includes(schemaSection.id)) {
+            setExpandedSections(prev => [...prev, schemaSection.id]);
+          }
+          
+          // Scroll to the field
+          setTimeout(() => {
+            const fieldElement = editorRefs.current[field.id];
+            if (fieldElement) {
+              fieldElement.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+              });
+              
+              // Add highlight effect
+              fieldElement.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2');
+              setTimeout(() => {
+                fieldElement.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-2');
+                setHighlightedElement(null);
+              }, 3000);
+            }
+          }, 300);
+          break;
+        }
+      }
+    }
+  }, [sectionSchema.sections, expandedSections]);
+
   // Enhanced keyboard shortcuts
   const shortcuts = useMemo(() => createAdminShortcuts({
     onSave: handleSave,
@@ -299,6 +357,7 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
     setContentHistory([initialContent]);
     setHistoryIndex(0);
     setIsDirty(false);
+    setHighlightedElement(null);
   }, [initialContent]);
 
   // Show save error toast
@@ -365,6 +424,7 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
     setContentHistory([initialContent]);
     setHistoryIndex(0);
     setIsDirty(false);
+    setHighlightedElement(null);
     toast.info("Content reset to last saved version");
   }, [initialContent, toast]);
 
@@ -405,10 +465,11 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
       {/* Left Side - Live Preview */}
       <div className="w-1/2 pr-3 border-r border-gray-200">
         <div className="sticky top-0 h-full overflow-y-auto">
-          <StaticPreview
+          <LivePreview
             section={section}
             isVisible={showPreview}
             onToggleVisibility={() => setShowPreview(!showPreview)}
+            onElementClick={handleElementClick}
           />
         </div>
       </div>
@@ -553,6 +614,13 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
                   </div>
                 )}
 
+                {highlightedElement && (
+                  <div className="flex items-center space-x-2 text-blue-600">
+                    <Target className="w-4 h-4" />
+                    <span className="text-sm">Element selected from preview</span>
+                  </div>
+                )}
+
                 {/* History Status */}
                 <div className="flex items-center space-x-2 text-gray-500">
                   <Clock className="w-4 h-4" />
@@ -612,14 +680,21 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
                       <div className="p-4">
                         <div className="space-y-6">
                           {schemaSection.fields.map((field) => (
-                            <FieldRenderer
+                            <div
                               key={field.id}
-                              field={field}
-                              fieldValue={getValueByPath(localContent, field.path)}
-                              fieldErrors={validationErrors[field.id]}
-                              onFieldChange={handleFieldChange}
-                              onArrayUpdate={handleArrayUpdate}
-                            />
+                              ref={(el) => { 
+                                if (el) editorRefs.current[field.id] = el; 
+                              }}
+                            >
+                              <FieldRenderer
+                                field={field}
+                                fieldValue={getValueByPath(localContent, field.path)}
+                                fieldErrors={validationErrors[field.id]}
+                                onFieldChange={handleFieldChange}
+                                onArrayUpdate={handleArrayUpdate}
+                                isHighlighted={highlightedElement === field.path}
+                              />
+                            </div>
                           ))}
                         </div>
                       </div>
