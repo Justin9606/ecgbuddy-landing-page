@@ -5,11 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AdminSidebar } from "./AdminSidebar";
 import { AdminHeader } from "./AdminHeader";
 import { DashboardHome } from "./sections/DashboardHome";
-import { ContentEditor } from "./sections/ContentEditor";
+import { EnhancedContentEditor } from "./EnhancedContentEditor";
 import { PageBuilder } from "./sections/PageBuilder";
 import { MediaLibrary } from "./sections/MediaLibrary";
 import { Settings } from "./sections/Settings";
 import { Users } from "./sections/Users";
+import { ToastProvider } from "./Toast";
 import { SiteContent } from "@/lib/admin/types";
 import { loadSiteContent, saveSiteContent, getDefaultSiteContent, savePreviewDraft } from "@/lib/admin/storage";
 
@@ -127,7 +128,7 @@ export const AdminDashboard: React.FC = () => {
         // Get the relevant section content
         const sectionContent = siteContent[activeSection as keyof SiteContent];
         return (
-          <ContentEditor 
+          <EnhancedContentEditor 
             section={activeSection}
             initialContent={sectionContent}
             onContentChange={(newContent) => handleContentChange(activeSection, newContent)}
@@ -140,41 +141,43 @@ export const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 flex">
-      {/* Sidebar */}
-      <AdminSidebar
-        activeSection={activeSection}
-        onSectionChange={setActiveSection}
-        isCollapsed={isSidebarCollapsed}
-        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-      />
-
-      {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'ml-20' : 'ml-80'}`}>
-        {/* Header */}
-        <AdminHeader 
+    <ToastProvider>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 flex">
+        {/* Sidebar */}
+        <AdminSidebar
           activeSection={activeSection}
-          onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          onSave={handleSaveAllChanges}
-          onPreview={handlePreview}
-          lastSaved={lastSaved}
+          onSectionChange={setActiveSection}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         />
 
-        {/* Content Area */}
-        <main className="p-6">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeSection}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              {renderContent()}
-            </motion.div>
-          </AnimatePresence>
-        </main>
+        {/* Main Content */}
+        <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+          {/* Header */}
+          <AdminHeader 
+            activeSection={activeSection}
+            onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            onSave={handleSaveAllChanges}
+            onPreview={handlePreview}
+            lastSaved={lastSaved}
+          />
+
+          {/* Content Area */}
+          <main className="p-6">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeSection}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                {renderContent()}
+              </motion.div>
+            </AnimatePresence>
+          </main>
+        </div>
       </div>
-    </div>
+    </ToastProvider>
   );
 };
