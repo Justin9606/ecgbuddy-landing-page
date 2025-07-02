@@ -27,6 +27,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("KOR");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -69,6 +70,10 @@ const Header = () => {
 
   const handleDropdownClick = (key: string) => {
     setActiveDropdown(activeDropdown === key ? null : key);
+  };
+
+  const handleLanguageChange = (language: string) => {
+    setSelectedLanguage(language);
   };
 
   const megaMenuItems = {
@@ -259,6 +264,68 @@ const Header = () => {
         link: "#support",
       },
     },
+    Careers: {
+      sections: [
+        {
+          title: "Open Positions",
+          items: [
+            {
+              name: "Software Engineers",
+              href: "#engineering",
+              description: "Build the future of healthcare AI",
+              icon: Brain,
+              gradient: "from-blue-500 to-indigo-600",
+            },
+            {
+              name: "Clinical Specialists",
+              href: "#clinical",
+              description: "Bridge technology and medicine",
+              icon: Heart,
+              gradient: "from-red-500 to-pink-600",
+            },
+            {
+              name: "Product Designers",
+              href: "#design",
+              description: "Design intuitive healthcare experiences",
+              icon: Sparkles,
+              gradient: "from-purple-500 to-violet-600",
+            },
+            {
+              name: "Data Scientists",
+              href: "#data",
+              description: "Advance AI-powered diagnostics",
+              icon: Activity,
+              gradient: "from-emerald-500 to-teal-600",
+            },
+          ],
+        },
+        {
+          title: "Why ARPI",
+          items: [
+            {
+              name: "Mission-Driven Work",
+              href: "#mission",
+              description: "Make a real impact on patient care",
+              icon: Heart,
+              gradient: "from-rose-500 to-red-600",
+            },
+            {
+              name: "Growth Opportunities",
+              href: "#growth",
+              description: "Advance your career with us",
+              icon: Users,
+              gradient: "from-amber-500 to-orange-500",
+            },
+          ],
+        },
+      ],
+      cta: {
+        title: "Ready to join us?",
+        description: "Explore open positions and apply today",
+        button: "View All Jobs",
+        link: "#jobs",
+      },
+    },
   };
 
   return (
@@ -417,14 +484,31 @@ const Header = () => {
               </button>
             </nav>
 
-            {/* Right Side Actions - Simplified Language Toggle Only */}
-            <div className="hidden lg:flex items-center space-x-2">
-              {/* Simplified Language Toggle */}
-              <div className="flex items-center space-x-2">
-                <button className="px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-pink-600 rounded-full shadow-sm transition-all duration-300 hover:shadow-md">
+            {/* Enhanced Right Side Actions - Polished Glassy Language Toggle */}
+            <div className="hidden lg:flex items-center space-x-4">
+              {/* Premium Glassy Language Toggle */}
+              <div className="relative bg-white/30 backdrop-blur-md border border-white/20 rounded-full p-1 flex items-center space-x-1 shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] transition-all duration-500 group overflow-hidden">
+                {/* Glassy hover effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+                
+                <button
+                  onClick={() => handleLanguageChange("KOR")}
+                  className={`relative z-10 px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-300 ${
+                    selectedLanguage === "KOR"
+                      ? "text-slate-900 bg-white/70 shadow-sm hover:shadow-md"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
+                  }`}
+                >
                   KOR
                 </button>
-                <button className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-full">
+                <button
+                  onClick={() => handleLanguageChange("ENG")}
+                  className={`relative z-10 px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-300 ${
+                    selectedLanguage === "ENG"
+                      ? "text-slate-900 bg-white/70 shadow-sm hover:shadow-md"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
+                  }`}
+                >
                   ENG
                 </button>
               </div>
@@ -451,7 +535,35 @@ const Header = () => {
                 : "max-h-0 opacity-0 overflow-hidden"
             }`}
           >
-            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_20px_70px_rgba(0,0,0,0.15)] mt-4 p-6 max-h-[70vh] overflow-y-auto">
+            <div className="bg-white/80 backdrop-blur-2xl rounded-2xl border border-slate-200/80 shadow-[0_20px_70px_rgba(0,0,0,0.15)] mt-4 p-6 max-h-[70vh] overflow-y-auto">
+              {/* Mobile Language Toggle */}
+              <div className="mb-6 pb-6 border-b border-slate-100">
+                <div className="flex items-center justify-center">
+                  <div className="bg-white/50 backdrop-blur-md border border-white/30 rounded-full p-1 flex items-center space-x-1 shadow-sm">
+                    <button
+                      onClick={() => handleLanguageChange("KOR")}
+                      className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
+                        selectedLanguage === "KOR"
+                          ? "text-slate-900 bg-white/80 shadow-sm"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                      }`}
+                    >
+                      한국어
+                    </button>
+                    <button
+                      onClick={() => handleLanguageChange("ENG")}
+                      className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
+                        selectedLanguage === "ENG"
+                          ? "text-slate-900 bg-white/80 shadow-sm"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                      }`}
+                    >
+                      English
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               {/* Mobile Navigation */}
               {Object.entries(megaMenuItems).map(([key, menu], index) => (
                 <div
