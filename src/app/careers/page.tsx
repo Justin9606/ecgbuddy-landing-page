@@ -46,7 +46,7 @@ const CareersPage = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Job positions data
+  // Job positions data - REMOVED featured and urgent badges
   const jobPositions = [
     {
       id: 1,
@@ -65,8 +65,6 @@ const CareersPage = () => {
         "Strong Python and cloud computing skills"
       ],
       benefits: ["Stock options", "Health insurance", "Flexible hours", "Remote work"],
-      featured: true,
-      urgent: false,
       posted: "2 days ago"
     },
     {
@@ -86,8 +84,6 @@ const CareersPage = () => {
         "Strong design sensibility"
       ],
       benefits: ["Stock options", "Health insurance", "Learning budget", "Gym membership"],
-      featured: false,
-      urgent: true,
       posted: "1 week ago"
     },
     {
@@ -107,8 +103,6 @@ const CareersPage = () => {
         "Regulatory compliance knowledge"
       ],
       benefits: ["Health insurance", "Conference budget", "Research grants", "Flexible schedule"],
-      featured: true,
-      urgent: false,
       posted: "3 days ago"
     },
     {
@@ -128,8 +122,6 @@ const CareersPage = () => {
         "Strong user research skills"
       ],
       benefits: ["Remote work", "Design tools budget", "Health insurance", "Unlimited PTO"],
-      featured: false,
-      urgent: false,
       posted: "5 days ago"
     },
     {
@@ -149,8 +141,6 @@ const CareersPage = () => {
         "Strong automation and monitoring skills"
       ],
       benefits: ["Stock options", "Health insurance", "On-call compensation", "Training budget"],
-      featured: false,
-      urgent: true,
       posted: "1 day ago"
     },
     {
@@ -170,8 +160,6 @@ const CareersPage = () => {
         "Strong statistical modeling skills"
       ],
       benefits: ["Remote work", "Conference budget", "Health insurance", "Research time"],
-      featured: false,
-      urgent: false,
       posted: "1 week ago"
     }
   ];
@@ -278,7 +266,7 @@ const CareersPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
-      {/* Header with Back Navigation */}
+      {/* Header with Back Navigation - UPDATED: Changed to ARPI Careers */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-slate-200/50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -295,7 +283,7 @@ const CareersPage = () => {
                 <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center">
                   <Heart className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-xl font-bold text-slate-800">ECG Buddy Careers</span>
+                <span className="text-xl font-bold text-slate-800">ARPI Careers</span>
               </div>
             </div>
             
@@ -654,7 +642,7 @@ const CareersPage = () => {
             </div>
           </motion.div>
 
-          {/* Job Listings - FIXED: Proper badge positioning with z-index */}
+          {/* Job Listings - REMOVED all badges and "Save for Later" button */}
           <div className="space-y-8">
             <AnimatePresence>
               {filteredJobs.map((job, index) => (
@@ -665,29 +653,11 @@ const CareersPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ delay: index * 0.1, duration: 0.5 }}
-                  className={`relative bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.1)] transition-all duration-500 group ${
-                    job.featured ? "ring-2 ring-red-500/20 border-red-200/50" : ""
-                  }`}
+                  className="relative bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.1)] transition-all duration-500 group"
                   whileHover={{ y: -2 }}
                 >
-                  {/* FIXED: Badges positioned OUTSIDE the card with proper z-index and spacing */}
-                  <div className="absolute -top-3 right-6 flex items-center space-x-2 z-30">
-                    {job.featured && (
-                      <div className="bg-gradient-to-r from-red-500 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center space-x-1 shadow-lg border-2 border-white">
-                        <Star className="w-3 h-3 fill-current" />
-                        <span>Featured</span>
-                      </div>
-                    )}
-                    {job.urgent && (
-                      <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center space-x-1 shadow-lg border-2 border-white">
-                        <Zap className="w-3 h-3" />
-                        <span>Urgent</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Card Content - Added top padding to accommodate badges */}
-                  <div className="p-8 pt-12">
+                  {/* Card Content - Normal padding since no badges */}
+                  <div className="p-8">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                       {/* Job Info */}
                       <div className="lg:col-span-2">
@@ -756,7 +726,7 @@ const CareersPage = () => {
                         </div>
                       </div>
 
-                      {/* Apply Section */}
+                      {/* Apply Section - REMOVED "Save for Later" button */}
                       <div className="lg:col-span-1">
                         <div className="bg-white/50 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-6 h-fit">
                           <div className="text-center mb-6">
@@ -778,10 +748,6 @@ const CareersPage = () => {
                             <span className="relative z-10">Apply Now</span>
                             <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
                           </motion.button>
-
-                          <button className="w-full bg-white/60 backdrop-blur-sm border border-slate-200/50 text-slate-700 px-6 py-3 rounded-2xl font-medium hover:bg-white/80 transition-all duration-300">
-                            Save for Later
-                          </button>
 
                           <div className="mt-4 pt-4 border-t border-slate-200/50 text-center">
                             <p className="text-xs text-slate-500">
