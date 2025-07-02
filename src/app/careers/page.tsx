@@ -190,13 +190,6 @@ const CareersPage = () => {
     return matchesDepartment && matchesLocation && matchesSearch;
   });
 
-  const teamStats = [
-    { label: "Team Members", value: "150+", icon: Users },
-    { label: "Countries", value: "12", icon: Globe },
-    { label: "Average Experience", value: "8 years", icon: Award },
-    { label: "Retention Rate", value: "94%", icon: TrendingUp }
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
       {/* Header with Back Navigation - UPDATED: Changed to ARPI Careers */}
@@ -271,7 +264,7 @@ const CareersPage = () => {
               Join a passionate team working to revolutionize cardiac care through cutting-edge AI technology. Help us save lives and improve patient outcomes worldwide.
             </motion.p>
 
-            {/* REMOVED "Watch Our Story" button - Only one CTA now */}
+            {/* Single CTA Button */}
             <motion.div
               className="flex justify-center"
               initial={{ opacity: 0, y: 30 }}
@@ -290,31 +283,6 @@ const CareersPage = () => {
               </motion.button>
             </motion.div>
           </div>
-
-          {/* SIMPLIFIED Team Stats */}
-          <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.8 }}
-          >
-            {teamStats.map((stat, index) => (
-              <motion.div
-                key={index}
-                className="bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-xl p-4 text-center shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] transition-all duration-500 group"
-                whileHover={{ y: -3 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1 + index * 0.1, duration: 0.6 }}
-              >
-                <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
-                  <stat.icon className="w-5 h-5 text-white" />
-                </div>
-                <div className="text-xl font-bold text-slate-800 mb-1">{stat.value}</div>
-                <div className="text-xs text-slate-600">{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
         </div>
       </section>
 
@@ -611,7 +579,7 @@ const CareersPage = () => {
                 <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
               </motion.button>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </div>
