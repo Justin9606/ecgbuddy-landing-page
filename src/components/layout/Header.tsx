@@ -71,11 +71,6 @@ const Header = () => {
     setActiveDropdown(activeDropdown === key ? null : key);
   };
 
-  // FIXED: Remove loading state and scroll instantly
-  const handleCTAClick = () => {
-    scrollToSection("mobile-download");
-  };
-
   const megaMenuItems = {
     Product: {
       sections: [
@@ -422,28 +417,17 @@ const Header = () => {
               </button>
             </nav>
 
-            {/* Right Side Actions with improved states */}
-            <div className="hidden lg:flex items-center space-x-4">
-              {/* Enhanced Language Toggle */}
-              <div className="flex items-center bg-red-50/50 backdrop-blur-sm rounded-full p-1 border border-red-100/50 hover:bg-red-50/70 transition-all duration-300">
+            {/* Right Side Actions - Simplified Language Toggle Only */}
+            <div className="hidden lg:flex items-center space-x-2">
+              {/* Simplified Language Toggle */}
+              <div className="flex items-center space-x-2">
                 <button className="px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-pink-600 rounded-full shadow-sm transition-all duration-300 hover:shadow-md">
                   KOR
                 </button>
-                <button className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-full hover:bg-white/50">
+                <button className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-full">
                   ENG
                 </button>
               </div>
-
-              {/* FIXED: Simplified CTA Button - No Loading State */}
-              <button
-                onClick={handleCTAClick}
-                className="relative group bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white px-6 py-2.5 rounded-full font-medium shadow-lg shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/20 overflow-hidden"
-              >
-                {/* Glassy hover effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-
-                <span className="relative z-10">Try ECG Buddy</span>
-              </button>
             </div>
 
             {/* Enhanced Mobile Menu Button */}
@@ -544,22 +528,6 @@ const Header = () => {
                 >
                   About Us
                   <Building2 className="w-4 h-4 ml-2 text-slate-500" />
-                </button>
-              </div>
-
-              {/* FIXED: Mobile CTA - No Loading State */}
-              <div className="mt-6 pt-6 border-t border-slate-100">
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    handleCTAClick();
-                  }}
-                  className="relative w-full bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white px-6 py-3 rounded-full font-medium shadow-lg shadow-red-500/25 overflow-hidden group"
-                >
-                  {/* Glassy hover effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-
-                  <span className="relative z-10">Try ECG Buddy</span>
                 </button>
               </div>
             </div>
