@@ -68,16 +68,28 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
       switch (section) {
         case "header":
           return (
-            <div className="min-h-screen bg-white">
-              <ComponentWrapper onElementClick={onElementClick}>
-                <Header onElementClick={onElementClick} />
-              </ComponentWrapper>
-              {/* Add some content below header to show it properly */}
-              <div className="pt-20 px-6">
+            <div className="min-h-screen bg-white relative">
+              {/* Override the fixed positioning for preview */}
+              <div className="relative z-10">
+                <ComponentWrapper onElementClick={onElementClick}>
+                  <div className="relative">
+                    {/* Remove fixed positioning and make it static for preview */}
+                    <div className="bg-white border-b border-gray-200 shadow-sm">
+                      <Header onElementClick={onElementClick} />
+                    </div>
+                  </div>
+                </ComponentWrapper>
+              </div>
+              
+              {/* Add some content below header to show context */}
+              <div className="px-6 py-20">
                 <div className="max-w-7xl mx-auto">
-                  <div className="text-center py-20">
+                  <div className="text-center">
                     <h2 className="text-3xl font-bold text-gray-900 mb-4">Header Preview</h2>
-                    <p className="text-gray-600">This shows how your header will appear on the live site</p>
+                    <p className="text-gray-600 mb-8">This shows how your header will appear on the live site</p>
+                    <div className="bg-gray-50 rounded-lg p-8">
+                      <p className="text-gray-500">Page content would appear below the header...</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -255,7 +267,7 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
         </div>
       </div>
 
-      {/* Admin Preview Styles - Enable interactions for editing */}
+      {/* Admin Preview Styles - Override fixed positioning for header preview */}
       <style jsx global>{`
         .admin-preview-container {
           /* Reduce animations in admin preview for better performance */
@@ -277,6 +289,20 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
           overflow: hidden;
           /* Enable interactions for editing */
           pointer-events: auto;
+        }
+
+        /* Override fixed positioning for header in preview */
+        .admin-preview-container header {
+          position: relative !important;
+          top: auto !important;
+          left: auto !important;
+          right: auto !important;
+          z-index: auto !important;
+        }
+
+        /* Ensure header content is visible */
+        .admin-preview-container .fixed {
+          position: relative !important;
         }
       `}</style>
     </div>
