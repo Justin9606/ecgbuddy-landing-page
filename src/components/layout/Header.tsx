@@ -282,7 +282,7 @@ const Header: React.FC<HeaderProps> = ({ onElementClick }) => {
       )}
 
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-out ${
+        className={`${onElementClick ? 'relative' : 'fixed'} top-0 left-0 right-0 z-50 transition-all duration-700 ease-out ${
           isScrolled
             ? "bg-white/70 backdrop-blur-2xl border-b border-red-100/50 shadow-[0_8px_32px_rgba(255,63,74,0.08)]"
             : "bg-transparent"
@@ -333,15 +333,16 @@ const Header: React.FC<HeaderProps> = ({ onElementClick }) => {
                     />
                   </button>
 
-                  {/* COMPLETELY OPAQUE Mega Menu Dropdown */}
+                  {/* Enhanced Mega Menu Dropdown with better z-index */}
                   <div
                     className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-2 transition-all duration-300 ${
                       activeDropdown === key
                         ? "opacity-100 translate-y-0 pointer-events-auto"
                         : "opacity-0 translate-y-2 pointer-events-none"
                     }`}
+                    style={{ zIndex: 9999 }} // Explicit high z-index
                   >
-                    <div className="w-[800px] bg-white rounded-3xl border border-slate-200/80 shadow-[0_20px_70px_rgba(0,0,0,0.15)] p-8 overflow-hidden group">
+                    <div className="w-[800px] bg-white rounded-3xl border border-slate-200/80 shadow-[0_20px_70px_rgba(0,0,0,0.15)] p-8 overflow-visible group">
                       {/* Subtle background animation */}
                       <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-slate-50/30 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-2000 ease-out"></div>
 

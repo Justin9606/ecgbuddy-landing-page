@@ -1,7 +1,7 @@
 "use client";
 
 import React, { memo, useMemo } from "react";
-import { Eye, EyeOff, Monitor, Smartphone, Tablet, RefreshCw, Target } from "lucide-react";
+import { Eye, EyeOff, Monitor, Smartphone, Tablet, RefreshCw, Target, Maximize2, Minimize2 } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
 import { useAdminContentData } from "@/lib/admin/contentProvider";
 
@@ -43,6 +43,7 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
   onElementClick,
 }) => {
   const [viewportMode, setViewportMode] = React.useState<"desktop" | "tablet" | "mobile">("desktop");
+  const [isFullscreen, setIsFullscreen] = React.useState(false);
   const { content, triggerUpdate } = useAdminContentData();
 
   const getViewportWidth = () => {
@@ -69,25 +70,22 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
         case "header":
           return (
             <div className="min-h-screen bg-white relative">
-              {/* Override the fixed positioning for preview */}
-              <div className="relative z-10">
+              {/* Header with proper z-index and positioning */}
+              <div className="relative z-50">
                 <ComponentWrapper onElementClick={onElementClick}>
-                  <div className="relative">
-                    {/* Remove fixed positioning and make it static for preview */}
-                    <div className="bg-white border-b border-gray-200 shadow-sm">
-                      <Header onElementClick={onElementClick} />
-                    </div>
+                  <div className="bg-white border-b border-gray-200 shadow-sm">
+                    <Header onElementClick={onElementClick} />
                   </div>
                 </ComponentWrapper>
               </div>
               
-              {/* Add some content below header to show context */}
-              <div className="px-6 py-20">
+              {/* Content below header to show context */}
+              <div className="px-6 py-12">
                 <div className="max-w-7xl mx-auto">
                   <div className="text-center">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Header Preview</h2>
-                    <p className="text-gray-600 mb-8">This shows how your header will appear on the live site</p>
-                    <div className="bg-gray-50 rounded-lg p-8">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-3">Header Preview</h2>
+                    <p className="text-gray-600 mb-6">This shows how your header will appear on the live site</p>
+                    <div className="bg-gray-50 rounded-lg p-6">
                       <p className="text-gray-500">Page content would appear below the header...</p>
                     </div>
                   </div>
@@ -177,74 +175,84 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
   if (!isVisible) return null;
 
   return (
-    <div className="h-full flex flex-col">
-      {/* Preview Header */}
-      <div className="flex-shrink-0 bg-white border-b border-gray-200 p-4">
+    <div className="h-full flex flex-col bg-white">
+      {/* Compact Preview Header */}
+      <div className="flex-shrink-0 bg-white border-b border-gray-200 px-3 py-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Eye className="w-4 h-4 text-gray-500" />
-            <h3 className="text-sm font-semibold text-gray-900">Live Preview</h3>
-            <div className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-medium">
+          <div className="flex items-center space-x-2">
+            <Eye className="w-3 h-3 text-gray-500" />
+            <h3 className="text-xs font-semibold text-gray-900">Live Preview</h3>
+            <div className="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full font-medium">
               Interactive
             </div>
             {onElementClick && (
-              <div className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium flex items-center space-x-1">
-                <Target className="w-3 h-3" />
+              <div className="bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5 rounded-full font-medium flex items-center space-x-1">
+                <Target className="w-2 h-2" />
                 <span>Click to Edit</span>
               </div>
             )}
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             {/* Manual Refresh Button */}
             <button
               onClick={triggerUpdate}
-              className="flex items-center space-x-1 px-2 py-1 text-xs text-gray-500 hover:text-gray-700 transition-colors rounded-md hover:bg-gray-100"
+              className="p-1 text-xs text-gray-500 hover:text-gray-700 transition-colors rounded hover:bg-gray-100"
               title="Refresh preview"
             >
               <RefreshCw className="w-3 h-3" />
             </button>
 
             {/* Viewport Selector */}
-            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+            <div className="flex items-center bg-gray-100 rounded p-0.5">
               {viewportOptions.map((viewport) => (
                 <button
                   key={viewport.id}
                   onClick={() => setViewportMode(viewport.id as any)}
-                  className={`flex items-center space-x-1 px-2 py-1 rounded-md text-xs font-medium transition-colors ${
+                  className={`flex items-center px-1.5 py-0.5 rounded text-xs font-medium transition-colors ${
                     viewportMode === viewport.id
                       ? "bg-white text-gray-900 shadow-sm"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
+                  title={viewport.name}
                 >
                   <viewport.icon className="w-3 h-3" />
-                  <span className="hidden sm:inline">{viewport.name}</span>
                 </button>
               ))}
             </div>
+
+            {/* Fullscreen Toggle */}
+            <button
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              className="p-1 text-xs text-gray-500 hover:text-gray-700 transition-colors rounded hover:bg-gray-100"
+              title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            >
+              {isFullscreen ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
+            </button>
             
             {onToggleVisibility && (
               <button
                 onClick={onToggleVisibility}
-                className="flex items-center space-x-1 text-xs text-gray-500 hover:text-gray-700 transition-colors px-2 py-1 rounded-md hover:bg-gray-100"
+                className="p-1 text-xs text-gray-500 hover:text-gray-700 transition-colors rounded hover:bg-gray-100"
+                title="Hide preview"
               >
                 <EyeOff className="w-3 h-3" />
-                <span>Hide</span>
               </button>
             )}
           </div>
         </div>
       </div>
 
-      {/* Live Preview Container */}
-      <div className="flex-1 bg-gray-100 overflow-hidden">
-        <div className="h-full flex items-center justify-center p-4">
+      {/* Live Preview Container - Removed extra padding and spacing */}
+      <div className="flex-1 bg-gray-50 overflow-hidden">
+        <div className="h-full flex items-start justify-center">
           <div 
-            className="bg-white shadow-xl rounded-lg overflow-hidden transition-all duration-300 h-full"
+            className={`bg-white shadow-lg overflow-hidden transition-all duration-300 ${
+              isFullscreen ? 'w-full h-full' : 'rounded-lg mt-2 mx-2 h-[calc(100%-1rem)]'
+            }`}
             style={{ 
-              width: getViewportWidth(),
-              maxWidth: "100%",
-              minHeight: "600px"
+              width: isFullscreen ? '100%' : getViewportWidth(),
+              maxWidth: isFullscreen ? '100%' : "100%",
             }}
           >
             {/* LIVE Content from Landing Page Components */}
@@ -255,19 +263,19 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
         </div>
       </div>
 
-      {/* Preview Info */}
-      <div className="flex-shrink-0 bg-gray-50 border-t border-gray-200 p-3">
+      {/* Compact Preview Info */}
+      <div className="flex-shrink-0 bg-gray-50 border-t border-gray-200 px-3 py-1">
         <div className="flex items-center justify-between text-xs text-gray-500">
           <span>
-            🔴 Live preview from actual landing page components
+            🔴 Live preview
           </span>
           <span className="font-medium">
-            {onElementClick ? 'Click elements to edit them' : 'Real-time content updates'}
+            {viewportMode.charAt(0).toUpperCase() + viewportMode.slice(1)} • {onElementClick ? 'Interactive' : 'Static'}
           </span>
         </div>
       </div>
 
-      {/* Admin Preview Styles - Override fixed positioning for header preview */}
+      {/* Enhanced Admin Preview Styles */}
       <style jsx global>{`
         .admin-preview-container {
           /* Reduce animations in admin preview for better performance */
@@ -286,7 +294,7 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
           /* Ensure proper scaling */
           transform-origin: top left;
           width: 100%;
-          overflow: hidden;
+          overflow: visible; /* Changed from hidden to visible for dropdowns */
           /* Enable interactions for editing */
           pointer-events: auto;
         }
@@ -297,12 +305,29 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
           top: auto !important;
           left: auto !important;
           right: auto !important;
-          z-index: auto !important;
+          z-index: 50 !important; /* High z-index for dropdowns */
         }
 
-        /* Ensure header content is visible */
+        /* Ensure header content is visible and dropdowns work */
         .admin-preview-container .fixed {
           position: relative !important;
+        }
+
+        /* Ensure dropdowns are visible in preview */
+        .admin-preview-container [class*="dropdown"],
+        .admin-preview-container [class*="menu"] {
+          z-index: 9999 !important;
+          position: absolute !important;
+        }
+
+        /* Make sure mega menus are visible */
+        .admin-preview-container .absolute {
+          z-index: 9999 !important;
+        }
+
+        /* Ensure proper stacking for interactive elements */
+        .admin-preview-container .group:hover > div[class*="absolute"] {
+          z-index: 9999 !important;
         }
       `}</style>
     </div>
