@@ -15,13 +15,8 @@ import {
   Star,
   Target,
 } from "lucide-react";
-import { HighlightableElement, HighlightableArrayItem } from "@/components/admin/InteractivePreview";
 
-interface MobileDownloadProps {
-  onElementClick?: (elementPath: string, elementType: string) => void;
-}
-
-const MobileDownload: React.FC<MobileDownloadProps> = ({ onElementClick }) => {
+const MobileDownload = () => {
   const [activeApp, setActiveApp] = useState<string>("ios");
 
   const apps = [
@@ -217,36 +212,20 @@ const MobileDownload: React.FC<MobileDownloadProps> = ({ onElementClick }) => {
             </span>
           </div>
 
-          <HighlightableElement
-            dataPath="sectionHeader.title"
-            elementType="richtext"
-            label="Section Title"
-            onElementClick={onElementClick}
-            disabled={!onElementClick}
-          >
-            <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-              <span className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent mb-2">
-                Take ECG Buddy
-              </span>
-              <span className="block bg-gradient-to-r from-red-600 via-red-500 to-pink-600 bg-clip-text text-transparent">
-                everywhere you go
-              </span>
-            </h2>
-          </HighlightableElement>
+          <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+            <span className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent mb-2">
+              Take ECG Buddy
+            </span>
+            <span className="block bg-gradient-to-r from-red-600 via-red-500 to-pink-600 bg-clip-text text-transparent">
+              everywhere you go
+            </span>
+          </h2>
 
-          <HighlightableElement
-            dataPath="sectionHeader.description"
-            elementType="richtext"
-            label="Section Description"
-            onElementClick={onElementClick}
-            disabled={!onElementClick}
-          >
-            <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-light">
-              Access powerful ECG analysis on any device. Download our native apps
-              for seamless real-time analysis, cloud sync, and platform-specific
-              integrations.
-            </p>
-          </HighlightableElement>
+          <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-light">
+            Access powerful ECG analysis on any device. Download our native apps
+            for seamless real-time analysis, cloud sync, and platform-specific
+            integrations.
+          </p>
         </motion.div>
 
         {/* Main Content */}
@@ -264,14 +243,7 @@ const MobileDownload: React.FC<MobileDownloadProps> = ({ onElementClick }) => {
               className="bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl p-2 shadow-[0_8px_32px_rgba(255,63,74,0.08)]"
               variants={itemVariants}
             >
-              <HighlightableElement
-                dataPath="apps"
-                elementType="array"
-                label="App Selection"
-                onElementClick={onElementClick}
-                disabled={!onElementClick}
-                className="grid grid-cols-3 gap-2"
-              >
+              <div className="grid grid-cols-3 gap-2">
                 {apps.map((app, index) => (
                   <motion.button
                     key={app.id}
@@ -316,7 +288,7 @@ const MobileDownload: React.FC<MobileDownloadProps> = ({ onElementClick }) => {
                     )}
                   </motion.button>
                 ))}
-              </HighlightableElement>
+              </div>
             </motion.div>
 
             {/* Active App Details with Smooth Transitions */}
@@ -411,7 +383,7 @@ const MobileDownload: React.FC<MobileDownloadProps> = ({ onElementClick }) => {
                   </div>
                 </div>
 
-                {/* Download Button */}
+                {/* FIXED: Download Button with Simplified Text */}
                 <motion.a
                   href={activeAppData.storeLink}
                   target="_blank"
@@ -592,61 +564,52 @@ const MobileDownload: React.FC<MobileDownloadProps> = ({ onElementClick }) => {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          <HighlightableElement
-            dataPath="bottomFeatures"
-            elementType="array"
-            label="Bottom Features"
-            onElementClick={onElementClick}
-            disabled={!onElementClick}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
-            {[
-              {
-                icon: Smartphone,
-                title: "Cross-Platform Sync",
-                description:
-                  "Seamlessly sync your ECG data across all devices with real-time cloud synchronization.",
-                gradient: "from-red-500 to-pink-600",
-              },
-              {
-                icon: Target,
-                title: "Accurate Analysis",
-                description:
-                  "Get precise ECG interpretations with our advanced AI algorithms trained on millions of cardiac patterns.",
-                gradient: "from-pink-500 to-rose-600",
-              },
-              {
-                icon: CheckCircle,
-                title: "Native Integration",
-                description:
-                  "Deep integration with platform-specific features like HealthKit, Google Health, and Windows Hello.",
-                gradient: "from-rose-500 to-red-600",
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                className="relative bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl p-8 transition-all duration-500 group shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] overflow-hidden"
-                whileHover={{ y: -5 }}
-              >
-                {/* Glassy hover effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+          {[
+            {
+              icon: Smartphone,
+              title: "Cross-Platform Sync",
+              description:
+                "Seamlessly sync your ECG data across all devices with real-time cloud synchronization.",
+              gradient: "from-red-500 to-pink-600",
+            },
+            {
+              icon: Target,
+              title: "Accurate Analysis",
+              description:
+                "Get precise ECG interpretations with our advanced AI algorithms trained on millions of cardiac patterns.",
+              gradient: "from-pink-500 to-rose-600",
+            },
+            {
+              icon: CheckCircle,
+              title: "Native Integration",
+              description:
+                "Deep integration with platform-specific features like HealthKit, Google Health, and Windows Hello.",
+              gradient: "from-rose-500 to-red-600",
+            },
+          ].map((feature, index) => (
+            <motion.div
+              key={index}
+              variants={itemVariants}
+              className="relative bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl p-8 transition-all duration-500 group shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] overflow-hidden"
+              whileHover={{ y: -5 }}
+            >
+              {/* Glassy hover effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
 
-                <motion.div
-                  className={`relative w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 shadow-lg`}
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
-                  <feature.icon className="w-8 h-8 text-white" />
-                </motion.div>
-                <h3 className="relative text-xl font-bold text-slate-800 mb-4 transition-colors duration-300">
-                  {feature.title}
-                </h3>
-                <p className="relative text-slate-600 leading-relaxed transition-colors duration-300">
-                  {feature.description}
-                </p>
+              <motion.div
+                className={`relative w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 shadow-lg`}
+                whileHover={{ scale: 1.1, rotate: 5 }}
+              >
+                <feature.icon className="w-8 h-8 text-white" />
               </motion.div>
-            ))}
-          </HighlightableElement>
+              <h3 className="relative text-xl font-bold text-slate-800 mb-4 transition-colors duration-300">
+                {feature.title}
+              </h3>
+              <p className="relative text-slate-600 leading-relaxed transition-colors duration-300">
+                {feature.description}
+              </p>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>

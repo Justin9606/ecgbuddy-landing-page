@@ -158,7 +158,7 @@
   background: #94a3b8;
 }
 
-/* Interactive preview styles - FIXED z-index issues */
+/* Interactive preview styles */
 .admin-preview-container {
   /* Reduce animations in admin preview for better performance */
   * {
@@ -176,40 +176,9 @@
   /* Ensure proper scaling */
   transform-origin: top left;
   width: 100%;
-  overflow: visible; /* Changed from hidden to visible for dropdowns */
+  overflow: hidden;
   /* Enable interactions for editing */
   pointer-events: auto;
-}
-
-/* Override fixed positioning for header in preview */
-.admin-preview-container header {
-  position: relative !important;
-  top: auto !important;
-  left: auto !important;
-  right: auto !important;
-  z-index: 50 !important; /* Reduced from 9999 to 50 */
-}
-
-/* Ensure header content is visible and dropdowns work */
-.admin-preview-container .fixed {
-  position: relative !important;
-}
-
-/* Ensure dropdowns are visible in preview - FIXED z-index */
-.admin-preview-container [class*="dropdown"],
-.admin-preview-container [class*="menu"] {
-  z-index: 100 !important; /* Reduced from 9999 to 100 */
-  position: absolute !important;
-}
-
-/* Make sure mega menus are visible - FIXED z-index */
-.admin-preview-container .absolute {
-  z-index: 100 !important; /* Reduced from 9999 to 100 */
-}
-
-/* Ensure proper stacking for interactive elements - FIXED z-index */
-.admin-preview-container .group:hover > div[class*="absolute"] {
-  z-index: 100 !important; /* Reduced from 9999 to 100 */
 }
 
 /* Highlight effects for interactive elements */
@@ -229,15 +198,4 @@
   outline-offset: 2px;
   border-radius: 4px;
   background-color: rgba(239, 68, 68, 0.05);
-}
-
-/* Remove white overlay issues by ensuring proper background inheritance */
-.admin-preview-container section,
-.admin-preview-container div {
-  background: inherit;
-}
-
-/* Ensure sections don't have unwanted white backgrounds */
-.admin-preview-container section:not([class*="bg-"]) {
-  background: transparent !important;
 }

@@ -16,13 +16,8 @@ import {
   Heart,
   CheckCircle,
 } from "lucide-react";
-import { HighlightableElement, HighlightableArrayItem } from "@/components/admin/InteractivePreview";
 
-interface FAQProps {
-  onElementClick?: (elementPath: string, elementType: string) => void;
-}
-
-const FAQ: React.FC<FAQProps> = ({ onElementClick }) => {
+const FAQ = () => {
   const [openItems, setOpenItems] = useState<number[]>([0]); // First item open by default
 
   const toggleItem = (index: number) => {
@@ -272,35 +267,19 @@ const FAQ: React.FC<FAQProps> = ({ onElementClick }) => {
             </span>
           </div>
 
-          <HighlightableElement
-            dataPath="sectionHeader.title"
-            elementType="richtext"
-            label="Section Title"
-            onElementClick={onElementClick}
-            disabled={!onElementClick}
-          >
-            <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-              <span className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent mb-2">
-                Got questions?
-              </span>
-              <span className="block bg-gradient-to-r from-red-600 via-red-500 to-pink-600 bg-clip-text text-transparent">
-                We have answers
-              </span>
-            </h2>
-          </HighlightableElement>
+          <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+            <span className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent mb-2">
+              Got questions?
+            </span>
+            <span className="block bg-gradient-to-r from-red-600 via-red-500 to-pink-600 bg-clip-text text-transparent">
+              We have answers
+            </span>
+          </h2>
 
-          <HighlightableElement
-            dataPath="sectionHeader.description"
-            elementType="richtext"
-            label="Section Description"
-            onElementClick={onElementClick}
-            disabled={!onElementClick}
-          >
-            <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-light">
-              Everything you need to know about ECG Buddy, from getting started to
-              advanced features and enterprise solutions.
-            </p>
-          </HighlightableElement>
+          <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-light">
+            Everything you need to know about ECG Buddy, from getting started to
+            advanced features and enterprise solutions.
+          </p>
         </motion.div>
 
         {/* FAQ Categories with Glassy Hover */}
@@ -311,126 +290,109 @@ const FAQ: React.FC<FAQProps> = ({ onElementClick }) => {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          <HighlightableElement
-            dataPath="categories"
-            elementType="array"
-            label="FAQ Categories"
-            onElementClick={onElementClick}
-            disabled={!onElementClick}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-8"
-          >
-            {faqCategories.map((category, categoryIndex) => (
-              <HighlightableArrayItem
-                key={categoryIndex}
-                dataPath="categories"
-                index={categoryIndex}
-                label="FAQ Category"
-                onElementClick={onElementClick}
-                disabled={!onElementClick}
-              >
-                <motion.div
-                  variants={categoryVariants}
-                  className="relative bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl p-8 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] transition-all duration-500 group overflow-hidden"
+          {faqCategories.map((category, categoryIndex) => (
+            <motion.div
+              key={categoryIndex}
+              variants={categoryVariants}
+              className="relative bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl p-8 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] transition-all duration-500 group overflow-hidden"
+            >
+              {/* Glassy hover effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+
+              {/* Category Header */}
+              <div className="relative flex items-center space-x-4 mb-8">
+                <div
+                  className={`w-16 h-16 bg-gradient-to-br ${category.gradient} rounded-2xl flex items-center justify-center shadow-lg`}
                 >
-                  {/* Glassy hover effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+                  <category.icon className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-slate-800">
+                    {category.title}
+                  </h3>
+                  <div
+                    className={`h-1 w-20 bg-gradient-to-r ${category.gradient} rounded-full mt-2`}
+                  ></div>
+                </div>
+              </div>
 
-                  {/* Category Header */}
-                  <div className="relative flex items-center space-x-4 mb-8">
-                    <div
-                      className={`w-16 h-16 bg-gradient-to-br ${category.gradient} rounded-2xl flex items-center justify-center shadow-lg`}
+              {/* Questions */}
+              <div className="relative space-y-4">
+                {category.questions.map((faq, faqIndex) => {
+                  const globalIndex = categoryIndex * 10 + faqIndex; // Unique index across all categories
+                  const isOpen = openItems.includes(globalIndex);
+
+                  return (
+                    <motion.div
+                      key={faqIndex}
+                      variants={itemVariants}
+                      className="bg-white/30 backdrop-blur-sm border border-red-100/40 rounded-2xl overflow-hidden hover:bg-white/50 transition-all duration-300"
                     >
-                      <category.icon className="w-8 h-8 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-slate-800">
-                        {category.title}
-                      </h3>
-                      <div
-                        className={`h-1 w-20 bg-gradient-to-r ${category.gradient} rounded-full mt-2`}
-                      ></div>
-                    </div>
-                  </div>
-
-                  {/* Questions */}
-                  <div className="relative space-y-4">
-                    {category.questions.map((faq, faqIndex) => {
-                      const globalIndex = categoryIndex * 10 + faqIndex; // Unique index across all categories
-                      const isOpen = openItems.includes(globalIndex);
-
-                      return (
+                      <button
+                        onClick={() => toggleItem(globalIndex)}
+                        className="w-full p-6 text-left flex items-center justify-between group"
+                      >
+                        <span className="font-semibold text-slate-800 group-hover:text-slate-900 transition-colors pr-4">
+                          {faq.question}
+                        </span>
                         <motion.div
-                          key={faqIndex}
-                          variants={itemVariants}
-                          className="bg-white/30 backdrop-blur-sm border border-red-100/40 rounded-2xl overflow-hidden hover:bg-white/50 transition-all duration-300"
+                          animate={{ rotate: isOpen ? 180 : 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                          className="flex-shrink-0"
                         >
-                          <button
-                            onClick={() => toggleItem(globalIndex)}
-                            className="w-full p-6 text-left flex items-center justify-between group"
-                          >
-                            <span className="font-semibold text-slate-800 group-hover:text-slate-900 transition-colors pr-4">
-                              {faq.question}
-                            </span>
-                            <motion.div
-                              animate={{ rotate: isOpen ? 180 : 0 }}
-                              transition={{ duration: 0.3, ease: "easeInOut" }}
-                              className="flex-shrink-0"
-                            >
-                              {isOpen ? (
-                                <Minus className="w-5 h-5 text-red-600" />
-                              ) : (
-                                <Plus className="w-5 h-5 text-slate-500 group-hover:text-red-600 transition-colors" />
-                              )}
-                            </motion.div>
-                          </button>
-
-                          <AnimatePresence>
-                            {isOpen && (
-                              <motion.div
-                                variants={answerVariants}
-                                initial="hidden"
-                                animate="visible"
-                                exit="hidden"
-                                className="overflow-hidden"
-                              >
-                                <div className="px-6 pb-6">
-                                  <div className="text-slate-600 leading-relaxed mb-4">
-                                    {faq.answer}
-                                  </div>
-
-                                  {/* Highlights */}
-                                  <div className="flex flex-wrap gap-2">
-                                    {faq.highlights.map(
-                                      (highlight, highlightIndex) => (
-                                        <motion.span
-                                          key={highlightIndex}
-                                          initial={{ opacity: 0, scale: 0.8 }}
-                                          animate={{ opacity: 1, scale: 1 }}
-                                          transition={{
-                                            delay: highlightIndex * 0.1,
-                                            duration: 0.3,
-                                            ease: "easeOut",
-                                          }}
-                                          className="inline-flex items-center space-x-1 bg-red-100/50 backdrop-blur-sm border border-red-200/50 rounded-full px-3 py-1 text-xs font-medium text-red-700"
-                                        >
-                                          <CheckCircle className="w-3 h-3" />
-                                          <span>{highlight}</span>
-                                        </motion.span>
-                                      )
-                                    )}
-                                  </div>
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+                          {isOpen ? (
+                            <Minus className="w-5 h-5 text-red-600" />
+                          ) : (
+                            <Plus className="w-5 h-5 text-slate-500 group-hover:text-red-600 transition-colors" />
+                          )}
                         </motion.div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              </HighlightableArrayItem>
-            ))}
-          </HighlightableElement>
+                      </button>
+
+                      <AnimatePresence>
+                        {isOpen && (
+                          <motion.div
+                            variants={answerVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="hidden"
+                            className="overflow-hidden"
+                          >
+                            <div className="px-6 pb-6">
+                              <div className="text-slate-600 leading-relaxed mb-4">
+                                {faq.answer}
+                              </div>
+
+                              {/* Highlights */}
+                              <div className="flex flex-wrap gap-2">
+                                {faq.highlights.map(
+                                  (highlight, highlightIndex) => (
+                                    <motion.span
+                                      key={highlightIndex}
+                                      initial={{ opacity: 0, scale: 0.8 }}
+                                      animate={{ opacity: 1, scale: 1 }}
+                                      transition={{
+                                        delay: highlightIndex * 0.1,
+                                        duration: 0.3,
+                                        ease: "easeOut",
+                                      }}
+                                      className="inline-flex items-center space-x-1 bg-red-100/50 backdrop-blur-sm border border-red-200/50 rounded-full px-3 py-1 text-xs font-medium text-red-700"
+                                    >
+                                      <CheckCircle className="w-3 h-3" />
+                                      <span>{highlight}</span>
+                                    </motion.span>
+                                  )
+                                )}
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          ))}
         </motion.div>
 
         {/* Bottom CTA with Glassy Hover */}
@@ -441,56 +403,48 @@ const FAQ: React.FC<FAQProps> = ({ onElementClick }) => {
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
         >
-          <HighlightableElement
-            dataPath="bottomCTA"
-            elementType="object"
-            label="Bottom CTA"
-            onElementClick={onElementClick}
-            disabled={!onElementClick}
-          >
-            <div className="relative bg-white/30 backdrop-blur-2xl border border-red-100/50 rounded-3xl p-12 max-w-4xl mx-auto shadow-[0_20px_70px_rgba(255,63,74,0.1)] hover:shadow-[0_30px_90px_rgba(255,63,74,0.15)] transition-all duration-700 group overflow-hidden">
-              {/* Glassy hover effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+          <div className="relative bg-white/30 backdrop-blur-2xl border border-red-100/50 rounded-3xl p-12 max-w-4xl mx-auto shadow-[0_20px_70px_rgba(255,63,74,0.1)] hover:shadow-[0_30px_90px_rgba(255,63,74,0.15)] transition-all duration-700 group overflow-hidden">
+            {/* Glassy hover effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
 
-              <div className="relative z-10">
-                <div className="inline-flex items-center space-x-2 bg-red-100/50 backdrop-blur-sm border border-red-200/50 rounded-full px-4 py-2 mb-6">
-                  <Sparkles className="w-4 h-4 text-red-600" />
-                  <span className="text-sm font-medium text-red-700">
-                    Still have questions?
-                  </span>
-                </div>
+            <div className="relative z-10">
+              <div className="inline-flex items-center space-x-2 bg-red-100/50 backdrop-blur-sm border border-red-200/50 rounded-full px-4 py-2 mb-6">
+                <Sparkles className="w-4 h-4 text-red-600" />
+                <span className="text-sm font-medium text-red-700">
+                  Still have questions?
+                </span>
+              </div>
 
-                <h3 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6 group-hover:text-slate-900 transition-colors duration-300">
-                  We're here to help
-                </h3>
+              <h3 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6 group-hover:text-slate-900 transition-colors duration-300">
+                We're here to help
+              </h3>
 
-                <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Can't find what you're looking for? Our support team is
-                  available 24/7 to answer any questions about ECG Buddy.
-                </p>
+              <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Can't find what you're looking for? Our support team is
+                available 24/7 to answer any questions about ECG Buddy.
+              </p>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="relative bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white px-10 py-4 rounded-full font-semibold text-lg shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 overflow-hidden group"
-                  >
-                    {/* Glassy hover effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                    <span className="relative z-10">Contact Support</span>
-                  </motion.button>
+              <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white px-10 py-4 rounded-full font-semibold text-lg shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 overflow-hidden group"
+                >
+                  {/* Glassy hover effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                  <span className="relative z-10">Contact Support</span>
+                </motion.button>
 
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="text-slate-600 hover:text-slate-800 font-medium transition-colors duration-300"
-                  >
-                    Schedule a demo
-                  </motion.button>
-                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="text-slate-600 hover:text-slate-800 font-medium transition-colors duration-300"
+                >
+                  Schedule a demo
+                </motion.button>
               </div>
             </div>
-          </HighlightableElement>
+          </div>
         </motion.div>
       </div>
     </section>
