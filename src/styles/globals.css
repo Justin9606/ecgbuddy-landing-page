@@ -160,16 +160,19 @@
 
 /* Interactive preview styles */
 .admin-preview-container {
-  /* Reduce animations in admin preview for better performance */
-  * {
-    animation-duration: 0.2s !important;
-    animation-delay: 0s !important;
-    transition-duration: 0.2s !important;
-    transition-delay: 0s !important;
-  }
-  
   /* Enable pointer events for interactive editing */
-  pointer-events: auto;
+  pointer-events: auto !important;
+}
+
+.admin-preview-container header {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+}
+
+.admin-preview-container .fixed {
+  position: relative !important;
 }
 
 .admin-preview-wrapper {
@@ -191,6 +194,7 @@
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
   border-radius: 4px;
+  z-index: 10;
 }
 
 .highlightable-element.highlighted {

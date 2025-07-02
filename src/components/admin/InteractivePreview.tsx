@@ -42,9 +42,7 @@ export const HighlightableElement: React.FC<HighlightableElementProps> = memo(({
 
   return (
     <motion.div
-      className={`relative group cursor-pointer transition-all duration-200 ${className} ${
-        isHovered ? 'highlightable-element highlighted z-10' : 'highlightable-element'
-      }`}
+      className={`relative group cursor-pointer transition-all duration-200 ${className} highlightable-element`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleClick}
