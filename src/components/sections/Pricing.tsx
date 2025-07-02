@@ -214,24 +214,31 @@ const Pricing = () => {
             Flexible credit-based pricing designed for healthcare professionals. Each credit equals one ECG analysis with our advanced AI system.
           </p>
 
-          {/* FIXED: Monthly/Yearly Toggle with proper styling */}
-          <div className="relative inline-flex items-center bg-white/80 backdrop-blur-2xl border border-slate-200/50 rounded-2xl p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
+          {/* COMPLETELY FIXED: Monthly/Yearly Toggle */}
+          <div className="relative inline-flex items-center bg-white/90 backdrop-blur-2xl border border-slate-200/60 rounded-2xl p-2 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
+            {/* Sliding Background */}
             <motion.div
               className="absolute bg-gradient-to-r from-red-500 to-pink-600 rounded-xl shadow-lg"
               animate={{
-                x: billingCycle === "monthly" ? 6 : "calc(100% - 6px)",
+                x: billingCycle === "monthly" ? 8 : "calc(100% - 8px)",
               }}
-              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 300, 
+                damping: 30,
+                mass: 0.8
+              }}
               style={{
-                width: "calc(50% - 6px)",
-                height: "calc(100% - 12px)",
-                top: "6px",
+                width: "calc(50% - 8px)",
+                height: "calc(100% - 16px)",
+                top: "8px",
               }}
             />
             
+            {/* Monthly Button */}
             <button
               onClick={() => setBillingCycle("monthly")}
-              className={`relative z-10 px-8 py-3 rounded-xl text-sm font-semibold transition-all duration-300 min-w-[120px] ${
+              className={`relative z-10 px-8 py-3 rounded-xl text-base font-semibold transition-all duration-300 min-w-[140px] ${
                 billingCycle === "monthly"
                   ? "text-white"
                   : "text-slate-600 hover:text-slate-800"
@@ -239,27 +246,27 @@ const Pricing = () => {
             >
               Monthly
             </button>
+
+            {/* Yearly Button */}
             <button
               onClick={() => setBillingCycle("yearly")}
-              className={`relative z-10 px-8 py-3 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center justify-center space-x-2 min-w-[120px] ${
+              className={`relative z-10 px-8 py-3 rounded-xl text-base font-semibold transition-all duration-300 min-w-[140px] ${
                 billingCycle === "yearly"
                   ? "text-white"
                   : "text-slate-600 hover:text-slate-800"
               }`}
             >
-              <span>Yearly</span>
-              <div className={`text-xs px-2 py-0.5 rounded-full font-bold transition-colors whitespace-nowrap ${
-                billingCycle === "yearly" 
-                  ? "bg-white/20 text-white" 
-                  : "bg-green-100 text-green-700"
-              }`}>
-                Save 20%
-              </div>
+              Yearly
             </button>
+
+            {/* Save 20% Badge - Positioned outside the toggle */}
+            <div className="absolute -top-3 -right-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg border-2 border-white">
+              Save 20%
+            </div>
           </div>
         </motion.div>
 
-        {/* FIXED: Pricing Cards with proper badge spacing */}
+        {/* Pricing Cards with proper badge spacing */}
         <div className="relative">
           {/* Add extra top margin to accommodate badges */}
           <div className="mt-16">
@@ -282,7 +289,7 @@ const Pricing = () => {
                     }`}
                     whileHover={{ y: -4 }}
                   >
-                    {/* FIXED: Badge positioned ABOVE the card with proper z-index */}
+                    {/* Badge positioned ABOVE the card with proper z-index */}
                     {plan.badge && (
                       <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
                         <div className={`bg-gradient-to-r ${plan.gradient} text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg border-2 border-white`}>
