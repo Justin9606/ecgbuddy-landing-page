@@ -15,8 +15,6 @@ import {
   Building2,
   Users,
   Mail,
-  Share2,
-  Bookmark,
 } from "lucide-react";
 import Link from "next/link";
 import { jobPositions, getJobById } from "@/lib/data/jobPositions";
@@ -93,15 +91,6 @@ const JobDetailPage = ({ params }: JobDetailPageProps) => {
                 </div>
                 <span className="text-xl font-bold text-slate-800">ARPI Careers</span>
               </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <button className="p-2 text-slate-600 hover:text-slate-900 transition-colors rounded-lg hover:bg-slate-100">
-                <Share2 className="w-5 h-5" />
-              </button>
-              <button className="p-2 text-slate-600 hover:text-slate-900 transition-colors rounded-lg hover:bg-slate-100">
-                <Bookmark className="w-5 h-5" />
-              </button>
             </div>
           </div>
         </div>
