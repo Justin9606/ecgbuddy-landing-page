@@ -17,6 +17,8 @@ import {
   Users,
   ChevronLeft,
   ChevronRight,
+  Activity,
+  Zap,
 } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
 
@@ -129,38 +131,40 @@ export const ModernSidebar: React.FC<ModernSidebarProps> = ({
 
   return (
     <motion.div
-      className="fixed left-0 top-0 h-full bg-white border-r border-gray-200 z-50 shadow-sm"
+      className="bg-white border-r border-gray-200 flex flex-col h-full shadow-sm"
       animate={{ width: isCollapsed ? 80 : 280 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
       {/* Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
-        {!isCollapsed && (
-          <motion.div
-            className="flex items-center space-x-3"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.1 }}
-          >
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <Building2 className="w-4 h-4 text-white" />
-            </div>
-            <div>
-              <h1 className="text-sm font-semibold text-gray-900">ARPI Admin</h1>
-              <p className="text-xs text-gray-500">Content Manager</p>
-            </div>
-          </motion.div>
-        )}
-        <button
-          onClick={onToggleCollapse}
-          className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          {isCollapsed ? (
-            <ChevronRight className="w-4 h-4 text-gray-600" />
-          ) : (
-            <ChevronLeft className="w-4 h-4 text-gray-600" />
+      <div className="p-4 border-b border-gray-100">
+        <div className="flex items-center justify-between">
+          {!isCollapsed && (
+            <motion.div
+              className="flex items-center space-x-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+            >
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                <Building2 className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h1 className="text-sm font-semibold text-gray-900">ARPI Admin</h1>
+                <p className="text-xs text-gray-500">Content Manager</p>
+              </div>
+            </motion.div>
           )}
-        </button>
+          <button
+            onClick={onToggleCollapse}
+            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            {isCollapsed ? (
+              <ChevronRight className="w-4 h-4 text-gray-600" />
+            ) : (
+              <ChevronLeft className="w-4 h-4 text-gray-600" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Navigation */}
@@ -185,15 +189,20 @@ export const ModernSidebar: React.FC<ModernSidebarProps> = ({
                 </motion.div>
               )}
               <div className="space-y-1 px-3">
-                {categoryItems.map((item) => (
-                  <button
+                {categoryItems.map((item, index) => (
+                  <motion.button
                     key={item.id}
                     onClick={() => onSectionChange(item.id)}
-                    className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 group ${
+                    className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 group relative ${
                       activeSection === item.id
-                        ? `bg-${item.color}-50 text-${item.color}-700`
+                        ? `bg-${item.color}-50 text-${item.color}-700 shadow-sm`
                         : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     }`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
                   >
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center mr-3 ${
                       activeSection === item.id
@@ -208,13 +217,24 @@ export const ModernSidebar: React.FC<ModernSidebarProps> = ({
                     </div>
                     
                     {!isCollapsed && (
-                      <span className="flex-1 text-left">{item.label}</span>
+                      <motion.span
+                        className="flex-1 text-left"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.1 }}
+                      >
+                        {item.label}
+                      </motion.span>
                     )}
 
-                    {activeSection === item.id && !isCollapsed && (
-                      <div className={`w-1.5 h-1.5 bg-${item.color}-500 rounded-full`} />
+                    {activeSection === item.id && (
+                      <motion.div
+                        className={`absolute right-2 w-2 h-2 bg-${item.color}-500 rounded-full`}
+                        layoutId="activeIndicator"
+                        transition={{ duration: 0.2 }}
+                      />
                     )}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </div>
@@ -224,7 +244,12 @@ export const ModernSidebar: React.FC<ModernSidebarProps> = ({
 
       {/* Footer */}
       {!isCollapsed && (
-        <div className="p-4 border-t border-gray-100">
+        <motion.div
+          className="p-4 border-t border-gray-100"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
           <div className="flex items-center space-x-2 text-xs text-gray-500">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <span>System Online</span>
@@ -232,7 +257,7 @@ export const ModernSidebar: React.FC<ModernSidebarProps> = ({
           <div className="text-xs text-gray-400 mt-1">
             v2.1.0 • Last updated 2 min ago
           </div>
-        </div>
+        </motion.div>
       )}
     </motion.div>
   );

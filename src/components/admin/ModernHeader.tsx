@@ -7,6 +7,8 @@ import {
   Eye,
   EyeOff,
   Monitor,
+  Smartphone,
+  Tablet,
   RefreshCw,
   CheckCircle,
   AlertCircle,
@@ -16,7 +18,6 @@ import {
   Search,
   Command,
   Loader2,
-  Menu,
 } from "lucide-react";
 import { AdminSection } from "./AdminDashboard";
 
@@ -29,7 +30,6 @@ interface ModernHeaderProps {
   saveError?: string | null;
   showPreview: boolean;
   onTogglePreview: () => void;
-  onToggleSidebar: () => void;
 }
 
 export const ModernHeader: React.FC<ModernHeaderProps> = ({
@@ -41,7 +41,6 @@ export const ModernHeader: React.FC<ModernHeaderProps> = ({
   saveError = null,
   showPreview,
   onTogglePreview,
-  onToggleSidebar,
 }) => {
   const getSectionTitle = (section: AdminSection) => {
     const titles = {
@@ -109,14 +108,7 @@ export const ModernHeader: React.FC<ModernHeaderProps> = ({
       transition={{ duration: 0.3 }}
     >
       {/* Left Section */}
-      <div className="flex items-center space-x-4">
-        <button
-          onClick={onToggleSidebar}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <Menu className="w-4 h-4 text-gray-600" />
-        </button>
-
+      <div className="flex items-center space-x-6">
         <div>
           <motion.h1
             className="text-lg font-semibold text-gray-900"
