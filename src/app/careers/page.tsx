@@ -38,130 +38,13 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import { jobPositions } from "@/lib/data/jobPositions";
 
 const CareersPage = () => {
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
   const [selectedLocation, setSelectedLocation] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  // Job positions data - REMOVED featured and urgent badges
-  const jobPositions = [
-    {
-      id: 1,
-      title: "Senior AI/ML Engineer",
-      department: "engineering",
-      location: "Seoul, Korea",
-      type: "Full-time",
-      experience: "5+ years",
-      salary: "$120K - $180K",
-      description: "Lead the development of our next-generation AI models for ECG analysis and cardiac diagnostics.",
-      requirements: [
-        "PhD/MS in Computer Science, AI, or related field",
-        "5+ years experience in machine learning",
-        "Expertise in TensorFlow, PyTorch, or similar",
-        "Experience with medical data and healthcare AI",
-        "Strong Python and cloud computing skills"
-      ],
-      benefits: ["Stock options", "Health insurance", "Flexible hours", "Remote work"],
-      posted: "2 days ago"
-    },
-    {
-      id: 2,
-      title: "Senior Frontend Developer",
-      department: "engineering",
-      location: "Seoul, Korea",
-      type: "Full-time",
-      experience: "4+ years",
-      salary: "$90K - $140K",
-      description: "Build beautiful, responsive user interfaces for our healthcare platform using React and Next.js.",
-      requirements: [
-        "BS in Computer Science or equivalent",
-        "4+ years React/Next.js experience",
-        "Expert in TypeScript, Tailwind CSS",
-        "Experience with healthcare/medical UIs",
-        "Strong design sensibility"
-      ],
-      benefits: ["Stock options", "Health insurance", "Learning budget", "Gym membership"],
-      posted: "1 week ago"
-    },
-    {
-      id: 3,
-      title: "Clinical Research Specialist",
-      department: "clinical",
-      location: "Seoul, Korea",
-      type: "Full-time",
-      experience: "3+ years",
-      salary: "$70K - $110K",
-      description: "Lead clinical validation studies and collaborate with medical institutions to improve our AI algorithms.",
-      requirements: [
-        "MD, PhD, or MS in Biomedical Sciences",
-        "3+ years clinical research experience",
-        "Experience with cardiology/ECG analysis",
-        "Strong statistical analysis skills",
-        "Regulatory compliance knowledge"
-      ],
-      benefits: ["Health insurance", "Conference budget", "Research grants", "Flexible schedule"],
-      posted: "3 days ago"
-    },
-    {
-      id: 4,
-      title: "Product Designer",
-      department: "design",
-      location: "Remote",
-      type: "Full-time",
-      experience: "3+ years",
-      salary: "$80K - $120K",
-      description: "Design intuitive healthcare experiences that help medical professionals save lives.",
-      requirements: [
-        "Bachelor's in Design or equivalent",
-        "3+ years product design experience",
-        "Proficiency in Figma, Adobe Creative Suite",
-        "Healthcare/medical design experience preferred",
-        "Strong user research skills"
-      ],
-      benefits: ["Remote work", "Design tools budget", "Health insurance", "Unlimited PTO"],
-      posted: "5 days ago"
-    },
-    {
-      id: 5,
-      title: "DevOps Engineer",
-      department: "engineering",
-      location: "Seoul, Korea",
-      type: "Full-time",
-      experience: "4+ years",
-      salary: "$100K - $150K",
-      description: "Build and maintain our cloud infrastructure to ensure 99.9% uptime for critical healthcare services.",
-      requirements: [
-        "BS in Computer Science or equivalent",
-        "4+ years DevOps/Infrastructure experience",
-        "Expert in AWS, Kubernetes, Docker",
-        "Experience with healthcare compliance (HIPAA)",
-        "Strong automation and monitoring skills"
-      ],
-      benefits: ["Stock options", "Health insurance", "On-call compensation", "Training budget"],
-      posted: "1 day ago"
-    },
-    {
-      id: 6,
-      title: "Data Scientist",
-      department: "data",
-      location: "Remote",
-      type: "Full-time",
-      experience: "3+ years",
-      salary: "$95K - $135K",
-      description: "Analyze large-scale medical data to improve our AI models and generate clinical insights.",
-      requirements: [
-        "PhD/MS in Statistics, Data Science, or related",
-        "3+ years data science experience",
-        "Expert in Python, R, SQL",
-        "Experience with medical/healthcare data",
-        "Strong statistical modeling skills"
-      ],
-      benefits: ["Remote work", "Conference budget", "Health insurance", "Research time"],
-      posted: "1 week ago"
-    }
-  ];
 
   const departments = [
     { id: "all", name: "All Departments", count: jobPositions.length },
@@ -192,7 +75,7 @@ const CareersPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
-      {/* Header with Back Navigation - UPDATED: Changed to ARPI Careers */}
+      {/* Header with Back Navigation */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-slate-200/50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -221,7 +104,7 @@ const CareersPage = () => {
         </div>
       </header>
 
-      {/* SIMPLIFIED Hero Section */}
+      {/* Hero Section */}
       <section className="relative py-16 overflow-hidden">
         {/* Background Elements */}
         <div className="absolute inset-0">
@@ -286,7 +169,7 @@ const CareersPage = () => {
         </div>
       </section>
 
-      {/* Open Positions - MAIN FOCUS */}
+      {/* Open Positions */}
       <section id="open-positions" className="py-16">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
@@ -416,7 +299,7 @@ const CareersPage = () => {
             </div>
           </motion.div>
 
-          {/* Job Listings - REMOVED all badges and "Save for Later" button */}
+          {/* Job Listings */}
           <div className="space-y-6">
             <AnimatePresence>
               {filteredJobs.map((job, index) => (
@@ -430,86 +313,88 @@ const CareersPage = () => {
                   className="relative bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.1)] transition-all duration-500 group"
                   whileHover={{ y: -2 }}
                 >
-                  {/* Card Content */}
-                  <div className="p-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                      {/* Job Info */}
-                      <div className="lg:col-span-2">
-                        <div className="mb-4">
-                          <h3 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-red-700 transition-colors duration-300">
-                            {job.title}
-                          </h3>
-                          <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-3">
-                            <div className="flex items-center space-x-1">
-                              <MapPin className="w-4 h-4" />
-                              <span>{job.location}</span>
+                  <Link href={`/careers/${job.id}`} className="block">
+                    {/* Card Content */}
+                    <div className="p-6">
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* Job Info */}
+                        <div className="lg:col-span-2">
+                          <div className="mb-4">
+                            <h3 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-red-700 transition-colors duration-300">
+                              {job.title}
+                            </h3>
+                            <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-3">
+                              <div className="flex items-center space-x-1">
+                                <MapPin className="w-4 h-4" />
+                                <span>{job.location}</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Clock className="w-4 h-4" />
+                                <span>{job.type}</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Briefcase className="w-4 h-4" />
+                                <span>{job.experience}</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <DollarSign className="w-4 h-4" />
+                                <span>{job.salary}</span>
+                              </div>
                             </div>
-                            <div className="flex items-center space-x-1">
-                              <Clock className="w-4 h-4" />
-                              <span>{job.type}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Briefcase className="w-4 h-4" />
-                              <span>{job.experience}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <DollarSign className="w-4 h-4" />
-                              <span>{job.salary}</span>
-                            </div>
-                          </div>
-                          <p className="text-slate-600 leading-relaxed mb-4">
-                            {job.description}
-                          </p>
+                            <p className="text-slate-600 leading-relaxed mb-4">
+                              {job.description}
+                            </p>
 
-                          {/* Benefits */}
-                          <div className="flex flex-wrap gap-2">
-                            {job.benefits.slice(0, 4).map((benefit, benefitIndex) => (
-                              <span
-                                key={benefitIndex}
-                                className="bg-green-100/50 text-green-700 px-3 py-1 rounded-full text-sm font-medium"
-                              >
-                                {benefit}
-                              </span>
-                            ))}
+                            {/* Benefits */}
+                            <div className="flex flex-wrap gap-2">
+                              {job.benefits.slice(0, 4).map((benefit, benefitIndex) => (
+                                <span
+                                  key={benefitIndex}
+                                  className="bg-green-100/50 text-green-700 px-3 py-1 rounded-full text-sm font-medium"
+                                >
+                                  {benefit}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Apply Section - REMOVED "Save for Later" button */}
-                      <div className="lg:col-span-1">
-                        <div className="bg-white/50 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-6 h-fit">
-                          <div className="text-center mb-4">
-                            <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                              <Rocket className="w-6 h-6 text-white" />
+                        {/* Apply Section */}
+                        <div className="lg:col-span-1">
+                          <div className="bg-white/50 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-6 h-fit">
+                            <div className="text-center mb-4">
+                              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                                <Rocket className="w-6 h-6 text-white" />
+                              </div>
+                              <h4 className="font-bold text-slate-800 mb-2">Ready to Apply?</h4>
+                              <p className="text-sm text-slate-600">
+                                Join our mission to revolutionize healthcare
+                              </p>
                             </div>
-                            <h4 className="font-bold text-slate-800 mb-2">Ready to Apply?</h4>
-                            <p className="text-sm text-slate-600">
-                              Join our mission to revolutionize healthcare
-                            </p>
-                          </div>
 
-                          <motion.button
-                            className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-3 rounded-2xl font-semibold shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center justify-center space-x-2 group overflow-hidden"
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                            <span className="relative z-10">Apply Now</span>
-                            <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
-                          </motion.button>
+                            <motion.div
+                              className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-3 rounded-2xl font-semibold shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center justify-center space-x-2 group overflow-hidden"
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                              <span className="relative z-10">Apply Now</span>
+                              <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
+                            </motion.div>
 
-                          <div className="mt-3 pt-3 border-t border-slate-200/50 text-center">
-                            <p className="text-xs text-slate-500">
-                              Questions? Email us at{" "}
-                              <a href="mailto:careers@ecgbuddy.ai" className="text-red-600 hover:text-red-700">
-                                careers@ecgbuddy.ai
-                              </a>
-                            </p>
+                            <div className="mt-3 pt-3 border-t border-slate-200/50 text-center">
+                              <p className="text-xs text-slate-500">
+                                Questions? Email us at{" "}
+                                <a href="mailto:careers@ecgbuddy.ai" className="text-red-600 hover:text-red-700">
+                                  careers@ecgbuddy.ai
+                                </a>
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -544,7 +429,7 @@ const CareersPage = () => {
         </div>
       </section>
 
-      {/* SIMPLIFIED CTA Section */}
+      {/* CTA Section */}
       <section className="py-16 bg-gradient-to-br from-red-50/30 via-white to-pink-50/20">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <motion.div
