@@ -39,7 +39,12 @@ const Footer = () => {
           href: "#features",
           description: "Complete feature set",
         },
-        { name: "Pricing", href: "#pricing", description: "Flexible plans" },
+        { 
+          name: "Pricing", 
+          href: "#pricing", 
+          description: "Flexible plans",
+          onClick: () => scrollToSection("pricing-section"),
+        },
         {
           name: "API Documentation",
           href: "#api",

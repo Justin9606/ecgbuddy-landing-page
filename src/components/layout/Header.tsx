@@ -506,6 +506,14 @@ const Header = () => {
                 </div>
               ))}
 
+              {/* Pricing Navigation - Direct Click with focus state */}
+              <button
+                onClick={() => scrollToSection("pricing-section")}
+                className="flex items-center space-x-1 px-4 py-2 text-slate-700 hover:text-slate-900 transition-all duration-200 font-medium rounded-lg hover:bg-red-50/50 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:bg-red-50/50"
+              >
+                <span>Pricing</span>
+              </button>
+
               {/* FAQ Navigation - Direct Click with focus state */}
               <button
                 onClick={() => scrollToSection("faq-section")}
@@ -727,6 +735,20 @@ const Header = () => {
                   ))}
                 </div>
               ))}
+
+              {/* Mobile Pricing */}
+              <div className="mt-6 pt-6 border-t border-slate-100">
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    scrollToSection("pricing-section");
+                  }}
+                  className="w-full text-left font-semibold text-slate-900 mb-3 flex items-center p-2 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500/20"
+                >
+                  Pricing
+                  <Sparkles className="w-4 h-4 ml-2 text-slate-500" />
+                </button>
+              </div>
 
               {/* Mobile FAQ */}
               <div className="mt-6 pt-6 border-t border-slate-100">
