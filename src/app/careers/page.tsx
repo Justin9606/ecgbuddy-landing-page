@@ -168,13 +168,13 @@ const CareersPage = () => {
     { id: "engineering", name: "Engineering", count: jobPositions.filter(job => job.department === "engineering").length },
     { id: "clinical", name: "Clinical", count: jobPositions.filter(job => job.department === "clinical").length },
     { id: "design", name: "Design", count: jobPositions.filter(job => job.department === "design").length },
-    { id: "data", name: "Data Science", count: jobPositions.filter(job => job.department === "data").length },
+    { id: "data", name: "Data Science", count: jobPositions.filter(job => job.department === "data").length }
   ];
 
   const locations = [
     { id: "all", name: "All Locations" },
     { id: "seoul", name: "Seoul, Korea" },
-    { id: "remote", name: "Remote" },
+    { id: "remote", name: "Remote" }
   ];
 
   // Filter jobs based on selected filters and search
@@ -579,7 +579,7 @@ const CareersPage = () => {
                 <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
               </motion.button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
     </div>
