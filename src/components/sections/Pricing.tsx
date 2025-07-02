@@ -214,24 +214,24 @@ const Pricing = () => {
             Flexible credit-based pricing designed for healthcare professionals. Each credit equals one ECG analysis with our advanced AI system.
           </p>
 
-          {/* ENHANCED Monthly/Yearly Toggle */}
-          <div className="relative inline-flex items-center bg-white/80 backdrop-blur-2xl border border-slate-200/50 rounded-2xl p-1 shadow-[0_8px_32px_rgba(0,0,0,0.08)] overflow-hidden">
+          {/* FIXED: Monthly/Yearly Toggle with proper styling */}
+          <div className="relative inline-flex items-center bg-white/80 backdrop-blur-2xl border border-slate-200/50 rounded-2xl p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
             <motion.div
               className="absolute bg-gradient-to-r from-red-500 to-pink-600 rounded-xl shadow-lg"
               animate={{
-                x: billingCycle === "monthly" ? 4 : "calc(100% - 4px)",
-                width: billingCycle === "monthly" ? "calc(50% - 4px)" : "calc(50% - 4px)",
+                x: billingCycle === "monthly" ? 6 : "calc(100% - 6px)",
               }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
               style={{
-                height: "calc(100% - 8px)",
-                top: "4px",
+                width: "calc(50% - 6px)",
+                height: "calc(100% - 12px)",
+                top: "6px",
               }}
             />
             
             <button
               onClick={() => setBillingCycle("monthly")}
-              className={`relative z-10 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
+              className={`relative z-10 px-8 py-3 rounded-xl text-sm font-semibold transition-all duration-300 min-w-[120px] ${
                 billingCycle === "monthly"
                   ? "text-white"
                   : "text-slate-600 hover:text-slate-800"
@@ -241,14 +241,14 @@ const Pricing = () => {
             </button>
             <button
               onClick={() => setBillingCycle("yearly")}
-              className={`relative z-10 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center space-x-2 ${
+              className={`relative z-10 px-8 py-3 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center justify-center space-x-2 min-w-[120px] ${
                 billingCycle === "yearly"
                   ? "text-white"
                   : "text-slate-600 hover:text-slate-800"
               }`}
             >
               <span>Yearly</span>
-              <div className={`text-xs px-2 py-0.5 rounded-full font-bold transition-colors ${
+              <div className={`text-xs px-2 py-0.5 rounded-full font-bold transition-colors whitespace-nowrap ${
                 billingCycle === "yearly" 
                   ? "bg-white/20 text-white" 
                   : "bg-green-100 text-green-700"
@@ -259,157 +259,161 @@ const Pricing = () => {
           </div>
         </motion.div>
 
-        {/* Pricing Cards */}
-        <motion.div
-          className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          {pricingPlans.map((plan, index) => {
-            const yearlySavings = getYearlySavings(plan);
+        {/* FIXED: Pricing Cards with proper badge spacing */}
+        <div className="relative">
+          {/* Add extra top margin to accommodate badges */}
+          <div className="mt-16">
+            <motion.div
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {pricingPlans.map((plan, index) => {
+                const yearlySavings = getYearlySavings(plan);
 
-            return (
-              <motion.div
-                key={plan.id}
-                variants={cardVariants}
-                className={`relative transition-all duration-500 ${
-                  plan.isPopular ? "lg:scale-105" : ""
-                }`}
-                whileHover={{ y: -4 }}
-              >
-                <div
-                  className={`relative bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl overflow-hidden transition-all duration-500 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] group ${
-                    plan.isPopular ? "ring-2 ring-red-500/20" : ""
-                  }`}
-                  style={{ paddingTop: plan.badge ? "3rem" : "1.5rem" }}
-                >
-                  {/* Glassy hover effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
-
-                  {/* FIXED: Badge positioned OUTSIDE the card with proper spacing */}
-                  {plan.badge && (
-                    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-30">
-                      <div className={`bg-gradient-to-r ${plan.gradient} text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg border-2 border-white`}>
-                        <div className="flex items-center space-x-1">
-                          <Star className="w-3 h-3 fill-current" />
-                          <span>{plan.badge}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="relative p-6">
-                    {/* Plan Header */}
-                    <div className="text-center mb-6">
-                      <motion.div
-                        className={`w-14 h-14 bg-gradient-to-br ${plan.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}
-                        whileHover={{ scale: 1.1, rotate: 5 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <plan.icon className="w-7 h-7 text-white" />
-                      </motion.div>
-
-                      <h3 className="text-xl font-bold text-slate-800 mb-2">
-                        {plan.name}
-                      </h3>
-                      <p className="text-slate-600 mb-4 text-sm leading-relaxed">
-                        {plan.description}
-                      </p>
-
-                      {/* Price Display */}
-                      <div className="mb-4">
-                        <div className="flex items-baseline justify-center space-x-1 mb-1">
-                          <span className="text-3xl font-bold text-slate-800">
-                            {formatPrice(plan)}
-                          </span>
-                          {typeof plan.price[billingCycle] === "number" && plan.price[billingCycle] > 0 && (
-                            <span className="text-lg text-slate-500">
-                              /month
-                            </span>
-                          )}
-                        </div>
-                        
-                        {billingCycle === "yearly" && yearlySavings && (
-                          <div className="text-green-600 text-sm font-medium mb-1">
-                            Save {yearlySavings}% annually
+                return (
+                  <motion.div
+                    key={plan.id}
+                    variants={cardVariants}
+                    className={`relative transition-all duration-500 ${
+                      plan.isPopular ? "lg:scale-105" : ""
+                    }`}
+                    whileHover={{ y: -4 }}
+                  >
+                    {/* FIXED: Badge positioned ABOVE the card with proper z-index */}
+                    {plan.badge && (
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+                        <div className={`bg-gradient-to-r ${plan.gradient} text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg border-2 border-white`}>
+                          <div className="flex items-center space-x-1">
+                            <Star className="w-3 h-3 fill-current" />
+                            <span>{plan.badge}</span>
                           </div>
-                        )}
-
-                        {typeof plan.price[billingCycle] === "number" && billingCycle === "yearly" && plan.price[billingCycle] > 0 && (
-                          <div className="text-slate-500 text-sm">
-                            Billed ${plan.price[billingCycle]} yearly
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Credits Display */}
-                      <div className="bg-white/30 backdrop-blur-sm border border-red-100/40 rounded-2xl p-3 mb-4">
-                        <div className="flex items-center justify-center space-x-2 mb-1">
-                          {plan.credits.amount === "Unlimited" ? (
-                            <Infinity className="w-4 h-4 text-slate-600" />
-                          ) : plan.credits.amount === "Custom" ? (
-                            <Target className="w-4 h-4 text-slate-600" />
-                          ) : (
-                            <Activity className="w-4 h-4 text-slate-600" />
-                          )}
-                          <span className="text-lg font-bold text-slate-800">
-                            {plan.credits.amount} {plan.credits.amount !== "Unlimited" && plan.credits.amount !== "Custom" && "Credits"}
-                          </span>
-                        </div>
-                        <div className="text-slate-600 text-sm">
-                          {plan.credits.description}
                         </div>
                       </div>
-                    </div>
+                    )}
 
-                    {/* Features List - REMOVED "+X more features" */}
-                    <div className="mb-6">
-                      <h4 className="font-semibold text-slate-800 mb-3 flex items-center text-sm">
-                        <Sparkles className="w-4 h-4 mr-2 text-red-500" />
-                        What's included
-                      </h4>
-                      <div className="space-y-2">
-                        {plan.features.map((feature, featureIndex) => (
-                          <div
-                            key={featureIndex}
-                            className="flex items-start space-x-2"
-                          >
-                            <div className="flex-shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                              <Check className="w-2.5 h-2.5 text-green-600" />
-                            </div>
-                            <span className="text-slate-600 text-sm leading-relaxed">
-                              {feature}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* CTA Button */}
-                    <motion.a
-                      href={plan.buttonLink}
-                      className={`relative group w-full ${
-                        plan.isPopular
-                          ? `bg-gradient-to-r ${plan.gradient} text-white shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)]`
-                          : "bg-white/60 backdrop-blur-sm border border-slate-200/50 text-slate-700 hover:bg-white/80"
-                      } px-6 py-3 rounded-2xl font-semibold transition-all duration-500 flex items-center justify-center space-x-2 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20`}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                    <div
+                      className={`relative bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl overflow-hidden transition-all duration-500 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] group ${
+                        plan.isPopular ? "ring-2 ring-red-500/20" : ""
+                      }`}
                     >
                       {/* Glassy hover effect */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
 
-                      <span className="relative z-10">{plan.buttonText}</span>
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
-                    </motion.a>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+                      <div className="relative p-6">
+                        {/* Plan Header */}
+                        <div className="text-center mb-6">
+                          <motion.div
+                            className={`w-14 h-14 bg-gradient-to-br ${plan.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}
+                            whileHover={{ scale: 1.1, rotate: 5 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <plan.icon className="w-7 h-7 text-white" />
+                          </motion.div>
+
+                          <h3 className="text-xl font-bold text-slate-800 mb-2">
+                            {plan.name}
+                          </h3>
+                          <p className="text-slate-600 mb-4 text-sm leading-relaxed">
+                            {plan.description}
+                          </p>
+
+                          {/* Price Display */}
+                          <div className="mb-4">
+                            <div className="flex items-baseline justify-center space-x-1 mb-1">
+                              <span className="text-3xl font-bold text-slate-800">
+                                {formatPrice(plan)}
+                              </span>
+                              {typeof plan.price[billingCycle] === "number" && plan.price[billingCycle] > 0 && (
+                                <span className="text-lg text-slate-500">
+                                  /month
+                                </span>
+                              )}
+                            </div>
+                            
+                            {billingCycle === "yearly" && yearlySavings && (
+                              <div className="text-green-600 text-sm font-medium mb-1">
+                                Save {yearlySavings}% annually
+                              </div>
+                            )}
+
+                            {typeof plan.price[billingCycle] === "number" && billingCycle === "yearly" && plan.price[billingCycle] > 0 && (
+                              <div className="text-slate-500 text-sm">
+                                Billed ${plan.price[billingCycle]} yearly
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Credits Display */}
+                          <div className="bg-white/30 backdrop-blur-sm border border-red-100/40 rounded-2xl p-3 mb-4">
+                            <div className="flex items-center justify-center space-x-2 mb-1">
+                              {plan.credits.amount === "Unlimited" ? (
+                                <Infinity className="w-4 h-4 text-slate-600" />
+                              ) : plan.credits.amount === "Custom" ? (
+                                <Target className="w-4 h-4 text-slate-600" />
+                              ) : (
+                                <Activity className="w-4 h-4 text-slate-600" />
+                              )}
+                              <span className="text-lg font-bold text-slate-800">
+                                {plan.credits.amount} {plan.credits.amount !== "Unlimited" && plan.credits.amount !== "Custom" && "Credits"}
+                              </span>
+                            </div>
+                            <div className="text-slate-600 text-sm">
+                              {plan.credits.description}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Features List */}
+                        <div className="mb-6">
+                          <h4 className="font-semibold text-slate-800 mb-3 flex items-center text-sm">
+                            <Sparkles className="w-4 h-4 mr-2 text-red-500" />
+                            What's included
+                          </h4>
+                          <div className="space-y-2">
+                            {plan.features.map((feature, featureIndex) => (
+                              <div
+                                key={featureIndex}
+                                className="flex items-start space-x-2"
+                              >
+                                <div className="flex-shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                                  <Check className="w-2.5 h-2.5 text-green-600" />
+                                </div>
+                                <span className="text-slate-600 text-sm leading-relaxed">
+                                  {feature}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* CTA Button */}
+                        <motion.a
+                          href={plan.buttonLink}
+                          className={`relative group w-full ${
+                            plan.isPopular
+                              ? `bg-gradient-to-r ${plan.gradient} text-white shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)]`
+                              : "bg-white/60 backdrop-blur-sm border border-slate-200/50 text-slate-700 hover:bg-white/80"
+                          } px-6 py-3 rounded-2xl font-semibold transition-all duration-500 flex items-center justify-center space-x-2 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20`}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          {/* Glassy hover effect */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+
+                          <span className="relative z-10">{plan.buttonText}</span>
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
+                        </motion.a>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );
