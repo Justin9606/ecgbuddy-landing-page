@@ -15,13 +15,8 @@ import {
   Star,
   Target,
 } from "lucide-react";
-import { HighlightableElement, HighlightableArrayItem } from "@/components/admin/InteractivePreview";
 
-interface MobileDownloadProps {
-  onElementClick?: (elementPath: string, elementType: string) => void;
-}
-
-const MobileDownload: React.FC<MobileDownloadProps> = ({ onElementClick }) => {
+const MobileDownload = () => {
   const [activeApp, setActiveApp] = useState<string>("ios");
 
   const apps = [
@@ -210,51 +205,27 @@ const MobileDownload: React.FC<MobileDownloadProps> = ({ onElementClick }) => {
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <HighlightableElement
-            dataPath="sectionHeader.badge"
-            elementType="text"
-            label="Section Badge"
-            onElementClick={onElementClick}
-            disabled={!onElementClick}
-          >
-            <div className="inline-flex items-center space-x-3 bg-white/60 backdrop-blur-2xl border border-red-100/50 rounded-full px-6 py-3 mb-8 shadow-[0_8px_32px_rgba(255,63,74,0.08)]">
-              <Smartphone className="w-4 h-4 text-red-500" />
-              <span className="text-sm font-medium text-slate-700">
-                Mobile & Desktop Apps
-              </span>
-            </div>
-          </HighlightableElement>
+          <div className="inline-flex items-center space-x-3 bg-white/60 backdrop-blur-2xl border border-red-100/50 rounded-full px-6 py-3 mb-8 shadow-[0_8px_32px_rgba(255,63,74,0.08)]">
+            <Smartphone className="w-4 h-4 text-red-500" />
+            <span className="text-sm font-medium text-slate-700">
+              Mobile & Desktop Apps
+            </span>
+          </div>
 
-          <HighlightableElement
-            dataPath="sectionHeader.title"
-            elementType="richtext"
-            label="Section Title"
-            onElementClick={onElementClick}
-            disabled={!onElementClick}
-          >
-            <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-              <span className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent mb-2">
-                Take ECG Buddy
-              </span>
-              <span className="block bg-gradient-to-r from-red-600 via-red-500 to-pink-600 bg-clip-text text-transparent">
-                everywhere you go
-              </span>
-            </h2>
-          </HighlightableElement>
+          <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+            <span className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent mb-2">
+              Take ECG Buddy
+            </span>
+            <span className="block bg-gradient-to-r from-red-600 via-red-500 to-pink-600 bg-clip-text text-transparent">
+              everywhere you go
+            </span>
+          </h2>
 
-          <HighlightableElement
-            dataPath="sectionHeader.description"
-            elementType="richtext"
-            label="Section Description"
-            onElementClick={onElementClick}
-            disabled={!onElementClick}
-          >
-            <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-light">
-              Access powerful ECG analysis on any device. Download our native apps
-              for seamless real-time analysis, cloud sync, and platform-specific
-              integrations.
-            </p>
-          </HighlightableElement>
+          <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-light">
+            Access powerful ECG analysis on any device. Download our native apps
+            for seamless real-time analysis, cloud sync, and platform-specific
+            integrations.
+          </p>
         </motion.div>
 
         {/* Main Content */}
@@ -274,56 +245,48 @@ const MobileDownload: React.FC<MobileDownloadProps> = ({ onElementClick }) => {
             >
               <div className="grid grid-cols-3 gap-2">
                 {apps.map((app, index) => (
-                  <HighlightableArrayItem
+                  <motion.button
                     key={app.id}
-                    dataPath="apps"
-                    index={index}
-                    label="App Option"
-                    onElementClick={onElementClick}
-                    disabled={!onElementClick}
+                    onClick={() => setActiveApp(app.id)}
+                    className={`relative p-6 rounded-2xl transition-all duration-500 group overflow-hidden ${
+                      activeApp === app.id
+                        ? "bg-white/60 border border-red-200/50 shadow-[0_8px_32px_rgba(255,63,74,0.12)]"
+                        : "hover:bg-white/30"
+                    }`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
                   >
-                    <motion.button
-                      onClick={() => setActiveApp(app.id)}
-                      className={`relative p-6 rounded-2xl transition-all duration-500 group overflow-hidden ${
-                        activeApp === app.id
-                          ? "bg-white/60 border border-red-200/50 shadow-[0_8px_32px_rgba(255,63,74,0.12)]"
-                          : "hover:bg-white/30"
-                      }`}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1, duration: 0.5 }}
+                    {/* Glassy hover effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+
+                    <motion.div
+                      className={`relative w-12 h-12 bg-gradient-to-br ${app.gradient} rounded-2xl flex items-center justify-center mb-4 mx-auto transition-transform duration-300 shadow-lg`}
+                      animate={{
+                        scale: activeApp === app.id ? 1.1 : 1,
+                        rotate: activeApp === app.id ? 3 : 0,
+                      }}
+                      transition={{ duration: 0.3 }}
                     >
-                      {/* Glassy hover effect */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                      <app.icon className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <div className="relative text-slate-800 font-medium text-sm text-center">
+                      {app.name}
+                    </div>
+                    <div className="relative text-slate-500 text-xs text-center mt-1">
+                      {app.platform}
+                    </div>
 
+                    {activeApp === app.id && (
                       <motion.div
-                        className={`relative w-12 h-12 bg-gradient-to-br ${app.gradient} rounded-2xl flex items-center justify-center mb-4 mx-auto transition-transform duration-300 shadow-lg`}
-                        animate={{
-                          scale: activeApp === app.id ? 1.1 : 1,
-                          rotate: activeApp === app.id ? 3 : 0,
-                        }}
+                        className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/10 via-red-600/10 to-pink-500/10 border border-red-500/20"
+                        layoutId="activeAppBorder"
                         transition={{ duration: 0.3 }}
-                      >
-                        <app.icon className="w-6 h-6 text-white" />
-                      </motion.div>
-                      <div className="relative text-slate-800 font-medium text-sm text-center">
-                        {app.name}
-                      </div>
-                      <div className="relative text-slate-500 text-xs text-center mt-1">
-                        {app.platform}
-                      </div>
-
-                      {activeApp === app.id && (
-                        <motion.div
-                          className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/10 via-red-600/10 to-pink-500/10 border border-red-500/20"
-                          layoutId="activeAppBorder"
-                          transition={{ duration: 0.3 }}
-                        />
-                      )}
-                    </motion.button>
-                  </HighlightableArrayItem>
+                      />
+                    )}
+                  </motion.button>
                 ))}
               </div>
             </motion.div>
@@ -420,7 +383,7 @@ const MobileDownload: React.FC<MobileDownloadProps> = ({ onElementClick }) => {
                   </div>
                 </div>
 
-                {/* Download Button */}
+                {/* FIXED: Download Button with Simplified Text */}
                 <motion.a
                   href={activeAppData.storeLink}
                   target="_blank"
@@ -464,92 +427,76 @@ const MobileDownload: React.FC<MobileDownloadProps> = ({ onElementClick }) => {
                 {/* Glassy hover effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
 
-                <HighlightableElement
-                  dataPath="qrCode.badge"
-                  elementType="text"
-                  label="QR Code Badge"
-                  onElementClick={onElementClick}
-                  disabled={!onElementClick}
-                >
-                  <div className="relative inline-flex items-center space-x-2 bg-red-100/50 backdrop-blur-sm border border-red-200/50 rounded-full px-4 py-2 mb-6">
-                    <QrCode className="w-4 h-4 text-red-600" />
-                    <span className="text-sm font-medium text-red-700">
-                      Scan to Download
-                    </span>
-                  </div>
-                </HighlightableElement>
+                <div className="relative inline-flex items-center space-x-2 bg-red-100/50 backdrop-blur-sm border border-red-200/50 rounded-full px-4 py-2 mb-6">
+                  <QrCode className="w-4 h-4 text-red-600" />
+                  <span className="text-sm font-medium text-red-700">
+                    Scan to Download
+                  </span>
+                </div>
 
                 {/* QR Code Placeholder with Enhanced Animation */}
-                <HighlightableElement
-                  dataPath="qrCode.placeholder"
-                  elementType="image"
-                  label="QR Code"
-                  onElementClick={onElementClick}
-                  disabled={!onElementClick}
-                >
-                  <div className="relative mb-8">
-                    <motion.div
-                      className="w-64 h-64 bg-white rounded-3xl mx-auto flex items-center justify-center shadow-[0_20px_60px_rgba(255,63,74,0.15)] transition-transform duration-500 border border-red-100/30"
-                      whileHover={{ scale: 1.05, rotate: 2 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className="text-center">
-                        <motion.div
-                          initial={{ scale: 0.8, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{ delay: 0.3, duration: 0.5 }}
-                        >
-                          <QrCode className="w-24 h-24 text-slate-400 mx-auto mb-4" />
-                        </motion.div>
-                        <motion.div
-                          className="text-slate-600 font-medium text-lg"
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.5, duration: 0.4 }}
-                        >
-                          {activeAppData.qrPlaceholder}
-                        </motion.div>
-                        <motion.div
-                          className="text-slate-500 text-sm mt-2"
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.6, duration: 0.4 }}
-                        >
-                          QR Code will be loaded
-                          <br />
-                          from admin configuration
-                        </motion.div>
-                      </div>
-                    </motion.div>
+                <div className="relative mb-8">
+                  <motion.div
+                    className="w-64 h-64 bg-white rounded-3xl mx-auto flex items-center justify-center shadow-[0_20px_60px_rgba(255,63,74,0.15)] transition-transform duration-500 border border-red-100/30"
+                    whileHover={{ scale: 1.05, rotate: 2 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="text-center">
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.3, duration: 0.5 }}
+                      >
+                        <QrCode className="w-24 h-24 text-slate-400 mx-auto mb-4" />
+                      </motion.div>
+                      <motion.div
+                        className="text-slate-600 font-medium text-lg"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5, duration: 0.4 }}
+                      >
+                        {activeAppData.qrPlaceholder}
+                      </motion.div>
+                      <motion.div
+                        className="text-slate-500 text-sm mt-2"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.6, duration: 0.4 }}
+                      >
+                        QR Code will be loaded
+                        <br />
+                        from admin configuration
+                      </motion.div>
+                    </div>
+                  </motion.div>
 
-                    {/* Floating Elements around QR */}
-                    <motion.div
-                      className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-br from-red-400 to-pink-500 rounded-full opacity-60"
-                      animate={{
-                        scale: [1, 1.2, 1],
-                        opacity: [0.6, 0.8, 0.6],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                    />
-                    <motion.div
-                      className="absolute -bottom-4 -left-4 w-6 h-6 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full opacity-40"
-                      animate={{
-                        scale: [1, 1.3, 1],
-                        opacity: [0.4, 0.7, 0.4],
-                      }}
-                      transition={{
-                        duration: 2.5,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 1,
-                      }}
-                    />
-                  </div>
-                </HighlightableElement>
+                  {/* Floating Elements around QR */}
+                  <motion.div
+                    className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-br from-red-400 to-pink-500 rounded-full opacity-60"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [0.6, 0.8, 0.6],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                  <motion.div
+                    className="absolute -bottom-4 -left-4 w-6 h-6 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full opacity-40"
+                    animate={{
+                      scale: [1, 1.3, 1],
+                      opacity: [0.4, 0.7, 0.4],
+                    }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 1,
+                    }}
+                  />
+                </div>
 
                 <motion.h3
                   className="relative text-2xl font-bold text-slate-800 mb-4 transition-colors duration-300"
@@ -640,36 +587,28 @@ const MobileDownload: React.FC<MobileDownloadProps> = ({ onElementClick }) => {
               gradient: "from-rose-500 to-red-600",
             },
           ].map((feature, index) => (
-            <HighlightableArrayItem
+            <motion.div
               key={index}
-              dataPath="bottomFeatures"
-              index={index}
-              label="Bottom Feature"
-              onElementClick={onElementClick}
-              disabled={!onElementClick}
+              variants={itemVariants}
+              className="relative bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl p-8 transition-all duration-500 group shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] overflow-hidden"
+              whileHover={{ y: -5 }}
             >
-              <motion.div
-                variants={itemVariants}
-                className="relative bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl p-8 transition-all duration-500 group shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] overflow-hidden"
-                whileHover={{ y: -5 }}
-              >
-                {/* Glassy hover effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+              {/* Glassy hover effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
 
-                <motion.div
-                  className={`relative w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 shadow-lg`}
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
-                  <feature.icon className="w-8 h-8 text-white" />
-                </motion.div>
-                <h3 className="relative text-xl font-bold text-slate-800 mb-4 transition-colors duration-300">
-                  {feature.title}
-                </h3>
-                <p className="relative text-slate-600 leading-relaxed transition-colors duration-300">
-                  {feature.description}
-                </p>
+              <motion.div
+                className={`relative w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 shadow-lg`}
+                whileHover={{ scale: 1.1, rotate: 5 }}
+              >
+                <feature.icon className="w-8 h-8 text-white" />
               </motion.div>
-            </HighlightableArrayItem>
+              <h3 className="relative text-xl font-bold text-slate-800 mb-4 transition-colors duration-300">
+                {feature.title}
+              </h3>
+              <p className="relative text-slate-600 leading-relaxed transition-colors duration-300">
+                {feature.description}
+              </p>
+            </motion.div>
           ))}
         </motion.div>
       </div>
