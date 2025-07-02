@@ -21,6 +21,7 @@ import {
   Headphones,
   HelpCircle,
   Building2,
+  Check,
 } from "lucide-react";
 
 const Header = () => {
@@ -28,7 +29,9 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("KOR");
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const languageDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,7 +41,7 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Handle click outside to close dropdown
+  // Handle click outside to close dropdowns
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -47,16 +50,22 @@ const Header = () => {
       ) {
         setActiveDropdown(null);
       }
+      if (
+        languageDropdownRef.current &&
+        !languageDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsLanguageDropdownOpen(false);
+      }
     };
 
-    if (activeDropdown) {
+    if (activeDropdown || isLanguageDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [activeDropdown]);
+  }, [activeDropdown, isLanguageDropdownOpen]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -74,7 +83,37 @@ const Header = () => {
 
   const handleLanguageChange = (language: string) => {
     setSelectedLanguage(language);
+    setIsLanguageDropdownOpen(false);
   };
+
+  const languages = [
+    {
+      code: "KOR",
+      name: "한국어",
+      flag: "🇰🇷",
+      nativeName: "Korean",
+    },
+    {
+      code: "ENG",
+      name: "English",
+      flag: "🇺🇸",
+      nativeName: "English",
+    },
+    {
+      code: "JPN",
+      name: "日本語",
+      flag: "🇯🇵",
+      nativeName: "Japanese",
+    },
+    {
+      code: "CHN",
+      name: "中文",
+      flag: "🇨🇳",
+      nativeName: "Chinese",
+    },
+  ];
+
+  const selectedLang = languages.find(lang => lang.code === selectedLanguage) || languages[0];
 
   const megaMenuItems = {
     Product: {
@@ -484,33 +523,82 @@ const Header = () => {
               </button>
             </nav>
 
-            {/* Enhanced Right Side Actions - Polished Glassy Language Toggle */}
+            {/* Enhanced Right Side Actions - Premium Language Dropdown */}
             <div className="hidden lg:flex items-center space-x-4">
-              {/* Premium Glassy Language Toggle */}
-              <div className="relative bg-white/30 backdrop-blur-md border border-white/20 rounded-full p-1 flex items-center space-x-1 shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] transition-all duration-500 group overflow-hidden">
-                {/* Glassy hover effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
-                
+              {/* Premium Language Dropdown */}
+              <div className="relative" ref={languageDropdownRef}>
                 <button
-                  onClick={() => handleLanguageChange("KOR")}
-                  className={`relative z-10 px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-300 ${
-                    selectedLanguage === "KOR"
-                      ? "text-slate-900 bg-white/70 shadow-sm hover:shadow-md"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
+                  onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+                  className="relative group bg-white/30 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 flex items-center space-x-3 shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] transition-all duration-500 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                >
+                  {/* Glassy hover effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+                  
+                  <div className="relative z-10 flex items-center space-x-2">
+                    <Globe className="w-4 h-4 text-slate-600" />
+                    <span className="text-sm font-medium text-slate-700">{selectedLang.flag}</span>
+                    <span className="text-sm font-medium text-slate-700">{selectedLang.code}</span>
+                    <ChevronDown 
+                      className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${
+                        isLanguageDropdownOpen ? "rotate-180" : ""
+                      }`} 
+                    />
+                  </div>
+                </button>
+
+                {/* Language Dropdown Menu */}
+                <div
+                  className={`absolute top-full right-0 mt-2 transition-all duration-300 ${
+                    isLanguageDropdownOpen
+                      ? "opacity-100 translate-y-0 pointer-events-auto"
+                      : "opacity-0 translate-y-2 pointer-events-none"
                   }`}
                 >
-                  KOR
-                </button>
-                <button
-                  onClick={() => handleLanguageChange("ENG")}
-                  className={`relative z-10 px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-300 ${
-                    selectedLanguage === "ENG"
-                      ? "text-slate-900 bg-white/70 shadow-sm hover:shadow-md"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
-                  }`}
-                >
-                  ENG
-                </button>
+                  <div className="w-64 bg-white/90 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-[0_20px_70px_rgba(0,0,0,0.15)] p-2 overflow-hidden">
+                    {/* Header */}
+                    <div className="px-4 py-3 border-b border-slate-100/50">
+                      <div className="flex items-center space-x-2">
+                        <Globe className="w-4 h-4 text-slate-500" />
+                        <span className="text-sm font-medium text-slate-700">Select Language</span>
+                      </div>
+                    </div>
+
+                    {/* Language Options */}
+                    <div className="py-2">
+                      {languages.map((language) => (
+                        <button
+                          key={language.code}
+                          onClick={() => handleLanguageChange(language.code)}
+                          className={`w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-50/80 rounded-xl transition-all duration-200 group ${
+                            selectedLanguage === language.code ? "bg-red-50/50" : ""
+                          }`}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <span className="text-lg">{language.flag}</span>
+                            <div>
+                              <div className="text-sm font-medium text-slate-800">
+                                {language.name}
+                              </div>
+                              <div className="text-xs text-slate-500">
+                                {language.nativeName}
+                              </div>
+                            </div>
+                          </div>
+                          {selectedLanguage === language.code && (
+                            <Check className="w-4 h-4 text-red-500" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Footer */}
+                    <div className="px-4 py-2 border-t border-slate-100/50">
+                      <div className="text-xs text-slate-500 text-center">
+                        More languages coming soon
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -536,30 +624,55 @@ const Header = () => {
             }`}
           >
             <div className="bg-white/80 backdrop-blur-2xl rounded-2xl border border-slate-200/80 shadow-[0_20px_70px_rgba(0,0,0,0.15)] mt-4 p-6 max-h-[70vh] overflow-y-auto">
-              {/* Mobile Language Toggle */}
+              {/* Mobile Language Dropdown */}
               <div className="mb-6 pb-6 border-b border-slate-100">
                 <div className="flex items-center justify-center">
-                  <div className="bg-white/50 backdrop-blur-md border border-white/30 rounded-full p-1 flex items-center space-x-1 shadow-sm">
+                  <div className="relative w-full max-w-xs">
                     <button
-                      onClick={() => handleLanguageChange("KOR")}
-                      className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
-                        selectedLanguage === "KOR"
-                          ? "text-slate-900 bg-white/80 shadow-sm"
-                          : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
-                      }`}
+                      onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+                      className="w-full bg-white/50 backdrop-blur-md border border-white/30 rounded-2xl px-4 py-3 flex items-center justify-between shadow-sm"
                     >
-                      한국어
+                      <div className="flex items-center space-x-3">
+                        <Globe className="w-4 h-4 text-slate-600" />
+                        <span className="text-lg">{selectedLang.flag}</span>
+                        <span className="text-sm font-medium text-slate-700">{selectedLang.name}</span>
+                      </div>
+                      <ChevronDown 
+                        className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${
+                          isLanguageDropdownOpen ? "rotate-180" : ""
+                        }`} 
+                      />
                     </button>
-                    <button
-                      onClick={() => handleLanguageChange("ENG")}
-                      className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
-                        selectedLanguage === "ENG"
-                          ? "text-slate-900 bg-white/80 shadow-sm"
-                          : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
-                      }`}
-                    >
-                      English
-                    </button>
+
+                    {/* Mobile Language Options */}
+                    {isLanguageDropdownOpen && (
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-lg p-2 z-50">
+                        {languages.map((language) => (
+                          <button
+                            key={language.code}
+                            onClick={() => handleLanguageChange(language.code)}
+                            className={`w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-50/80 rounded-xl transition-all duration-200 ${
+                              selectedLanguage === language.code ? "bg-red-50/50" : ""
+                            }`}
+                          >
+                            <div className="flex items-center space-x-3">
+                              <span className="text-lg">{language.flag}</span>
+                              <div>
+                                <div className="text-sm font-medium text-slate-800">
+                                  {language.name}
+                                </div>
+                                <div className="text-xs text-slate-500">
+                                  {language.nativeName}
+                                </div>
+                              </div>
+                            </div>
+                            {selectedLanguage === language.code && (
+                              <Check className="w-4 h-4 text-red-500" />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
