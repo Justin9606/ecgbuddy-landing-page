@@ -44,9 +44,8 @@ const CareersPage = () => {
   const [selectedLocation, setSelectedLocation] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedJob, setSelectedJob] = useState<number | null>(null);
 
-  // Job positions data
+  // Job positions data - REMOVED featured and urgent badges
   const jobPositions = [
     {
       id: 1,
@@ -57,20 +56,12 @@ const CareersPage = () => {
       experience: "5+ years",
       salary: "$120K - $180K",
       description: "Lead the development of our next-generation AI models for ECG analysis and cardiac diagnostics.",
-      fullDescription: "We are seeking a Senior AI/ML Engineer to lead the development of our next-generation AI models for ECG analysis and cardiac diagnostics. You will work with a world-class team of engineers and researchers to build cutting-edge machine learning systems that help save lives. This role involves designing and implementing deep learning architectures, optimizing model performance, and ensuring our AI systems meet the highest standards of medical accuracy and reliability.",
       requirements: [
         "PhD/MS in Computer Science, AI, or related field",
         "5+ years experience in machine learning",
         "Expertise in TensorFlow, PyTorch, or similar",
         "Experience with medical data and healthcare AI",
         "Strong Python and cloud computing skills"
-      ],
-      responsibilities: [
-        "Design and implement deep learning models for ECG analysis",
-        "Collaborate with medical professionals to validate AI algorithms",
-        "Optimize model performance for real-time processing",
-        "Lead technical discussions and mentor junior engineers",
-        "Ensure compliance with medical device regulations"
       ],
       benefits: ["Stock options", "Health insurance", "Flexible hours", "Remote work"],
       posted: "2 days ago"
@@ -84,20 +75,12 @@ const CareersPage = () => {
       experience: "4+ years",
       salary: "$90K - $140K",
       description: "Build beautiful, responsive user interfaces for our healthcare platform using React and Next.js.",
-      fullDescription: "Join our frontend team to build beautiful, responsive user interfaces for our healthcare platform. You'll work closely with designers and backend engineers to create intuitive experiences that help medical professionals make critical decisions. This role involves building complex data visualizations, implementing real-time features, and ensuring our platform works seamlessly across all devices.",
       requirements: [
         "BS in Computer Science or equivalent",
         "4+ years React/Next.js experience",
         "Expert in TypeScript, Tailwind CSS",
         "Experience with healthcare/medical UIs",
         "Strong design sensibility"
-      ],
-      responsibilities: [
-        "Develop responsive web applications using React and Next.js",
-        "Create interactive data visualizations for ECG analysis",
-        "Collaborate with UX/UI designers on user experience",
-        "Implement real-time features and WebSocket connections",
-        "Optimize application performance and accessibility"
       ],
       benefits: ["Stock options", "Health insurance", "Learning budget", "Gym membership"],
       posted: "1 week ago"
@@ -111,20 +94,12 @@ const CareersPage = () => {
       experience: "3+ years",
       salary: "$70K - $110K",
       description: "Lead clinical validation studies and collaborate with medical institutions to improve our AI algorithms.",
-      fullDescription: "We are looking for a Clinical Research Specialist to lead clinical validation studies and collaborate with medical institutions worldwide. You will design and execute clinical trials, analyze research data, and work closely with our AI team to improve algorithm accuracy. This role is crucial in ensuring our products meet the highest clinical standards and regulatory requirements.",
       requirements: [
         "MD, PhD, or MS in Biomedical Sciences",
         "3+ years clinical research experience",
         "Experience with cardiology/ECG analysis",
         "Strong statistical analysis skills",
         "Regulatory compliance knowledge"
-      ],
-      responsibilities: [
-        "Design and execute clinical validation studies",
-        "Collaborate with hospitals and medical institutions",
-        "Analyze clinical data and prepare research reports",
-        "Ensure compliance with FDA and international regulations",
-        "Present findings at medical conferences"
       ],
       benefits: ["Health insurance", "Conference budget", "Research grants", "Flexible schedule"],
       posted: "3 days ago"
@@ -138,20 +113,12 @@ const CareersPage = () => {
       experience: "3+ years",
       salary: "$80K - $120K",
       description: "Design intuitive healthcare experiences that help medical professionals save lives.",
-      fullDescription: "As a Product Designer, you'll create intuitive healthcare experiences that help medical professionals save lives. You'll work on complex design challenges, from simplifying ECG interpretation workflows to designing mobile applications for emergency situations. This role requires deep empathy for users, strong visual design skills, and the ability to translate complex medical concepts into clear, actionable interfaces.",
       requirements: [
         "Bachelor's in Design or equivalent",
         "3+ years product design experience",
         "Proficiency in Figma, Adobe Creative Suite",
         "Healthcare/medical design experience preferred",
         "Strong user research skills"
-      ],
-      responsibilities: [
-        "Design user interfaces for web and mobile applications",
-        "Conduct user research with healthcare professionals",
-        "Create design systems and component libraries",
-        "Collaborate with engineering teams on implementation",
-        "Test and iterate on design solutions"
       ],
       benefits: ["Remote work", "Design tools budget", "Health insurance", "Unlimited PTO"],
       posted: "5 days ago"
@@ -165,20 +132,12 @@ const CareersPage = () => {
       experience: "4+ years",
       salary: "$100K - $150K",
       description: "Build and maintain our cloud infrastructure to ensure 99.9% uptime for critical healthcare services.",
-      fullDescription: "Join our DevOps team to build and maintain cloud infrastructure that ensures 99.9% uptime for critical healthcare services. You'll work with cutting-edge technologies to create scalable, secure, and reliable systems that healthcare professionals depend on. This role involves managing Kubernetes clusters, implementing CI/CD pipelines, and ensuring our platform meets strict healthcare compliance requirements.",
       requirements: [
         "BS in Computer Science or equivalent",
         "4+ years DevOps/Infrastructure experience",
         "Expert in AWS, Kubernetes, Docker",
         "Experience with healthcare compliance (HIPAA)",
         "Strong automation and monitoring skills"
-      ],
-      responsibilities: [
-        "Manage and scale Kubernetes infrastructure on AWS",
-        "Implement CI/CD pipelines and automation tools",
-        "Monitor system performance and ensure high availability",
-        "Maintain security and compliance standards",
-        "Collaborate with development teams on deployment strategies"
       ],
       benefits: ["Stock options", "Health insurance", "On-call compensation", "Training budget"],
       posted: "1 day ago"
@@ -192,20 +151,12 @@ const CareersPage = () => {
       experience: "3+ years",
       salary: "$95K - $135K",
       description: "Analyze large-scale medical data to improve our AI models and generate clinical insights.",
-      fullDescription: "We're seeking a Data Scientist to analyze large-scale medical data and generate clinical insights that improve our AI models. You'll work with massive datasets of ECG recordings, patient outcomes, and clinical metadata to discover patterns that enhance our diagnostic accuracy. This role combines advanced statistical analysis with domain expertise in cardiology and machine learning.",
       requirements: [
         "PhD/MS in Statistics, Data Science, or related",
         "3+ years data science experience",
         "Expert in Python, R, SQL",
         "Experience with medical/healthcare data",
         "Strong statistical modeling skills"
-      ],
-      responsibilities: [
-        "Analyze large-scale medical datasets",
-        "Develop statistical models for clinical insights",
-        "Collaborate with AI team on model improvements",
-        "Create data visualizations and reports",
-        "Ensure data quality and privacy compliance"
       ],
       benefits: ["Remote work", "Conference budget", "Health insurance", "Research time"],
       posted: "1 week ago"
@@ -239,11 +190,16 @@ const CareersPage = () => {
     return matchesDepartment && matchesLocation && matchesSearch;
   });
 
-  const selectedJobData = selectedJob ? jobPositions.find(job => job.id === selectedJob) : null;
+  const teamStats = [
+    { label: "Team Members", value: "150+", icon: Users },
+    { label: "Countries", value: "12", icon: Globe },
+    { label: "Average Experience", value: "8 years", icon: Award },
+    { label: "Retention Rate", value: "94%", icon: TrendingUp }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
-      {/* Header with Back Navigation */}
+      {/* Header with Back Navigation - UPDATED: Changed to ARPI Careers */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-slate-200/50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -272,7 +228,7 @@ const CareersPage = () => {
         </div>
       </header>
 
-      {/* SIMPLIFIED Hero Section - NO TEAM STATS */}
+      {/* SIMPLIFIED Hero Section */}
       <section className="relative py-16 overflow-hidden">
         {/* Background Elements */}
         <div className="absolute inset-0">
@@ -315,7 +271,7 @@ const CareersPage = () => {
               Join a passionate team working to revolutionize cardiac care through cutting-edge AI technology. Help us save lives and improve patient outcomes worldwide.
             </motion.p>
 
-            {/* Single CTA Button */}
+            {/* REMOVED "Watch Our Story" button - Only one CTA now */}
             <motion.div
               className="flex justify-center"
               initial={{ opacity: 0, y: 30 }}
@@ -334,127 +290,35 @@ const CareersPage = () => {
               </motion.button>
             </motion.div>
           </div>
+
+          {/* SIMPLIFIED Team Stats */}
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.8 }}
+          >
+            {teamStats.map((stat, index) => (
+              <motion.div
+                key={index}
+                className="bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-xl p-4 text-center shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] transition-all duration-500 group"
+                whileHover={{ y: -3 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1 + index * 0.1, duration: 0.6 }}
+              >
+                <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <stat.icon className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-xl font-bold text-slate-800 mb-1">{stat.value}</div>
+                <div className="text-xs text-slate-600">{stat.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
-      {/* Job Detail Modal */}
-      <AnimatePresence>
-        {selectedJob && selectedJobData && (
-          <motion.div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedJob(null)}
-          >
-            <motion.div
-              className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-8">
-                {/* Header */}
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <h2 className="text-3xl font-bold text-slate-800 mb-2">{selectedJobData.title}</h2>
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-4">
-                      <div className="flex items-center space-x-1">
-                        <MapPin className="w-4 h-4" />
-                        <span>{selectedJobData.location}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Clock className="w-4 h-4" />
-                        <span>{selectedJobData.type}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Briefcase className="w-4 h-4" />
-                        <span>{selectedJobData.experience}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <DollarSign className="w-4 h-4" />
-                        <span>{selectedJobData.salary}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setSelectedJob(null)}
-                    className="p-2 hover:bg-slate-100 rounded-full transition-colors"
-                  >
-                    <X className="w-6 h-6 text-slate-500" />
-                  </button>
-                </div>
-
-                {/* Content */}
-                <div className="space-y-8">
-                  {/* Description */}
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-800 mb-4">About This Role</h3>
-                    <p className="text-slate-600 leading-relaxed">{selectedJobData.fullDescription}</p>
-                  </div>
-
-                  {/* Requirements */}
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-800 mb-4">Requirements</h3>
-                    <ul className="space-y-2">
-                      {selectedJobData.requirements.map((req, index) => (
-                        <li key={index} className="flex items-start space-x-2">
-                          <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                          <span className="text-slate-600">{req}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Responsibilities */}
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-800 mb-4">Key Responsibilities</h3>
-                    <ul className="space-y-2">
-                      {selectedJobData.responsibilities.map((resp, index) => (
-                        <li key={index} className="flex items-start space-x-2">
-                          <Target className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                          <span className="text-slate-600">{resp}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Benefits */}
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-800 mb-4">Benefits & Perks</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedJobData.benefits.map((benefit, index) => (
-                        <span
-                          key={index}
-                          className="bg-green-100/50 text-green-700 px-3 py-1 rounded-full text-sm font-medium"
-                        >
-                          {benefit}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Apply Button */}
-                  <div className="pt-6 border-t border-slate-200">
-                    <motion.button
-                      className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center justify-center space-x-3 group overflow-hidden"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                      <span className="relative z-10">Apply for This Position</span>
-                      <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
-                    </motion.button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Open Positions */}
+      {/* Open Positions - MAIN FOCUS */}
       <section id="open-positions" className="py-16">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
@@ -584,7 +448,7 @@ const CareersPage = () => {
             </div>
           </motion.div>
 
-          {/* Job Listings */}
+          {/* Job Listings - REMOVED all badges and "Save for Later" button */}
           <div className="space-y-6">
             <AnimatePresence>
               {filteredJobs.map((job, index) => (
@@ -595,9 +459,8 @@ const CareersPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ delay: index * 0.1, duration: 0.5 }}
-                  className="relative bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.1)] transition-all duration-500 group cursor-pointer"
+                  className="relative bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.1)] transition-all duration-500 group"
                   whileHover={{ y: -2 }}
-                  onClick={() => setSelectedJob(job.id)}
                 >
                   {/* Card Content */}
                   <div className="p-6">
@@ -644,7 +507,7 @@ const CareersPage = () => {
                         </div>
                       </div>
 
-                      {/* Apply Section */}
+                      {/* Apply Section - REMOVED "Save for Later" button */}
                       <div className="lg:col-span-1">
                         <div className="bg-white/50 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-6 h-fit">
                           <div className="text-center mb-4">
@@ -653,11 +516,21 @@ const CareersPage = () => {
                             </div>
                             <h4 className="font-bold text-slate-800 mb-2">Ready to Apply?</h4>
                             <p className="text-sm text-slate-600">
-                              Click to view full details and apply
+                              Join our mission to revolutionize healthcare
                             </p>
                           </div>
 
-                          <div className="text-center">
+                          <motion.button
+                            className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-3 rounded-2xl font-semibold shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center justify-center space-x-2 group overflow-hidden"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                            <span className="relative z-10">Apply Now</span>
+                            <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
+                          </motion.button>
+
+                          <div className="mt-3 pt-3 border-t border-slate-200/50 text-center">
                             <p className="text-xs text-slate-500">
                               Questions? Email us at{" "}
                               <a href="mailto:careers@ecgbuddy.ai" className="text-red-600 hover:text-red-700">
@@ -703,7 +576,7 @@ const CareersPage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* SIMPLIFIED CTA Section */}
       <section className="py-16 bg-gradient-to-br from-red-50/30 via-white to-pink-50/20">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <motion.div
@@ -738,7 +611,7 @@ const CareersPage = () => {
                 <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
               </motion.button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
     </div>
