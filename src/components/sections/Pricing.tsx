@@ -356,13 +356,12 @@ const Pricing = () => {
                     ? "bg-white/25 text-white backdrop-blur-sm" 
                     : "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg"
                 }`}
-                animate={{
-                  scale: billingCycle === "yearly" ? 1 : [1, 1.1, 1],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: billingCycle === "yearly" ? 0 : Infinity,
-                }}
+                animate={billingCycle === "yearly" ? { scale: 1 } : { scale: [1, 1.1, 1] }}
+                transition={
+                  billingCycle === "yearly" 
+                    ? { duration: 0 }
+                    : { duration: 2, repeat: Infinity }
+                }
               >
                 Save 20%
               </motion.div>
@@ -612,7 +611,7 @@ const Pricing = () => {
                   <div className="font-bold text-slate-800">{item.title}</div>
                   <div className="text-sm text-slate-600">{item.description}</div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </motion.div>
