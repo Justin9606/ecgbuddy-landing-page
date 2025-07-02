@@ -29,10 +29,14 @@
       "tryEcgBuddy": "Try ECG Buddy",
       "getStarted": "Get Started"
     },
-    "language": {
-      "korean": "KOR",
-      "english": "ENG"
-    }
+
+    "languages": [
+      {
+        "code": "en",
+        "name": "English",
+        "flag": "🇺🇸"
+      }
+    ]
   },
   "hero": {
     "badge": "AI-Powered ECG Analysis",

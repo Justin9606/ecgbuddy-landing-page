@@ -5,6 +5,7 @@ import {
   Footer,
   Hero,
   Features,
+  Pricing,
   MobileDownload,
   FAQ,
   AboutARPI,
@@ -16,6 +17,7 @@ export default function HomePage() {
       <Header />
       <Hero />
       <Features />
+      <Pricing />
       <MobileDownload />
       <FAQ />
       <AboutARPI />

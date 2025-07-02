@@ -29,10 +29,14 @@
       "tryEcgBuddy": "ECG Buddy 체험하기",
       "getStarted": "시작하기"
     },
-    "language": {
-      "korean": "KOR",
-      "english": "ENG"
-    }
+
+    "languages": [
+      {
+        "code": "ko",
+        "name": "한국어",
+        "flag": "🇰🇷"
+      }
+    ]
   },
   "hero": {
     "badge": "AI 기반 심전도 분석",
