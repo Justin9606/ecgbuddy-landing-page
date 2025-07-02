@@ -2,7 +2,7 @@
 
 import React, { useState, memo } from "react";
 import { motion } from "framer-motion";
-import { Edit3, Target, MousePointer } from "lucide-react";
+import { Edit3, MousePointer } from "lucide-react";
 
 interface HighlightableElementProps {
   children: React.ReactNode;
@@ -43,7 +43,7 @@ export const HighlightableElement: React.FC<HighlightableElementProps> = memo(({
   return (
     <motion.div
       className={`relative group cursor-pointer transition-all duration-200 ${className} ${
-        isHovered ? 'ring-2 ring-blue-500 ring-offset-2 rounded-lg z-10' : ''
+        isHovered ? 'highlightable-element highlighted z-10' : 'highlightable-element'
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -53,16 +53,6 @@ export const HighlightableElement: React.FC<HighlightableElementProps> = memo(({
     >
       {children}
       
-      {/* Hover Overlay */}
-      {isHovered && (
-        <motion.div
-          className="absolute inset-0 bg-blue-500/10 border-2 border-blue-500 rounded-lg pointer-events-none z-20"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.1 }}
-        />
-      )}
-
       {/* Edit Label */}
       {isHovered && (
         <motion.div

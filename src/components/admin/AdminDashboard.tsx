@@ -6,7 +6,7 @@ import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import { ModernSidebar } from "./ModernSidebar";
 import { ModernHeader } from "./ModernHeader";
 import { ModernContentEditor } from "./ModernContentEditor";
-import { ModernLivePreview } from "./ModernLivePreview";
+import { LivePreview } from "./LivePreview";
 import { DashboardHome } from "./sections/DashboardHome";
 import { PageBuilder } from "./sections/PageBuilder";
 import { MediaLibrary } from "./sections/MediaLibrary";
@@ -38,6 +38,7 @@ export const AdminDashboard: React.FC = () => {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(true);
+  const [highlightedElement, setHighlightedElement] = useState<string | null>(null);
 
   // Load content from localStorage on mount
   useEffect(() => {
@@ -105,6 +106,13 @@ export const AdminDashboard: React.FC = () => {
     }
   }, [siteContent]);
 
+  const handleElementClick = useCallback((elementPath: string, elementType: string) => {
+    console.log('Element clicked:', elementPath, elementType);
+    setHighlightedElement(elementPath);
+    
+    // This will be used to scroll to and highlight the corresponding field in the editor
+  }, []);
+
   const currentSectionContent = useMemo(() => {
     return siteContent[activeSection as keyof SiteContent];
   }, [siteContent, activeSection]);
@@ -123,7 +131,7 @@ export const AdminDashboard: React.FC = () => {
         />
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'ml-20' : 'ml-0'}`}>
           {/* Modern Header */}
           <ModernHeader 
             activeSection={activeSection}
@@ -134,6 +142,7 @@ export const AdminDashboard: React.FC = () => {
             saveError={saveError}
             showPreview={showPreview}
             onTogglePreview={() => setShowPreview(!showPreview)}
+            onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           />
 
           {/* Content Area */}
@@ -183,28 +192,30 @@ export const AdminDashboard: React.FC = () => {
                       <PanelGroup direction="horizontal" className="h-full">
                         {/* Live Preview Panel */}
                         <Panel defaultSize={50} minSize={30} maxSize={70}>
-                          <ModernLivePreview
-                            section={activeSection}
-                            content={currentSectionContent}
-                            onElementClick={(elementPath, elementType) => {
-                              // Handle element click for editing
-                              console.log('Element clicked:', elementPath, elementType);
-                            }}
-                          />
+                          <div className="h-full overflow-hidden">
+                            <LivePreview
+                              section={activeSection}
+                              isVisible={true}
+                              onElementClick={handleElementClick}
+                            />
+                          </div>
                         </Panel>
 
                         {/* Resize Handle */}
-                        <PanelResizeHandle className="w-1 bg-gray-200 hover:bg-blue-400 transition-colors duration-200" />
+                        <PanelResizeHandle className="resize-handle w-2" />
 
                         {/* Content Editor Panel */}
                         <Panel defaultSize={50} minSize={30} maxSize={70}>
-                          <ModernContentEditor
-                            section={activeSection}
-                            content={currentSectionContent}
-                            onContentChange={(newContent) => handleContentChange(activeSection, newContent)}
-                            onSave={handleSaveAllChanges}
-                            isLoading={isLoading}
-                          />
+                          <div className="h-full overflow-hidden">
+                            <ModernContentEditor
+                              section={activeSection}
+                              content={currentSectionContent}
+                              onContentChange={(newContent) => handleContentChange(activeSection, newContent)}
+                              onSave={handleSaveAllChanges}
+                              isLoading={isLoading}
+                              highlightedElement={highlightedElement}
+                            />
+                          </div>
                         </Panel>
                       </PanelGroup>
                     ) : (
@@ -214,6 +225,7 @@ export const AdminDashboard: React.FC = () => {
                         onContentChange={(newContent) => handleContentChange(activeSection, newContent)}
                         onSave={handleSaveAllChanges}
                         isLoading={isLoading}
+                        highlightedElement={highlightedElement}
                       />
                     )}
                   </div>

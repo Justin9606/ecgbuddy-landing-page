@@ -21,21 +21,6 @@ interface LivePreviewProps {
   onElementClick?: (elementPath: string, elementType: string) => void;
 }
 
-// Memoized component wrapper to prevent unnecessary re-renders
-const ComponentWrapper = memo(({ 
-  children, 
-  onElementClick 
-}: { 
-  children: React.ReactNode;
-  onElementClick?: (elementPath: string, elementType: string) => void;
-}) => (
-  <div className="admin-preview-wrapper">
-    {React.cloneElement(children as React.ReactElement, { onElementClick })}
-  </div>
-));
-
-ComponentWrapper.displayName = 'ComponentWrapper';
-
 export const LivePreview: React.FC<LivePreviewProps> = memo(({
   section,
   isVisible = true,
@@ -68,74 +53,25 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
     try {
       switch (section) {
         case "header":
-          return (
-            <div className="min-h-screen">
-              {/* Header with proper z-index and positioning */}
-              <div className="relative">
-                <ComponentWrapper onElementClick={onElementClick}>
-                  <Header onElementClick={onElementClick} />
-                </ComponentWrapper>
-              </div>
-              
-              {/* Content below header to show context */}
-              <div className="px-6 py-12 bg-white">
-                <div className="max-w-7xl mx-auto">
-                  <div className="text-center">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-3">Header Preview</h2>
-                    <p className="text-gray-600 mb-6">This shows how your header will appear on the live site</p>
-                    <div className="bg-gray-50 rounded-lg p-6">
-                      <p className="text-gray-500">Page content would appear below the header...</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
+          return <Header onElementClick={onElementClick} />;
           
         case "hero":
-          return (
-            <ComponentWrapper onElementClick={onElementClick}>
-              <Hero onElementClick={onElementClick} />
-            </ComponentWrapper>
-          );
+          return <Hero onElementClick={onElementClick} />;
           
         case "features":
-          return (
-            <ComponentWrapper onElementClick={onElementClick}>
-              <Features onElementClick={onElementClick} />
-            </ComponentWrapper>
-          );
+          return <Features onElementClick={onElementClick} />;
           
         case "mobile-download":
-          return (
-            <ComponentWrapper onElementClick={onElementClick}>
-              <MobileDownload onElementClick={onElementClick} />
-            </ComponentWrapper>
-          );
+          return <MobileDownload onElementClick={onElementClick} />;
           
         case "faq":
-          return (
-            <ComponentWrapper onElementClick={onElementClick}>
-              <FAQ onElementClick={onElementClick} />
-            </ComponentWrapper>
-          );
+          return <FAQ onElementClick={onElementClick} />;
           
         case "about-arpi":
-          return (
-            <ComponentWrapper onElementClick={onElementClick}>
-              <AboutARPI onElementClick={onElementClick} />
-            </ComponentWrapper>
-          );
+          return <AboutARPI onElementClick={onElementClick} />;
           
         case "footer":
-          return (
-            <div className="min-h-screen bg-white flex flex-col">
-              <div className="flex-1"></div>
-              <ComponentWrapper onElementClick={onElementClick}>
-                <Footer onElementClick={onElementClick} />
-              </ComponentWrapper>
-            </div>
-          );
+          return <Footer onElementClick={onElementClick} />;
           
         default:
           return (
@@ -158,7 +94,7 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
         </div>
       );
     }
-  }, [section, content, onElementClick]); // Re-render when content or onElementClick changes
+  }, [section, content, onElementClick]);
 
   if (!isVisible) return null;
 
@@ -231,76 +167,23 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
         </div>
       </div>
 
-      {/* Live Preview Container - Clean and minimal */}
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full">
-          <div 
-            className={`h-full overflow-y-auto transition-all duration-300 ${
-              isFullscreen ? 'w-full' : ''
-            }`}
-            style={{ 
-              width: isFullscreen ? '100%' : getViewportWidth(),
-              maxWidth: "100%",
-            }}
-          >
-            {/* PURE Landing Page Content - NO extra styling */}
-            <div className="admin-preview-container">
-              {renderLivePreview}
-            </div>
+      {/* Live Preview Container */}
+      <div className="flex-1 overflow-auto">
+        <div 
+          className={`h-full overflow-y-auto transition-all duration-300 mx-auto ${
+            isFullscreen ? 'w-full' : ''
+          }`}
+          style={{ 
+            width: isFullscreen ? '100%' : getViewportWidth(),
+            maxWidth: "100%",
+          }}
+        >
+          {/* PURE Landing Page Content - NO extra styling */}
+          <div className="admin-preview-container">
+            {renderLivePreview}
           </div>
         </div>
       </div>
-
-      {/* Enhanced Admin Preview Styles */}
-      <style jsx global>{`
-        /* Clean preview container - no interference with original styles */
-        .admin-preview-container {
-          /* Enable pointer events for interactive editing */
-          pointer-events: auto;
-          /* Ensure proper overflow for dropdowns */
-          overflow: visible;
-        }
-        
-        .admin-preview-wrapper {
-          /* Ensure proper scaling */
-          transform-origin: top left;
-          width: 100%;
-          /* Enable interactions for editing */
-          pointer-events: auto;
-          /* Allow overflow for dropdowns */
-          overflow: visible;
-        }
-
-        /* Fix header positioning in preview */
-        .admin-preview-container header {
-          position: relative !important;
-          top: auto !important;
-          left: auto !important;
-          right: auto !important;
-        }
-
-        /* Ensure dropdowns work properly in preview */
-        .admin-preview-container .absolute {
-          position: absolute !important;
-          z-index: 9999 !important;
-        }
-
-        /* Fix mega menu visibility */
-        .admin-preview-container [class*="dropdown"],
-        .admin-preview-container [class*="menu"] {
-          z-index: 9999 !important;
-        }
-
-        /* Ensure hover states work */
-        .admin-preview-container .group:hover > div[class*="absolute"] {
-          z-index: 9999 !important;
-        }
-
-        /* Remove any fixed positioning that might interfere */
-        .admin-preview-container .fixed {
-          position: relative !important;
-        }
-      `}</style>
     </div>
   );
 });

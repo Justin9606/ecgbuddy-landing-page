@@ -568,7 +568,7 @@ const Hero: React.FC<HeroProps> = ({ onElementClick }) => {
                 disabled={!onElementClick}
               >
                 <motion.div
-                  className={`group relative bg-gradient-to-br ${item.bgGradient} backdrop-blur-2xl border border-${item.borderColor} rounded-2xl p-6 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] overflow-hidden cursor-pointer min-w-[200px]`}
+                  className={`group relative bg-gradient-to-br ${item.bgGradient} backdrop-blur-2xl border border-${item.borderColor} rounded-2xl p-4 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] overflow-hidden cursor-pointer min-w-[200px]`}
                   initial={{ opacity: 0, y: 20, scale: 0.9 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{
