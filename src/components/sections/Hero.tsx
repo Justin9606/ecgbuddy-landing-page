@@ -141,13 +141,11 @@ const Hero = () => {
               x: { duration: 0.5 },
               y: { duration: 0.5 },
               scale: {
-                type: "tween",
                 duration: 8 + i * 2,
                 repeat: Infinity,
                 ease: "easeInOut",
               },
               opacity: {
-                type: "tween",
                 duration: 8 + i * 2,
                 repeat: Infinity,
                 ease: "easeInOut",
@@ -171,12 +169,12 @@ const Hero = () => {
               <motion.div
                 className="w-2 h-2 bg-red-400 rounded-full"
                 animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
-                transition={{ type: "tween", duration: 2, repeat: Infinity }}
+                transition={{ duration: 2, repeat: Infinity }}
               />
               <motion.div
                 className="absolute inset-0 w-2 h-2 bg-red-400 rounded-full"
                 animate={{ scale: [1, 2, 1], opacity: [0.5, 0, 0.5] }}
-                transition={{ type: "tween", duration: 2, repeat: Infinity }}
+                transition={{ duration: 2, repeat: Infinity }}
               />
             </div>
             <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">
@@ -187,7 +185,6 @@ const Hero = () => {
               <motion.div
                 animate={{ rotate: [0, 12, 0] }}
                 transition={{
-                  type: "tween",
                   duration: 2,
                   repeat: Infinity,
                   ease: "easeInOut",
@@ -372,7 +369,7 @@ const Hero = () => {
               <span className="relative z-10">Try ECG Buddy</span>
               <motion.div
                 animate={{ x: [0, 5, 0] }}
-                transition={{ type: "tween", duration: 1.5, repeat: Infinity }}
+                transition={{ duration: 1.5, repeat: Infinity }}
               >
                 <ArrowRight className="w-5 h-5 relative z-10" />
               </motion.div>
@@ -548,7 +545,6 @@ const Hero = () => {
                     opacity: [0.7, 1, 0.7],
                   }}
                   transition={{
-                    type: "tween",
                     duration: 2,
                     repeat: Infinity,
                     ease: "easeInOut",
@@ -575,7 +571,6 @@ const Hero = () => {
             rotate: [0, 1, 0],
           }}
           transition={{
-            type: "tween",
             duration: 6,
             repeat: Infinity,
             ease: "easeInOut",
@@ -586,12 +581,12 @@ const Hero = () => {
               <motion.div
                 className="w-3 h-3 bg-red-400 rounded-full"
                 animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
-                transition={{ type: "tween", duration: 2, repeat: Infinity }}
+                transition={{ duration: 2, repeat: Infinity }}
               />
               <motion.div
                 className="absolute inset-0 w-3 h-3 bg-red-400 rounded-full"
                 animate={{ scale: [1, 2, 1], opacity: [0.5, 0, 0.5] }}
-                transition={{ type: "tween", duration: 2, repeat: Infinity }}
+                transition={{ duration: 2, repeat: Infinity }}
               />
             </div>
             <span className="text-sm font-medium text-slate-700">
@@ -599,7 +594,7 @@ const Hero = () => {
             </span>
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
-              transition={{ type: "tween", duration: 2, repeat: Infinity }}
+              transition={{ duration: 2, repeat: Infinity }}
             >
               <Activity className="w-4 h-4 text-red-500" />
             </motion.div>
@@ -617,7 +612,7 @@ const Hero = () => {
             <motion.div
               className="absolute inset-0 bg-gradient-to-r from-red-100/20 to-pink-100/20"
               animate={{ opacity: [0.2, 0.4, 0.2] }}
-              transition={{ type: "tween", duration: 3, repeat: Infinity }}
+              transition={{ duration: 3, repeat: Infinity }}
             />
             <Brain className="w-6 h-6 text-red-600" />
             <span className="ml-2 text-sm text-slate-600 font-medium">
