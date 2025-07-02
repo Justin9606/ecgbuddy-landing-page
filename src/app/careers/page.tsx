@@ -25,7 +25,6 @@ import {
   ArrowLeft,
   Building2,
   Sparkles,
-  Play,
   Calendar,
   DollarSign,
   Briefcase,
@@ -191,72 +190,6 @@ const CareersPage = () => {
     return matchesDepartment && matchesLocation && matchesSearch;
   });
 
-  const companyValues = [
-    {
-      icon: Heart,
-      title: "Patient First",
-      description: "Every decision we make is guided by improving patient outcomes and saving lives.",
-      gradient: "from-red-500 to-pink-600"
-    },
-    {
-      icon: Brain,
-      title: "Innovation",
-      description: "We push the boundaries of AI and healthcare technology to solve complex problems.",
-      gradient: "from-purple-500 to-indigo-600"
-    },
-    {
-      icon: Users,
-      title: "Collaboration",
-      description: "We believe diverse teams create better solutions for global healthcare challenges.",
-      gradient: "from-blue-500 to-cyan-600"
-    },
-    {
-      icon: Target,
-      title: "Excellence",
-      description: "We maintain the highest standards in everything we do, from code to clinical validation.",
-      gradient: "from-emerald-500 to-teal-600"
-    }
-  ];
-
-  const benefits = [
-    {
-      icon: DollarSign,
-      title: "Competitive Salary",
-      description: "Top-tier compensation with equity options",
-      color: "text-green-600"
-    },
-    {
-      icon: Heart,
-      title: "Health & Wellness",
-      description: "Comprehensive health insurance and wellness programs",
-      color: "text-red-600"
-    },
-    {
-      icon: Home,
-      title: "Flexible Work",
-      description: "Remote-first culture with flexible hours",
-      color: "text-blue-600"
-    },
-    {
-      icon: GraduationCap,
-      title: "Learning Budget",
-      description: "$3,000 annual budget for courses and conferences",
-      color: "text-purple-600"
-    },
-    {
-      icon: Plane,
-      title: "Unlimited PTO",
-      description: "Take time off when you need it",
-      color: "text-cyan-600"
-    },
-    {
-      icon: Gift,
-      title: "Stock Options",
-      description: "Equity participation in company growth",
-      color: "text-orange-600"
-    }
-  ];
-
   const teamStats = [
     { label: "Team Members", value: "150+", icon: Users },
     { label: "Countries", value: "12", icon: Globe },
@@ -295,47 +228,17 @@ const CareersPage = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
+      {/* SIMPLIFIED Hero Section */}
+      <section className="relative py-16 overflow-hidden">
         {/* Background Elements */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-red-50/30 via-white to-pink-50/20"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,63,74,0.05),transparent_50%)]"></div>
-        </div>
-
-        {/* Floating Orbs */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-red-200/20 to-pink-200/20 rounded-full blur-3xl"
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-          <motion.div
-            className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-br from-purple-200/20 to-indigo-200/20 rounded-full blur-3xl"
-            animate={{
-              scale: [1.2, 1, 1.2],
-              opacity: [0.5, 0.3, 0.5],
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 2,
-            }}
-          />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <motion.div
-              className="inline-flex items-center space-x-3 bg-white/60 backdrop-blur-2xl border border-red-100/50 rounded-full px-6 py-3 mb-8 shadow-[0_8px_32px_rgba(255,63,74,0.08)]"
+              className="inline-flex items-center space-x-3 bg-white/60 backdrop-blur-2xl border border-red-100/50 rounded-full px-6 py-3 mb-6 shadow-[0_8px_32px_rgba(255,63,74,0.08)]"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
@@ -346,7 +249,7 @@ const CareersPage = () => {
             </motion.div>
 
             <motion.h1
-              className="text-6xl md:text-7xl font-bold mb-8 leading-tight"
+              className="text-5xl md:text-6xl font-bold mb-6 leading-tight"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2 }}
@@ -360,16 +263,17 @@ const CareersPage = () => {
             </motion.h1>
 
             <motion.p
-              className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed mb-12"
+              className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Join a passionate team of engineers, clinicians, and researchers working to revolutionize cardiac care through cutting-edge AI technology. Help us save lives and improve patient outcomes worldwide.
+              Join a passionate team working to revolutionize cardiac care through cutting-edge AI technology. Help us save lives and improve patient outcomes worldwide.
             </motion.p>
 
+            {/* REMOVED "Watch Our Story" button - Only one CTA now */}
             <motion.div
-              className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6"
+              className="flex justify-center"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
@@ -384,22 +288,12 @@ const CareersPage = () => {
                 <span className="relative z-10">View Open Positions</span>
                 <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
               </motion.button>
-
-              <motion.button
-                className="group bg-white/60 backdrop-blur-2xl border border-red-100/50 text-slate-700 px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 flex items-center space-x-3 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.12)] overflow-hidden"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                <Play className="w-5 h-5 relative z-10" />
-                <span className="relative z-10">Watch Our Story</span>
-              </motion.button>
             </motion.div>
           </div>
 
-          {/* Team Stats */}
+          {/* SIMPLIFIED Team Stats */}
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto"
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.8 }}
@@ -407,113 +301,25 @@ const CareersPage = () => {
             {teamStats.map((stat, index) => (
               <motion.div
                 key={index}
-                className="bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-2xl p-6 text-center shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] transition-all duration-500 group"
-                whileHover={{ y: -5 }}
+                className="bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-xl p-4 text-center shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] transition-all duration-500 group"
+                whileHover={{ y: -3 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1 + index * 0.1, duration: 0.6 }}
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <stat.icon className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <stat.icon className="w-5 h-5 text-white" />
                 </div>
-                <div className="text-2xl font-bold text-slate-800 mb-1">{stat.value}</div>
-                <div className="text-sm text-slate-600">{stat.label}</div>
+                <div className="text-xl font-bold text-slate-800 mb-1">{stat.value}</div>
+                <div className="text-xs text-slate-600">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* Company Values */}
-      <section className="py-20 relative">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                Our Values
-              </span>
-            </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              The principles that guide everything we do and shape our culture
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {companyValues.map((value, index) => (
-              <motion.div
-                key={index}
-                className="bg-white/40 backdrop-blur-2xl border border-slate-200/50 rounded-3xl p-8 text-center shadow-[0_8px_32px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.1)] transition-all duration-500 group"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                whileHover={{ y: -5 }}
-              >
-                <div className={`w-16 h-16 bg-gradient-to-br ${value.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <value.icon className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-800 mb-4">{value.title}</h3>
-                <p className="text-slate-600 leading-relaxed">{value.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-20 bg-gradient-to-br from-slate-50 to-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                Why Join Us?
-              </span>
-            </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              We offer comprehensive benefits and a culture that supports your growth and well-being
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {benefits.map((benefit, index) => (
-              <motion.div
-                key={index}
-                className="bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-2xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.1)] transition-all duration-500 group"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                whileHover={{ y: -3 }}
-              >
-                <div className="flex items-start space-x-4">
-                  <div className={`w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                    <benefit.icon className={`w-6 h-6 ${benefit.color}`} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-800 mb-2">{benefit.title}</h3>
-                    <p className="text-slate-600">{benefit.description}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Open Positions */}
-      <section id="open-positions" className="py-20">
+      {/* Open Positions - MAIN FOCUS */}
+      <section id="open-positions" className="py-16">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
             className="text-center mb-12"
@@ -527,7 +333,7 @@ const CareersPage = () => {
                 Open Positions
               </span>
             </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-8">
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
               Find your perfect role and help us revolutionize healthcare technology
             </p>
 
@@ -643,7 +449,7 @@ const CareersPage = () => {
           </motion.div>
 
           {/* Job Listings - REMOVED all badges and "Save for Later" button */}
-          <div className="space-y-8">
+          <div className="space-y-6">
             <AnimatePresence>
               {filteredJobs.map((job, index) => (
                 <motion.div
@@ -656,16 +462,16 @@ const CareersPage = () => {
                   className="relative bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.1)] transition-all duration-500 group"
                   whileHover={{ y: -2 }}
                 >
-                  {/* Card Content - Normal padding since no badges */}
-                  <div className="p-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Card Content */}
+                  <div className="p-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                       {/* Job Info */}
                       <div className="lg:col-span-2">
-                        <div className="mb-6">
-                          <h3 className="text-2xl font-bold text-slate-800 mb-2 group-hover:text-red-700 transition-colors duration-300">
+                        <div className="mb-4">
+                          <h3 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-red-700 transition-colors duration-300">
                             {job.title}
                           </h3>
-                          <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-4">
+                          <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-3">
                             <div className="flex items-center space-x-1">
                               <MapPin className="w-4 h-4" />
                               <span>{job.location}</span>
@@ -682,46 +488,21 @@ const CareersPage = () => {
                               <DollarSign className="w-4 h-4" />
                               <span>{job.salary}</span>
                             </div>
-                            <div className="flex items-center space-x-1">
-                              <Calendar className="w-4 h-4" />
-                              <span>{job.posted}</span>
-                            </div>
                           </div>
-                          <p className="text-slate-600 leading-relaxed mb-6">
+                          <p className="text-slate-600 leading-relaxed mb-4">
                             {job.description}
                           </p>
 
-                          {/* Requirements Preview */}
-                          <div className="mb-4">
-                            <h4 className="font-semibold text-slate-800 mb-2">Key Requirements:</h4>
-                            <div className="space-y-1">
-                              {job.requirements.slice(0, 3).map((req, reqIndex) => (
-                                <div key={reqIndex} className="flex items-start space-x-2">
-                                  <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                                  <span className="text-sm text-slate-600">{req}</span>
-                                </div>
-                              ))}
-                              {job.requirements.length > 3 && (
-                                <div className="text-sm text-slate-500 ml-6">
-                                  +{job.requirements.length - 3} more requirements
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
                           {/* Benefits */}
-                          <div>
-                            <h4 className="font-semibold text-slate-800 mb-2">Benefits:</h4>
-                            <div className="flex flex-wrap gap-2">
-                              {job.benefits.map((benefit, benefitIndex) => (
-                                <span
-                                  key={benefitIndex}
-                                  className="bg-green-100/50 text-green-700 px-3 py-1 rounded-full text-sm font-medium"
-                                >
-                                  {benefit}
-                                </span>
-                              ))}
-                            </div>
+                          <div className="flex flex-wrap gap-2">
+                            {job.benefits.slice(0, 4).map((benefit, benefitIndex) => (
+                              <span
+                                key={benefitIndex}
+                                className="bg-green-100/50 text-green-700 px-3 py-1 rounded-full text-sm font-medium"
+                              >
+                                {benefit}
+                              </span>
+                            ))}
                           </div>
                         </div>
                       </div>
@@ -729,9 +510,9 @@ const CareersPage = () => {
                       {/* Apply Section - REMOVED "Save for Later" button */}
                       <div className="lg:col-span-1">
                         <div className="bg-white/50 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-6 h-fit">
-                          <div className="text-center mb-6">
-                            <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                              <Rocket className="w-8 h-8 text-white" />
+                          <div className="text-center mb-4">
+                            <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                              <Rocket className="w-6 h-6 text-white" />
                             </div>
                             <h4 className="font-bold text-slate-800 mb-2">Ready to Apply?</h4>
                             <p className="text-sm text-slate-600">
@@ -740,7 +521,7 @@ const CareersPage = () => {
                           </div>
 
                           <motion.button
-                            className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-3 rounded-2xl font-semibold shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center justify-center space-x-2 group overflow-hidden mb-4"
+                            className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-3 rounded-2xl font-semibold shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center justify-center space-x-2 group overflow-hidden"
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                           >
@@ -749,7 +530,7 @@ const CareersPage = () => {
                             <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
                           </motion.button>
 
-                          <div className="mt-4 pt-4 border-t border-slate-200/50 text-center">
+                          <div className="mt-3 pt-3 border-t border-slate-200/50 text-center">
                             <p className="text-xs text-slate-500">
                               Questions? Email us at{" "}
                               <a href="mailto:careers@ecgbuddy.ai" className="text-red-600 hover:text-red-700">
@@ -795,42 +576,42 @@ const CareersPage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-red-50/30 via-white to-pink-50/20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+      {/* SIMPLIFIED CTA Section */}
+      <section className="py-16 bg-gradient-to-br from-red-50/30 via-white to-pink-50/20">
+        <div className="max-w-3xl mx-auto px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl p-12 shadow-[0_20px_70px_rgba(255,63,74,0.1)] hover:shadow-[0_30px_90px_rgba(255,63,74,0.15)] transition-all duration-700 group overflow-hidden"
+            className="bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl p-8 shadow-[0_20px_70px_rgba(255,63,74,0.1)] hover:shadow-[0_30px_90px_rgba(255,63,74,0.15)] transition-all duration-700 group overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
             
             <div className="relative z-10">
-              <div className="w-20 h-20 bg-gradient-to-br from-red-500 to-pink-600 rounded-3xl flex items-center justify-center mx-auto mb-8">
-                <Heart className="w-10 h-10 text-white" />
+              <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Heart className="w-8 h-8 text-white" />
               </div>
               
-              <h2 className="text-4xl font-bold text-slate-800 mb-6">
+              <h2 className="text-3xl font-bold text-slate-800 mb-4">
                 Don't see the perfect role?
               </h2>
               
-              <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-                We're always looking for exceptional talent. Send us your resume and tell us how you'd like to contribute to our mission.
+              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
+                We're always looking for exceptional talent. Send us your resume and tell us how you'd like to contribute.
               </p>
               
               <motion.button
-                className="bg-gradient-to-r from-red-500 to-pink-600 text-white px-10 py-4 rounded-full font-semibold text-lg shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center space-x-3 mx-auto group overflow-hidden"
+                className="bg-gradient-to-r from-red-500 to-pink-600 text-white px-8 py-3 rounded-full font-semibold shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center space-x-2 mx-auto group overflow-hidden"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
                 <span className="relative z-10">Send Your Resume</span>
-                <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
+                <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
               </motion.button>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </div>
