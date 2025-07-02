@@ -385,9 +385,12 @@ const CareersPage = () => {
                             <div className="mt-3 pt-3 border-t border-slate-200/50 text-center">
                               <p className="text-xs text-slate-500">
                                 Questions? Email us at{" "}
-                                <a href="mailto:careers@ecgbuddy.ai" className="text-red-600 hover:text-red-700">
+                                <span 
+                                  onClick={() => window.location.href = 'mailto:careers@ecgbuddy.ai'}
+                                  className="text-red-600 hover:text-red-700 cursor-pointer"
+                                >
                                   careers@ecgbuddy.ai
-                                </a>
+                                </span>
                               </p>
                             </div>
                           </div>
