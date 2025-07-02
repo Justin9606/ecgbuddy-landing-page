@@ -654,8 +654,8 @@ const CareersPage = () => {
             </div>
           </motion.div>
 
-          {/* Job Listings */}
-          <div className="space-y-6">
+          {/* Job Listings - FIXED: Proper badge positioning with z-index */}
+          <div className="space-y-8">
             <AnimatePresence>
               {filteredJobs.map((job, index) => (
                 <motion.div
@@ -665,129 +665,132 @@ const CareersPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ delay: index * 0.1, duration: 0.5 }}
-                  className={`relative bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.1)] transition-all duration-500 group ${
+                  className={`relative bg-white/60 backdrop-blur-2xl border border-slate-200/50 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.1)] transition-all duration-500 group ${
                     job.featured ? "ring-2 ring-red-500/20 border-red-200/50" : ""
                   }`}
                   whileHover={{ y: -2 }}
                 >
-                  {/* Badges */}
-                  <div className="absolute top-6 right-6 flex items-center space-x-2">
+                  {/* FIXED: Badges positioned OUTSIDE the card with proper z-index and spacing */}
+                  <div className="absolute -top-3 right-6 flex items-center space-x-2 z-30">
                     {job.featured && (
-                      <div className="bg-gradient-to-r from-red-500 to-pink-600 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center space-x-1">
+                      <div className="bg-gradient-to-r from-red-500 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center space-x-1 shadow-lg border-2 border-white">
                         <Star className="w-3 h-3 fill-current" />
                         <span>Featured</span>
                       </div>
                     )}
                     {job.urgent && (
-                      <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center space-x-1">
+                      <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center space-x-1 shadow-lg border-2 border-white">
                         <Zap className="w-3 h-3" />
                         <span>Urgent</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Job Info */}
-                    <div className="lg:col-span-2">
-                      <div className="mb-6">
-                        <h3 className="text-2xl font-bold text-slate-800 mb-2 group-hover:text-red-700 transition-colors duration-300">
-                          {job.title}
-                        </h3>
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-4">
-                          <div className="flex items-center space-x-1">
-                            <MapPin className="w-4 h-4" />
-                            <span>{job.location}</span>
+                  {/* Card Content - Added top padding to accommodate badges */}
+                  <div className="p-8 pt-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                      {/* Job Info */}
+                      <div className="lg:col-span-2">
+                        <div className="mb-6">
+                          <h3 className="text-2xl font-bold text-slate-800 mb-2 group-hover:text-red-700 transition-colors duration-300">
+                            {job.title}
+                          </h3>
+                          <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-4">
+                            <div className="flex items-center space-x-1">
+                              <MapPin className="w-4 h-4" />
+                              <span>{job.location}</span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <Clock className="w-4 h-4" />
+                              <span>{job.type}</span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <Briefcase className="w-4 h-4" />
+                              <span>{job.experience}</span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <DollarSign className="w-4 h-4" />
+                              <span>{job.salary}</span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <Calendar className="w-4 h-4" />
+                              <span>{job.posted}</span>
+                            </div>
                           </div>
-                          <div className="flex items-center space-x-1">
-                            <Clock className="w-4 h-4" />
-                            <span>{job.type}</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Briefcase className="w-4 h-4" />
-                            <span>{job.experience}</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <DollarSign className="w-4 h-4" />
-                            <span>{job.salary}</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>{job.posted}</span>
-                          </div>
-                        </div>
-                        <p className="text-slate-600 leading-relaxed mb-6">
-                          {job.description}
-                        </p>
+                          <p className="text-slate-600 leading-relaxed mb-6">
+                            {job.description}
+                          </p>
 
-                        {/* Requirements Preview */}
-                        <div className="mb-4">
-                          <h4 className="font-semibold text-slate-800 mb-2">Key Requirements:</h4>
-                          <div className="space-y-1">
-                            {job.requirements.slice(0, 3).map((req, reqIndex) => (
-                              <div key={reqIndex} className="flex items-start space-x-2">
-                                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                                <span className="text-sm text-slate-600">{req}</span>
-                              </div>
-                            ))}
-                            {job.requirements.length > 3 && (
-                              <div className="text-sm text-slate-500 ml-6">
-                                +{job.requirements.length - 3} more requirements
-                              </div>
-                            )}
+                          {/* Requirements Preview */}
+                          <div className="mb-4">
+                            <h4 className="font-semibold text-slate-800 mb-2">Key Requirements:</h4>
+                            <div className="space-y-1">
+                              {job.requirements.slice(0, 3).map((req, reqIndex) => (
+                                <div key={reqIndex} className="flex items-start space-x-2">
+                                  <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                                  <span className="text-sm text-slate-600">{req}</span>
+                                </div>
+                              ))}
+                              {job.requirements.length > 3 && (
+                                <div className="text-sm text-slate-500 ml-6">
+                                  +{job.requirements.length - 3} more requirements
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Benefits */}
-                        <div>
-                          <h4 className="font-semibold text-slate-800 mb-2">Benefits:</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {job.benefits.map((benefit, benefitIndex) => (
-                              <span
-                                key={benefitIndex}
-                                className="bg-green-100/50 text-green-700 px-3 py-1 rounded-full text-sm font-medium"
-                              >
-                                {benefit}
-                              </span>
-                            ))}
+                          {/* Benefits */}
+                          <div>
+                            <h4 className="font-semibold text-slate-800 mb-2">Benefits:</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {job.benefits.map((benefit, benefitIndex) => (
+                                <span
+                                  key={benefitIndex}
+                                  className="bg-green-100/50 text-green-700 px-3 py-1 rounded-full text-sm font-medium"
+                                >
+                                  {benefit}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Apply Section */}
-                    <div className="lg:col-span-1">
-                      <div className="bg-white/50 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-6 h-fit">
-                        <div className="text-center mb-6">
-                          <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <Rocket className="w-8 h-8 text-white" />
+                      {/* Apply Section */}
+                      <div className="lg:col-span-1">
+                        <div className="bg-white/50 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-6 h-fit">
+                          <div className="text-center mb-6">
+                            <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                              <Rocket className="w-8 h-8 text-white" />
+                            </div>
+                            <h4 className="font-bold text-slate-800 mb-2">Ready to Apply?</h4>
+                            <p className="text-sm text-slate-600">
+                              Join our mission to revolutionize healthcare
+                            </p>
                           </div>
-                          <h4 className="font-bold text-slate-800 mb-2">Ready to Apply?</h4>
-                          <p className="text-sm text-slate-600">
-                            Join our mission to revolutionize healthcare
-                          </p>
-                        </div>
 
-                        <motion.button
-                          className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-3 rounded-2xl font-semibold shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center justify-center space-x-2 group overflow-hidden mb-4"
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                          <span className="relative z-10">Apply Now</span>
-                          <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
-                        </motion.button>
+                          <motion.button
+                            className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-3 rounded-2xl font-semibold shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center justify-center space-x-2 group overflow-hidden mb-4"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                            <span className="relative z-10">Apply Now</span>
+                            <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
+                          </motion.button>
 
-                        <button className="w-full bg-white/60 backdrop-blur-sm border border-slate-200/50 text-slate-700 px-6 py-3 rounded-2xl font-medium hover:bg-white/80 transition-all duration-300">
-                          Save for Later
-                        </button>
+                          <button className="w-full bg-white/60 backdrop-blur-sm border border-slate-200/50 text-slate-700 px-6 py-3 rounded-2xl font-medium hover:bg-white/80 transition-all duration-300">
+                            Save for Later
+                          </button>
 
-                        <div className="mt-4 pt-4 border-t border-slate-200/50 text-center">
-                          <p className="text-xs text-slate-500">
-                            Questions? Email us at{" "}
-                            <a href="mailto:careers@ecgbuddy.ai" className="text-red-600 hover:text-red-700">
-                              careers@ecgbuddy.ai
-                            </a>
-                          </p>
+                          <div className="mt-4 pt-4 border-t border-slate-200/50 text-center">
+                            <p className="text-xs text-slate-500">
+                              Questions? Email us at{" "}
+                              <a href="mailto:careers@ecgbuddy.ai" className="text-red-600 hover:text-red-700">
+                                careers@ecgbuddy.ai
+                              </a>
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
