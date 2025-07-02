@@ -68,10 +68,6 @@ const Pricing = () => {
         "24/7 priority support",
         "All platform access",
         "Advanced reporting & analytics",
-        "EMR integration",
-        "Team collaboration tools",
-        "API access",
-        "Data export capabilities",
       ],
       buttonText: "Start Pro Trial",
       buttonLink: "#pro-signup",
@@ -100,10 +96,6 @@ const Pricing = () => {
         "Custom AI model training",
         "Dedicated account manager",
         "SLA guarantees",
-        "Advanced compliance",
-        "Custom integrations",
-        "On-premise deployment",
-        "Training & onboarding",
       ],
       buttonText: "Contact Sales",
       buttonLink: "#contact-sales",
@@ -291,14 +283,14 @@ const Pricing = () => {
                   className={`relative bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl overflow-hidden transition-all duration-500 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] group ${
                     plan.isPopular ? "ring-2 ring-red-500/20" : ""
                   }`}
-                  style={{ paddingTop: plan.badge ? "2rem" : "1.5rem" }}
+                  style={{ paddingTop: plan.badge ? "3rem" : "1.5rem" }}
                 >
                   {/* Glassy hover effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
 
-                  {/* FIXED: Popular Badge - Absolutely positioned OUTSIDE the card */}
+                  {/* FIXED: Badge positioned OUTSIDE the card with proper spacing */}
                   {plan.badge && (
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-30">
+                    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-30">
                       <div className={`bg-gradient-to-r ${plan.gradient} text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg border-2 border-white`}>
                         <div className="flex items-center space-x-1">
                           <Star className="w-3 h-3 fill-current" />
@@ -372,14 +364,14 @@ const Pricing = () => {
                       </div>
                     </div>
 
-                    {/* Features List */}
+                    {/* Features List - REMOVED "+X more features" */}
                     <div className="mb-6">
                       <h4 className="font-semibold text-slate-800 mb-3 flex items-center text-sm">
                         <Sparkles className="w-4 h-4 mr-2 text-red-500" />
                         What's included
                       </h4>
                       <div className="space-y-2">
-                        {plan.features.slice(0, 6).map((feature, featureIndex) => (
+                        {plan.features.map((feature, featureIndex) => (
                           <div
                             key={featureIndex}
                             className="flex items-start space-x-2"
@@ -392,11 +384,6 @@ const Pricing = () => {
                             </span>
                           </div>
                         ))}
-                        {plan.features.length > 6 && (
-                          <div className="text-slate-500 text-sm text-center pt-1">
-                            +{plan.features.length - 6} more features
-                          </div>
-                        )}
                       </div>
                     </div>
 
