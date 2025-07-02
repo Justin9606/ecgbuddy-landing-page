@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AdminSidebar } from "./AdminSidebar";
-import { AdminHeader } from "./AdminHeader";
+import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
+import { ModernSidebar } from "./ModernSidebar";
+import { ModernHeader } from "./ModernHeader";
+import { ModernContentEditor } from "./ModernContentEditor";
+import { ModernLivePreview } from "./ModernLivePreview";
 import { DashboardHome } from "./sections/DashboardHome";
-import { EnhancedContentEditor } from "./EnhancedContentEditor";
 import { PageBuilder } from "./sections/PageBuilder";
 import { MediaLibrary } from "./sections/MediaLibrary";
 import { Settings } from "./sections/Settings";
@@ -32,9 +34,10 @@ export const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<AdminSection>("dashboard");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [siteContent, setSiteContent] = useState<SiteContent>(() => getDefaultSiteContent());
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(true);
 
   // Load content from localStorage on mount
   useEffect(() => {
@@ -44,9 +47,6 @@ export const AdminDashboard: React.FC = () => {
         const savedContent = loadSiteContent();
         if (savedContent) {
           setSiteContent(savedContent);
-          console.log('Loaded existing content from localStorage');
-        } else {
-          console.log('No existing content found, using defaults');
         }
       } catch (error) {
         console.error('Error loading content:', error);
@@ -59,7 +59,6 @@ export const AdminDashboard: React.FC = () => {
     loadContent();
   }, []);
 
-  // Memoized content change handler to prevent unnecessary re-renders
   const handleContentChange = useCallback((section: AdminSection, newSectionContent: any) => {
     setSiteContent(prevContent => {
       const updatedContent = {
@@ -67,34 +66,27 @@ export const AdminDashboard: React.FC = () => {
         [section]: newSectionContent
       };
       
-      // Auto-save to localStorage with debouncing
-      const timeoutId = setTimeout(() => {
-        try {
-          saveSiteContent(updatedContent);
-          setLastSaved(new Date());
-          setSaveError(null);
-        } catch (error) {
-          console.error('Auto-save failed:', error);
-          setSaveError('Auto-save failed');
-        }
-      }, 1000); // 1 second debounce
+      // Auto-save to localStorage
+      try {
+        saveSiteContent(updatedContent);
+        setLastSaved(new Date());
+        setSaveError(null);
+      } catch (error) {
+        console.error('Auto-save failed:', error);
+        setSaveError('Auto-save failed');
+      }
       
-      // Clear previous timeout
       return updatedContent;
     });
   }, []);
 
-  // Memoized save handler
   const handleSaveAllChanges = useCallback(async () => {
     try {
       setIsLoading(true);
       setSaveError(null);
       
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate save delay
       saveSiteContent(siteContent);
       setLastSaved(new Date());
-      
-      console.log('All changes saved successfully');
     } catch (error) {
       console.error('Error saving changes:', error);
       setSaveError('Failed to save changes');
@@ -103,11 +95,9 @@ export const AdminDashboard: React.FC = () => {
     }
   }, [siteContent]);
 
-  // Memoized preview handler
   const handlePreview = useCallback(() => {
     try {
       savePreviewDraft(siteContent);
-      // Open preview in new tab
       window.open('/', '_blank');
     } catch (error) {
       console.error('Error creating preview:', error);
@@ -115,102 +105,122 @@ export const AdminDashboard: React.FC = () => {
     }
   }, [siteContent]);
 
-  // Memoized section change handler
-  const handleSectionChange = useCallback((section: AdminSection) => {
-    setActiveSection(section);
-  }, []);
-
-  // Memoized content for current section
   const currentSectionContent = useMemo(() => {
     return siteContent[activeSection as keyof SiteContent];
   }, [siteContent, activeSection]);
 
-  // Memoized render function for better performance
-  const renderContent = useMemo(() => {
-    if (isLoading) {
-      return (
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="w-8 h-8 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-slate-600">Loading content...</p>
-          </div>
-        </div>
-      );
-    }
-
-    switch (activeSection) {
-      case "dashboard":
-        return <DashboardHome onSectionChange={handleSectionChange} />;
-      case "page-builder":
-        return <PageBuilder />;
-      case "media-library":
-        return <MediaLibrary />;
-      case "settings":
-        return <Settings />;
-      case "users":
-        return <Users />;
-      default:
-        // Content editing sections
-        return (
-          <EnhancedContentEditor 
-            section={activeSection}
-            initialContent={currentSectionContent}
-            onContentChange={(newContent) => handleContentChange(activeSection, newContent)}
-            onSave={handleSaveAllChanges}
-            onPreview={handlePreview}
-            lastSaved={lastSaved}
-          />
-        );
-    }
-  }, [
-    isLoading,
-    activeSection,
-    currentSectionContent,
-    handleSectionChange,
-    handleContentChange,
-    handleSaveAllChanges,
-    handlePreview,
-    lastSaved
-  ]);
+  const isContentSection = !['dashboard', 'page-builder', 'media-library', 'settings', 'users'].includes(activeSection);
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 flex">
-        {/* Sidebar */}
-        <AdminSidebar
+      <div className="h-screen bg-gray-50 flex overflow-hidden">
+        {/* Modern Sidebar */}
+        <ModernSidebar
           activeSection={activeSection}
           onSectionChange={setActiveSection}
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         />
 
-        {/* Main Content */}
-        <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
-          {/* Header */}
-          <AdminHeader 
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Modern Header */}
+          <ModernHeader 
             activeSection={activeSection}
-            onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             onSave={handleSaveAllChanges}
             onPreview={handlePreview}
             lastSaved={lastSaved}
             isLoading={isLoading}
             saveError={saveError}
+            showPreview={showPreview}
+            onTogglePreview={() => setShowPreview(!showPreview)}
           />
 
           {/* Content Area */}
-          <main className="p-6">
+          <div className="flex-1 overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeSection}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
+                exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
+                className="h-full"
               >
-                {renderContent}
+                {activeSection === "dashboard" && (
+                  <div className="h-full overflow-y-auto p-6">
+                    <DashboardHome onSectionChange={setActiveSection} />
+                  </div>
+                )}
+
+                {activeSection === "page-builder" && (
+                  <div className="h-full">
+                    <PageBuilder />
+                  </div>
+                )}
+
+                {activeSection === "media-library" && (
+                  <div className="h-full overflow-y-auto p-6">
+                    <MediaLibrary />
+                  </div>
+                )}
+
+                {activeSection === "settings" && (
+                  <div className="h-full overflow-y-auto p-6">
+                    <Settings />
+                  </div>
+                )}
+
+                {activeSection === "users" && (
+                  <div className="h-full overflow-y-auto p-6">
+                    <Users />
+                  </div>
+                )}
+
+                {isContentSection && (
+                  <div className="h-full">
+                    {showPreview ? (
+                      <PanelGroup direction="horizontal" className="h-full">
+                        {/* Live Preview Panel */}
+                        <Panel defaultSize={50} minSize={30} maxSize={70}>
+                          <ModernLivePreview
+                            section={activeSection}
+                            content={currentSectionContent}
+                            onElementClick={(elementPath, elementType) => {
+                              // Handle element click for editing
+                              console.log('Element clicked:', elementPath, elementType);
+                            }}
+                          />
+                        </Panel>
+
+                        {/* Resize Handle */}
+                        <PanelResizeHandle className="w-1 bg-gray-200 hover:bg-blue-400 transition-colors duration-200" />
+
+                        {/* Content Editor Panel */}
+                        <Panel defaultSize={50} minSize={30} maxSize={70}>
+                          <ModernContentEditor
+                            section={activeSection}
+                            content={currentSectionContent}
+                            onContentChange={(newContent) => handleContentChange(activeSection, newContent)}
+                            onSave={handleSaveAllChanges}
+                            isLoading={isLoading}
+                          />
+                        </Panel>
+                      </PanelGroup>
+                    ) : (
+                      <ModernContentEditor
+                        section={activeSection}
+                        content={currentSectionContent}
+                        onContentChange={(newContent) => handleContentChange(activeSection, newContent)}
+                        onSave={handleSaveAllChanges}
+                        isLoading={isLoading}
+                      />
+                    )}
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
-          </main>
+          </div>
         </div>
       </div>
     </ToastProvider>
