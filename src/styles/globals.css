@@ -85,3 +85,117 @@
   transform: rotate(2deg);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
+
+/* Resizable Panel Styles */
+[data-panel-group] {
+  display: flex;
+}
+
+[data-panel-group][data-panel-group-direction="horizontal"] {
+  flex-direction: row;
+}
+
+[data-panel-group][data-panel-group-direction="vertical"] {
+  flex-direction: column;
+}
+
+[data-panel] {
+  flex: 1 1 0%;
+  overflow: hidden;
+}
+
+[data-panel-resize-handle] {
+  flex: none;
+  outline: none;
+  position: relative;
+}
+
+[data-panel-resize-handle]:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+[data-panel-resize-handle][data-panel-resize-handle-active] {
+  cursor: col-resize;
+}
+
+[data-panel-resize-handle][data-panel-resize-handle-direction="horizontal"] {
+  cursor: col-resize;
+}
+
+[data-panel-resize-handle][data-panel-resize-handle-direction="vertical"] {
+  cursor: row-resize;
+}
+
+/* Custom resize handle styling */
+.resize-handle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  transition: background-color 0.2s ease;
+}
+
+.resize-handle:hover {
+  background: #e2e8f0;
+}
+
+.resize-handle::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 32px;
+  background: #cbd5e1;
+  border-radius: 2px;
+  transition: background-color 0.2s ease;
+}
+
+.resize-handle:hover::before {
+  background: #94a3b8;
+}
+
+/* Interactive preview styles */
+.admin-preview-container {
+  /* Reduce animations in admin preview for better performance */
+  * {
+    animation-duration: 0.2s !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.2s !important;
+    transition-delay: 0s !important;
+  }
+  
+  /* Enable pointer events for interactive editing */
+  pointer-events: auto;
+}
+
+.admin-preview-wrapper {
+  /* Ensure proper scaling */
+  transform-origin: top left;
+  width: 100%;
+  overflow: hidden;
+  /* Enable interactions for editing */
+  pointer-events: auto;
+}
+
+/* Highlight effects for interactive elements */
+.highlightable-element {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.highlightable-element:hover {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.highlightable-element.highlighted {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+  border-radius: 4px;
+  background-color: rgba(239, 68, 68, 0.05);
+}

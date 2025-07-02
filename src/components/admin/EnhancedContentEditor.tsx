@@ -22,7 +22,9 @@ import {
   Trash2,
   Loader2,
   RefreshCw,
+  GripVertical,
 } from "lucide-react";
+import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import { AdminSection } from "./AdminDashboard";
 import { RichTextEditor } from "./fields/RichTextEditor";
 import { ImagePreview } from "./fields/ImagePreview";
@@ -461,250 +463,266 @@ export const EnhancedContentEditor: React.FC<EnhancedContentEditorProps> = ({
   const SectionIcon = getIconComponent(sectionSchema.icon);
 
   return (
-    <div className="h-full flex">
-      {/* Left Side - Live Preview */}
-      <div className="w-1/2 pr-3 border-r border-gray-200">
-        <div className="sticky top-0 h-full overflow-y-auto">
-          <LivePreview
-            section={section}
-            isVisible={showPreview}
-            onToggleVisibility={() => setShowPreview(!showPreview)}
-            onElementClick={handleElementClick}
-          />
-        </div>
-      </div>
-
-      {/* Right Side - Enhanced Content Editor */}
-      <div className="w-1/2 pl-3">
-        <div className="h-full overflow-y-auto">
-          {/* Enhanced Header */}
-          <div className="mb-6 sticky top-0 bg-white z-10 pb-4 border-b border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
-                  <SectionIcon className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-semibold text-gray-900 mb-1">
-                    {sectionSchema.title}
-                  </h1>
-                  <p className="text-sm text-gray-600">{sectionSchema.description}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                {/* Undo/Redo */}
-                <button
-                  onClick={handleUndo}
-                  disabled={historyIndex <= 0}
-                  className="flex items-center space-x-1 px-2 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Undo (Ctrl+Z)"
-                >
-                  <Undo className="w-3 h-3" />
-                </button>
-
-                <button
-                  onClick={handleRedo}
-                  disabled={historyIndex >= contentHistory.length - 1}
-                  className="flex items-center space-x-1 px-2 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Redo (Ctrl+Y)"
-                >
-                  <Redo className="w-3 h-3" />
-                </button>
-
-                {/* Utility Actions */}
-                <button
-                  onClick={handleDuplicateSection}
-                  className="flex items-center space-x-1 px-2 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
-                  title="Duplicate Section"
-                >
-                  <Copy className="w-3 h-3" />
-                </button>
-
-                <button
-                  onClick={() => setShowKeyboardHelp(true)}
-                  className="flex items-center space-x-1 px-2 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
-                  title="Keyboard shortcuts"
-                >
-                  <Keyboard className="w-3 h-3" />
-                </button>
-
-                <button
-                  onClick={handleReset}
-                  className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  <span>Reset</span>
-                </button>
-
-                <button
-                  onClick={onPreview}
-                  className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
-                >
-                  <Monitor className="w-4 h-4" />
-                  <span>Full Preview</span>
-                </button>
-
-                <button
-                  onClick={handleSave}
-                  disabled={hasErrors || isLoading}
-                  className={`flex items-center space-x-2 px-4 py-1.5 text-sm font-medium text-white border rounded-lg transition-all duration-200 ${
-                    hasErrors || isLoading
-                      ? 'bg-gray-400 border-gray-400 cursor-not-allowed' 
-                      : 'bg-blue-600 border-blue-600 hover:bg-blue-700'
-                  }`}
-                >
-                  {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Save className="w-4 h-4" />
-                  )}
-                  <span>{isLoading ? 'Saving...' : 'Save'}</span>
-                </button>
-              </div>
+    <div className="h-full flex flex-col">
+      {/* Enhanced Header */}
+      <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
+              <SectionIcon className="w-6 h-6 text-white" />
             </div>
-
-            {/* Search Bar */}
-            <div className="mb-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search fields..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  data-search-input
-                  className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    ×
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Enhanced Status */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                {isSaving ? (
-                  <div className="flex items-center space-x-2 text-blue-600">
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span className="text-sm">Auto-saving...</span>
-                  </div>
-                ) : isDirty ? (
-                  <div className="flex items-center space-x-2 text-amber-600">
-                    <AlertCircle className="w-4 h-4" />
-                    <span className="text-sm">Unsaved changes</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-2 text-green-600">
-                    <CheckCircle className="w-4 h-4" />
-                    <span className="text-sm">All changes saved</span>
-                  </div>
-                )}
-                
-                {hasErrors && (
-                  <div className="flex items-center space-x-2 text-red-600">
-                    <AlertCircle className="w-4 h-4" />
-                    <span className="text-sm">Please fix validation errors</span>
-                  </div>
-                )}
-
-                {highlightedElement && (
-                  <div className="flex items-center space-x-2 text-blue-600">
-                    <Target className="w-4 h-4" />
-                    <span className="text-sm">Element selected from preview</span>
-                  </div>
-                )}
-
-                {/* History Status */}
-                <div className="flex items-center space-x-2 text-gray-500">
-                  <Clock className="w-4 h-4" />
-                  <span className="text-sm">
-                    {historyIndex + 1}/{contentHistory.length} changes
-                  </span>
-                </div>
-              </div>
-              
-              {(lastSaved || autoSaveLastSaved) && (
-                <div className="text-xs text-gray-500">
-                  Last saved: {(autoSaveLastSaved || lastSaved)?.toLocaleTimeString()}
-                </div>
-              )}
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-900 mb-1">
+                {sectionSchema.title}
+              </h1>
+              <p className="text-sm text-gray-600">{sectionSchema.description}</p>
             </div>
           </div>
 
-          {/* Content Sections */}
-          <div className="space-y-6 pb-8">
-            {filteredSections.length === 0 ? (
-              <div className="text-center py-12">
-                <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No fields found</h3>
-                <p className="text-gray-500">Try adjusting your search query</p>
-              </div>
-            ) : (
-              filteredSections.map((schemaSection, index) => {
-                const SchemaSectionIcon = getIconComponent(schemaSection.icon);
-                return (
-                  <div
-                    key={schemaSection.id}
-                    className="bg-white border border-gray-200 rounded-lg overflow-hidden"
-                  >
-                    {/* Section Header */}
-                    <button
-                      onClick={() => toggleSection(schemaSection.id)}
-                      className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors border-b border-gray-200"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <SchemaSectionIcon className="w-4 h-4 text-gray-600" />
-                        <h3 className="text-sm font-semibold text-gray-900">
-                          {schemaSection.title}
-                        </h3>
-                        <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-full">
-                          {schemaSection.fields.length} fields
-                        </span>
-                      </div>
-                      {expandedSections.includes(schemaSection.id) ? (
-                        <ChevronUp className="w-4 h-4 text-gray-500" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4 text-gray-500" />
-                      )}
-                    </button>
+          <div className="flex items-center space-x-2">
+            {/* Undo/Redo */}
+            <button
+              onClick={handleUndo}
+              disabled={historyIndex <= 0}
+              className="flex items-center space-x-1 px-2 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Undo (Ctrl+Z)"
+            >
+              <Undo className="w-3 h-3" />
+            </button>
 
-                    {/* Section Content */}
-                    {expandedSections.includes(schemaSection.id) && (
-                      <div className="p-4">
-                        <div className="space-y-6">
-                          {schemaSection.fields.map((field) => (
-                            <div
-                              key={field.id}
-                              ref={(el) => { 
-                                if (el) editorRefs.current[field.id] = el; 
-                              }}
-                            >
-                              <FieldRenderer
-                                field={field}
-                                fieldValue={getValueByPath(localContent, field.path)}
-                                fieldErrors={validationErrors[field.id]}
-                                onFieldChange={handleFieldChange}
-                                onArrayUpdate={handleArrayUpdate}
-                                isHighlighted={highlightedElement === field.path}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })
+            <button
+              onClick={handleRedo}
+              disabled={historyIndex >= contentHistory.length - 1}
+              className="flex items-center space-x-1 px-2 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Redo (Ctrl+Y)"
+            >
+              <Redo className="w-3 h-3" />
+            </button>
+
+            {/* Utility Actions */}
+            <button
+              onClick={handleDuplicateSection}
+              className="flex items-center space-x-1 px-2 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+              title="Duplicate Section"
+            >
+              <Copy className="w-3 h-3" />
+            </button>
+
+            <button
+              onClick={() => setShowKeyboardHelp(true)}
+              className="flex items-center space-x-1 px-2 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+              title="Keyboard shortcuts"
+            >
+              <Keyboard className="w-3 h-3" />
+            </button>
+
+            <button
+              onClick={handleReset}
+              className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Reset</span>
+            </button>
+
+            <button
+              onClick={onPreview}
+              className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+            >
+              <Monitor className="w-4 h-4" />
+              <span>Full Preview</span>
+            </button>
+
+            <button
+              onClick={handleSave}
+              disabled={hasErrors || isLoading}
+              className={`flex items-center space-x-2 px-4 py-1.5 text-sm font-medium text-white border rounded-lg transition-all duration-200 ${
+                hasErrors || isLoading
+                  ? 'bg-gray-400 border-gray-400 cursor-not-allowed' 
+                  : 'bg-blue-600 border-blue-600 hover:bg-blue-700'
+              }`}
+            >
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              <span>{isLoading ? 'Saving...' : 'Save'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search fields..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              data-search-input
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                ×
+              </button>
             )}
           </div>
         </div>
+
+        {/* Enhanced Status */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            {isSaving ? (
+              <div className="flex items-center space-x-2 text-blue-600">
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                <span className="text-sm">Auto-saving...</span>
+              </div>
+            ) : isDirty ? (
+              <div className="flex items-center space-x-2 text-amber-600">
+                <AlertCircle className="w-4 h-4" />
+                <span className="text-sm">Unsaved changes</span>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2 text-green-600">
+                <CheckCircle className="w-4 h-4" />
+                <span className="text-sm">All changes saved</span>
+              </div>
+            )}
+            
+            {hasErrors && (
+              <div className="flex items-center space-x-2 text-red-600">
+                <AlertCircle className="w-4 h-4" />
+                <span className="text-sm">Please fix validation errors</span>
+              </div>
+            )}
+
+            {highlightedElement && (
+              <div className="flex items-center space-x-2 text-blue-600">
+                <Target className="w-4 h-4" />
+                <span className="text-sm">Element selected from preview</span>
+              </div>
+            )}
+
+            {/* History Status */}
+            <div className="flex items-center space-x-2 text-gray-500">
+              <Clock className="w-4 h-4" />
+              <span className="text-sm">
+                {historyIndex + 1}/{contentHistory.length} changes
+              </span>
+            </div>
+          </div>
+          
+          {(lastSaved || autoSaveLastSaved) && (
+            <div className="text-xs text-gray-500">
+              Last saved: {(autoSaveLastSaved || lastSaved)?.toLocaleTimeString()}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Resizable Panel Group */}
+      <div className="flex-1 overflow-hidden">
+        <PanelGroup direction="horizontal" className="h-full">
+          {/* Left Panel - Live Preview */}
+          <Panel defaultSize={50} minSize={30} maxSize={70}>
+            <div className="h-full overflow-hidden border-r border-gray-200">
+              <div className="h-full overflow-y-auto">
+                <LivePreview
+                  section={section}
+                  isVisible={showPreview}
+                  onToggleVisibility={() => setShowPreview(!showPreview)}
+                  onElementClick={handleElementClick}
+                />
+              </div>
+            </div>
+          </Panel>
+
+          {/* Resize Handle */}
+          <PanelResizeHandle className="w-2 bg-gray-100 hover:bg-gray-200 transition-colors duration-200 flex items-center justify-center group">
+            <div className="w-1 h-8 bg-gray-300 rounded-full group-hover:bg-gray-400 transition-colors duration-200 flex items-center justify-center">
+              <GripVertical className="w-3 h-3 text-gray-500 group-hover:text-gray-600" />
+            </div>
+          </PanelResizeHandle>
+
+          {/* Right Panel - Content Editor */}
+          <Panel defaultSize={50} minSize={30} maxSize={70}>
+            <div className="h-full overflow-hidden">
+              <div className="h-full overflow-y-auto p-6">
+                {/* Content Sections */}
+                <div className="space-y-6 pb-8">
+                  {filteredSections.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No fields found</h3>
+                      <p className="text-gray-500">Try adjusting your search query</p>
+                    </div>
+                  ) : (
+                    filteredSections.map((schemaSection, index) => {
+                      const SchemaSectionIcon = getIconComponent(schemaSection.icon);
+                      return (
+                        <div
+                          key={schemaSection.id}
+                          className="bg-white border border-gray-200 rounded-lg overflow-hidden"
+                        >
+                          {/* Section Header */}
+                          <button
+                            onClick={() => toggleSection(schemaSection.id)}
+                            className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors border-b border-gray-200"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <SchemaSectionIcon className="w-4 h-4 text-gray-600" />
+                              <h3 className="text-sm font-semibold text-gray-900">
+                                {schemaSection.title}
+                              </h3>
+                              <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-full">
+                                {schemaSection.fields.length} fields
+                              </span>
+                            </div>
+                            {expandedSections.includes(schemaSection.id) ? (
+                              <ChevronUp className="w-4 h-4 text-gray-500" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4 text-gray-500" />
+                            )}
+                          </button>
+
+                          {/* Section Content */}
+                          {expandedSections.includes(schemaSection.id) && (
+                            <div className="p-4">
+                              <div className="space-y-6">
+                                {schemaSection.fields.map((field) => (
+                                  <div
+                                    key={field.id}
+                                    ref={(el) => { 
+                                      if (el) editorRefs.current[field.id] = el; 
+                                    }}
+                                  >
+                                    <FieldRenderer
+                                      field={field}
+                                      fieldValue={getValueByPath(localContent, field.path)}
+                                      fieldErrors={validationErrors[field.id]}
+                                      onFieldChange={handleFieldChange}
+                                      onArrayUpdate={handleArrayUpdate}
+                                      isHighlighted={highlightedElement === field.path}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            </div>
+          </Panel>
+        </PanelGroup>
       </div>
 
       {/* Keyboard Shortcuts Modal */}

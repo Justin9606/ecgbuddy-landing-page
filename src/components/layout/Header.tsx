@@ -22,8 +22,13 @@ import {
   HelpCircle,
   Building2,
 } from "lucide-react";
+import { HighlightableElement, HighlightableArrayItem } from "@/components/admin/InteractivePreview";
 
-const Header = () => {
+interface HeaderProps {
+  onElementClick?: (elementPath: string, elementType: string) => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onElementClick }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -286,7 +291,14 @@ const Header = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             {/* Logo with improved hover state */}
-            <div className="flex items-center space-x-3 group cursor-pointer">
+            <HighlightableElement
+              dataPath="logoText"
+              elementType="text"
+              label="Logo Text"
+              onElementClick={onElementClick}
+              disabled={!onElementClick}
+              className="flex items-center space-x-3 group cursor-pointer"
+            >
               <div className="relative">
                 <div className="w-8 h-8 bg-gradient-to-br from-red-400 via-red-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/25 group-hover:shadow-red-500/40 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
                   <Heart className="w-4 h-4 text-white" />
@@ -296,7 +308,7 @@ const Header = () => {
               <span className="text-xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 bg-clip-text text-transparent group-hover:from-red-600 group-hover:via-red-500 group-hover:to-pink-600 transition-all duration-300">
                 ECG Buddy
               </span>
-            </div>
+            </HighlightableElement>
 
             {/* Desktop Navigation with improved focus states */}
             <nav
@@ -425,25 +437,40 @@ const Header = () => {
             {/* Right Side Actions with improved states */}
             <div className="hidden lg:flex items-center space-x-4">
               {/* Enhanced Language Toggle */}
-              <div className="flex items-center bg-red-50/50 backdrop-blur-sm rounded-full p-1 border border-red-100/50 hover:bg-red-50/70 transition-all duration-300">
+              <HighlightableElement
+                dataPath="languages"
+                elementType="array"
+                label="Language Toggle"
+                onElementClick={onElementClick}
+                disabled={!onElementClick}
+                className="flex items-center bg-red-50/50 backdrop-blur-sm rounded-full p-1 border border-red-100/50 hover:bg-red-50/70 transition-all duration-300"
+              >
                 <button className="px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-pink-600 rounded-full shadow-sm transition-all duration-300 hover:shadow-md">
                   KOR
                 </button>
                 <button className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-full hover:bg-white/50">
                   ENG
                 </button>
-              </div>
+              </HighlightableElement>
 
               {/* FIXED: Simplified CTA Button - No Loading State */}
-              <button
-                onClick={handleCTAClick}
-                className="relative group bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white px-6 py-2.5 rounded-full font-medium shadow-lg shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/20 overflow-hidden"
+              <HighlightableElement
+                dataPath="ctaButton.text"
+                elementType="button"
+                label="CTA Button"
+                onElementClick={onElementClick}
+                disabled={!onElementClick}
               >
-                {/* Glassy hover effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                <button
+                  onClick={handleCTAClick}
+                  className="relative group bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white px-6 py-2.5 rounded-full font-medium shadow-lg shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/20 overflow-hidden"
+                >
+                  {/* Glassy hover effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
-                <span className="relative z-10">Try ECG Buddy</span>
-              </button>
+                  <span className="relative z-10">Try ECG Buddy</span>
+                </button>
+              </HighlightableElement>
             </div>
 
             {/* Enhanced Mobile Menu Button */}
