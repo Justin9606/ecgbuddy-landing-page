@@ -48,12 +48,6 @@ const Pricing = () => {
         "Email support",
         "Mobile app access",
         "Basic reporting",
-        "Community forum access",
-      ],
-      limitations: [
-        "Limited to 10 analyses per day",
-        "Standard priority processing",
-        "Basic support only",
       ],
       buttonText: "Start Free Trial",
       buttonLink: "#signup",
@@ -86,12 +80,9 @@ const Pricing = () => {
         "Advanced reporting & analytics",
         "EMR integration",
         "Team collaboration tools",
-        "Custom workflows",
         "API access",
         "Data export capabilities",
-        "Advanced security features",
       ],
-      limitations: [],
       buttonText: "Start Pro Trial",
       buttonLink: "#pro-signup",
       isPopular: true,
@@ -124,11 +115,8 @@ const Pricing = () => {
         "Advanced compliance",
         "Custom integrations",
         "On-premise deployment",
-        "Custom reporting",
-        "Training & onboarding",
         "24/7 dedicated support",
       ],
-      limitations: [],
       buttonText: "Contact Sales",
       buttonLink: "#contact-sales",
       isPopular: false,
@@ -187,9 +175,9 @@ const Pricing = () => {
     
     const price = plan.price[billingCycle] as number;
     if (billingCycle === "yearly") {
-      return `$${Math.round(price / 12)}/mo`;
+      return `$${Math.round(price / 12)}`;
     }
-    return `$${price}/mo`;
+    return `$${price}`;
   };
 
   const getYearlySavings = (plan: typeof pricingPlans[0]) => {
@@ -265,7 +253,7 @@ const Pricing = () => {
           <div className="inline-flex items-center bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-full p-1 shadow-[0_8px_32px_rgba(255,63,74,0.08)]">
             <button
               onClick={() => setBillingCycle("monthly")}
-              className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+              className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
                 billingCycle === "monthly"
                   ? "bg-gradient-to-r from-red-500 to-pink-600 text-white shadow-lg"
                   : "text-slate-600 hover:text-slate-800"
@@ -275,7 +263,7 @@ const Pricing = () => {
             </button>
             <button
               onClick={() => setBillingCycle("yearly")}
-              className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 relative ${
+              className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 relative ${
                 billingCycle === "yearly"
                   ? "bg-gradient-to-r from-red-500 to-pink-600 text-white shadow-lg"
                   : "text-slate-600 hover:text-slate-800"
@@ -291,7 +279,7 @@ const Pricing = () => {
 
         {/* Pricing Cards */}
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-32"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -306,7 +294,7 @@ const Pricing = () => {
                 key={plan.id}
                 variants={cardVariants}
                 className={`relative transition-all duration-500 ${
-                  plan.isPopular ? "lg:scale-105 lg:-mt-4" : ""
+                  plan.isPopular ? "lg:scale-105 lg:-mt-8" : ""
                 }`}
                 onMouseEnter={() => setHoveredPlan(plan.id)}
                 onMouseLeave={() => setHoveredPlan(null)}
@@ -332,91 +320,91 @@ const Pricing = () => {
                     </div>
                   )}
 
-                  <div className="relative p-8">
+                  <div className="relative p-10">
                     {/* Plan Header */}
-                    <div className="text-center mb-8">
+                    <div className="text-center mb-10">
                       <motion.div
-                        className={`w-16 h-16 bg-gradient-to-br ${plan.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg`}
+                        className={`w-20 h-20 bg-gradient-to-br ${plan.gradient} rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg`}
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ duration: 0.3 }}
                       >
-                        <plan.icon className="w-8 h-8 text-white" />
+                        <plan.icon className="w-10 h-10 text-white" />
                       </motion.div>
 
-                      <h3 className="text-2xl font-bold text-slate-800 mb-2">
+                      <h3 className="text-3xl font-bold text-slate-800 mb-4">
                         {plan.name}
                       </h3>
-                      <p className="text-slate-600 text-sm mb-6">
+                      <p className="text-slate-600 text-lg mb-8 leading-relaxed">
                         {plan.description}
                       </p>
 
                       {/* Price Display */}
-                      <div className="mb-6">
-                        <div className="flex items-baseline justify-center space-x-2">
-                          <span className="text-4xl font-bold text-slate-800">
+                      <div className="mb-8">
+                        <div className="flex items-baseline justify-center space-x-2 mb-2">
+                          <span className="text-5xl font-bold text-slate-800">
                             {formatPrice(plan)}
                           </span>
                           {typeof plan.price[billingCycle] === "number" && plan.price[billingCycle] > 0 && (
-                            <span className="text-slate-500">
-                              {billingCycle === "yearly" ? "/month" : "/month"}
+                            <span className="text-xl text-slate-500">
+                              /month
                             </span>
                           )}
                         </div>
                         
                         {billingCycle === "yearly" && yearlySavings && (
-                          <div className="text-green-600 text-sm font-medium mt-2">
+                          <div className="text-green-600 text-sm font-medium mb-2">
                             Save {yearlySavings}% annually
                           </div>
                         )}
 
                         {typeof plan.price[billingCycle] === "number" && billingCycle === "yearly" && plan.price[billingCycle] > 0 && (
-                          <div className="text-slate-500 text-sm mt-1">
+                          <div className="text-slate-500 text-sm">
                             Billed ${plan.price[billingCycle]} yearly
                           </div>
                         )}
                       </div>
 
                       {/* Credits Display */}
-                      <div className={`bg-gradient-to-br ${plan.bgGradient} backdrop-blur-sm border border-${plan.borderColor} rounded-2xl p-4 mb-8`}>
-                        <div className="flex items-center justify-center space-x-2 mb-2">
+                      <div className={`bg-gradient-to-br ${plan.bgGradient} backdrop-blur-sm border border-${plan.borderColor} rounded-2xl p-6 mb-10`}>
+                        <div className="flex items-center justify-center space-x-3 mb-3">
                           {plan.credits.amount === "Unlimited" ? (
-                            <Infinity className="w-5 h-5 text-slate-600" />
+                            <Infinity className="w-6 h-6 text-slate-600" />
                           ) : plan.credits.amount === "Custom" ? (
-                            <Target className="w-5 h-5 text-slate-600" />
+                            <Target className="w-6 h-6 text-slate-600" />
                           ) : (
-                            <CreditCard className="w-5 h-5 text-slate-600" />
+                            <CreditCard className="w-6 h-6 text-slate-600" />
                           )}
-                          <span className="font-bold text-slate-800">
+                          <span className="text-xl font-bold text-slate-800">
                             {plan.credits.amount} {plan.credits.amount !== "Unlimited" && plan.credits.amount !== "Custom" && "Credits"}
                           </span>
                         </div>
-                        <div className="text-sm text-slate-600">
+                        <div className="text-slate-600">
                           {plan.credits.description}
                         </div>
                       </div>
                     </div>
 
                     {/* Features List */}
-                    <div className="mb-8">
-                      <h4 className="font-semibold text-slate-800 mb-4 flex items-center">
-                        <Sparkles className="w-4 h-4 mr-2 text-red-500" />
+                    <div className="mb-10">
+                      <h4 className="font-semibold text-slate-800 mb-6 flex items-center text-lg">
+                        <Sparkles className="w-5 h-5 mr-3 text-red-500" />
                         What's included
                       </h4>
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {plan.features.map((feature, featureIndex) => (
                           <motion.div
                             key={featureIndex}
-                            className="flex items-start space-x-3"
+                            className="flex items-start space-x-4"
                             custom={featureIndex}
                             variants={featureVariants}
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
                           >
-                            <div className="flex-shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                              <Check className="w-3 h-3 text-green-600" />
+                            <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                              <Check className="w-4 h-4 text-green-600" />
                             </div>
-                            <span className="text-slate-600 text-sm leading-relaxed">
+                            <span className="text-slate-600 leading-relaxed">
                               {feature}
                             </span>
                           </motion.div>
@@ -431,7 +419,7 @@ const Pricing = () => {
                         plan.isPopular
                           ? `bg-gradient-to-r ${plan.gradient} text-white shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)]`
                           : "bg-white/60 backdrop-blur-sm border border-slate-200/50 text-slate-700 hover:bg-white/80"
-                      } px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-500 flex items-center justify-center space-x-3 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20`}
+                      } px-8 py-5 rounded-2xl font-semibold text-lg transition-all duration-500 flex items-center justify-center space-x-3 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20`}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
@@ -450,7 +438,7 @@ const Pricing = () => {
 
         {/* Bottom Features */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -506,7 +494,7 @@ const Pricing = () => {
 
         {/* FAQ Section */}
         <motion.div
-          className="mt-20 text-center"
+          className="text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
