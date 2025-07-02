@@ -23,6 +23,7 @@ import {
   Building2,
   Check,
 } from "lucide-react";
+import Link from "next/link";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -303,68 +304,6 @@ const Header = () => {
         link: "#support",
       },
     },
-    Careers: {
-      sections: [
-        {
-          title: "Open Positions",
-          items: [
-            {
-              name: "Software Engineers",
-              href: "#engineering",
-              description: "Build the future of healthcare AI",
-              icon: Brain,
-              gradient: "from-blue-500 to-indigo-600",
-            },
-            {
-              name: "Clinical Specialists",
-              href: "#clinical",
-              description: "Bridge technology and medicine",
-              icon: Heart,
-              gradient: "from-red-500 to-pink-600",
-            },
-            {
-              name: "Product Designers",
-              href: "#design",
-              description: "Design intuitive healthcare experiences",
-              icon: Sparkles,
-              gradient: "from-purple-500 to-violet-600",
-            },
-            {
-              name: "Data Scientists",
-              href: "#data",
-              description: "Advance AI-powered diagnostics",
-              icon: Activity,
-              gradient: "from-emerald-500 to-teal-600",
-            },
-          ],
-        },
-        {
-          title: "Why ARPI",
-          items: [
-            {
-              name: "Mission-Driven Work",
-              href: "#mission",
-              description: "Make a real impact on patient care",
-              icon: Heart,
-              gradient: "from-rose-500 to-red-600",
-            },
-            {
-              name: "Growth Opportunities",
-              href: "#growth",
-              description: "Advance your career with us",
-              icon: Users,
-              gradient: "from-amber-500 to-orange-500",
-            },
-          ],
-        },
-      ],
-      cta: {
-        title: "Ready to join us?",
-        description: "Explore open positions and apply today",
-        button: "View All Jobs",
-        link: "#jobs",
-      },
-    },
   };
 
   return (
@@ -387,7 +326,7 @@ const Header = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             {/* Logo with improved hover state */}
-            <div className="flex items-center space-x-3 group cursor-pointer">
+            <Link href="/" className="flex items-center space-x-3 group cursor-pointer">
               <div className="relative">
                 <div className="w-8 h-8 bg-gradient-to-br from-red-400 via-red-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/25 group-hover:shadow-red-500/40 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
                   <Heart className="w-4 h-4 text-white" />
@@ -397,7 +336,7 @@ const Header = () => {
               <span className="text-xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 bg-clip-text text-transparent group-hover:from-red-600 group-hover:via-red-500 group-hover:to-pink-600 transition-all duration-300">
                 ECG Buddy
               </span>
-            </div>
+            </Link>
 
             {/* Desktop Navigation with improved focus states */}
             <nav
@@ -505,6 +444,14 @@ const Header = () => {
                   </div>
                 </div>
               ))}
+
+              {/* Careers Navigation - Direct Link */}
+              <Link
+                href="/careers"
+                className="flex items-center space-x-1 px-4 py-2 text-slate-700 hover:text-slate-900 transition-all duration-200 font-medium rounded-lg hover:bg-red-50/50 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:bg-red-50/50"
+              >
+                <span>Careers</span>
+              </Link>
 
               {/* Pricing Navigation - Direct Click with focus state */}
               <button
@@ -735,6 +682,18 @@ const Header = () => {
                   ))}
                 </div>
               ))}
+
+              {/* Mobile Careers */}
+              <div className="mt-6 pt-6 border-t border-slate-100">
+                <Link
+                  href="/careers"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full text-left font-semibold text-slate-900 mb-3 flex items-center p-2 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500/20"
+                >
+                  Careers
+                  <Building2 className="w-4 h-4 ml-2 text-slate-500" />
+                </Link>
+              </div>
 
               {/* Mobile Pricing */}
               <div className="mt-6 pt-6 border-t border-slate-100">
