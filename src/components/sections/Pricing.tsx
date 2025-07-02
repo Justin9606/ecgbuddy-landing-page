@@ -10,28 +10,20 @@ import {
   Building2,
   ArrowRight,
   Sparkles,
-  Shield,
-  Users,
-  Clock,
-  Heart,
-  Brain,
-  Activity,
-  Target,
-  Mail,
-  Phone,
   CreditCard,
   Infinity,
+  Target,
+  Activity,
 } from "lucide-react";
 
 const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-  const [hoveredPlan, setHoveredPlan] = useState<string | null>(null);
 
   const pricingPlans = [
     {
       id: "free",
       name: "Free",
-      description: "Perfect for getting started with ECG analysis",
+      description: "Perfect for individual doctors getting started",
       price: {
         monthly: 0,
         yearly: 0,
@@ -43,7 +35,7 @@ const Pricing = () => {
       },
       features: [
         "10 daily ECG analyses",
-        "Basic AI interpretation",
+        "Basic AI interpretation", 
         "Standard processing speed",
         "Email support",
         "Mobile app access",
@@ -53,8 +45,6 @@ const Pricing = () => {
       buttonLink: "#signup",
       isPopular: false,
       gradient: "from-slate-500 to-slate-600",
-      bgGradient: "from-slate-50/50 to-gray-50/50",
-      borderColor: "slate-200/50",
       icon: Zap,
       badge: null,
     },
@@ -68,7 +58,7 @@ const Pricing = () => {
       },
       credits: {
         amount: "Unlimited",
-        period: "monthly",
+        period: "monthly", 
         description: "Unlimited ECG analyses",
       },
       features: [
@@ -87,15 +77,13 @@ const Pricing = () => {
       buttonLink: "#pro-signup",
       isPopular: true,
       gradient: "from-red-500 to-pink-600",
-      bgGradient: "from-red-50/50 to-pink-50/50",
-      borderColor: "red-200/50",
       icon: Crown,
       badge: "Most Popular",
     },
     {
       id: "enterprise",
       name: "Enterprise",
-      description: "Custom solutions for large organizations",
+      description: "Custom solutions for hospitals & health systems",
       price: {
         monthly: "Custom",
         yearly: "Custom",
@@ -107,7 +95,7 @@ const Pricing = () => {
       },
       features: [
         "Custom credit allocation",
-        "White-label solutions",
+        "White-label solutions", 
         "Dedicated infrastructure",
         "Custom AI model training",
         "Dedicated account manager",
@@ -115,14 +103,12 @@ const Pricing = () => {
         "Advanced compliance",
         "Custom integrations",
         "On-premise deployment",
-        "24/7 dedicated support",
+        "Training & onboarding",
       ],
       buttonText: "Contact Sales",
       buttonLink: "#contact-sales",
       isPopular: false,
       gradient: "from-purple-500 to-indigo-600",
-      bgGradient: "from-purple-50/50 to-indigo-50/50",
-      borderColor: "purple-200/50",
       icon: Building2,
       badge: "Enterprise",
     },
@@ -149,19 +135,6 @@ const Pricing = () => {
         ease: "easeOut",
       },
     },
-  };
-
-  const featureVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      x: 0,
-      transition: {
-        delay: i * 0.05,
-        duration: 0.3,
-        ease: "easeOut",
-      },
-    }),
   };
 
   const formatPrice = (plan: typeof pricingPlans[0]) => {
@@ -196,7 +169,7 @@ const Pricing = () => {
   };
 
   return (
-    <section id="pricing-section" className="relative py-32 overflow-hidden">
+    <section id="pricing-section" className="relative py-24 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-red-50/30 via-white to-pink-50/20"></div>
 
@@ -223,7 +196,7 @@ const Pricing = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         {/* Section Header */}
         <motion.div
-          className="text-center mb-20"
+          className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -232,11 +205,11 @@ const Pricing = () => {
           <div className="inline-flex items-center space-x-3 bg-white/60 backdrop-blur-2xl border border-red-100/50 rounded-full px-6 py-3 mb-8 shadow-[0_8px_32px_rgba(255,63,74,0.08)]">
             <CreditCard className="w-4 h-4 text-red-500" />
             <span className="text-sm font-medium text-slate-700">
-              Flexible Pricing Plans
+              Credit-Based Pricing
             </span>
           </div>
 
-          <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
             <span className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent mb-2">
               Choose your plan
             </span>
@@ -245,17 +218,29 @@ const Pricing = () => {
             </span>
           </h2>
 
-          <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-light mb-12">
-            Flexible credit-based pricing that scales with your needs. Each credit equals one ECG analysis with our advanced AI system.
+          <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed mb-10">
+            Flexible credit-based pricing designed for healthcare professionals. Each credit equals one ECG analysis with our advanced AI system.
           </p>
 
-          {/* Billing Toggle */}
-          <div className="inline-flex items-center bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-full p-1 shadow-[0_8px_32px_rgba(255,63,74,0.08)]">
+          {/* Enhanced Billing Toggle */}
+          <div className="relative inline-flex items-center bg-white/50 backdrop-blur-2xl border border-red-100/50 rounded-2xl p-1.5 shadow-[0_8px_32px_rgba(255,63,74,0.08)] overflow-hidden group">
+            {/* Glassy hover effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+            
+            <motion.div
+              className="absolute inset-y-1.5 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl shadow-lg transition-all duration-300"
+              animate={{
+                x: billingCycle === "monthly" ? 4 : "calc(100% - 4px)",
+                width: billingCycle === "monthly" ? "calc(50% - 4px)" : "calc(50% - 4px)",
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            />
+            
             <button
               onClick={() => setBillingCycle("monthly")}
-              className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+              className={`relative z-10 px-8 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
                 billingCycle === "monthly"
-                  ? "bg-gradient-to-r from-red-500 to-pink-600 text-white shadow-lg"
+                  ? "text-white"
                   : "text-slate-600 hover:text-slate-800"
               }`}
             >
@@ -263,30 +248,29 @@ const Pricing = () => {
             </button>
             <button
               onClick={() => setBillingCycle("yearly")}
-              className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 relative ${
+              className={`relative z-10 px-8 py-3 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center space-x-2 ${
                 billingCycle === "yearly"
-                  ? "bg-gradient-to-r from-red-500 to-pink-600 text-white shadow-lg"
+                  ? "text-white"
                   : "text-slate-600 hover:text-slate-800"
               }`}
             >
-              Yearly
-              <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+              <span>Yearly</span>
+              <div className="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold">
                 Save 20%
-              </span>
+              </div>
             </button>
           </div>
         </motion.div>
 
         {/* Pricing Cards */}
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-32"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
         >
           {pricingPlans.map((plan, index) => {
-            const isHovered = hoveredPlan === plan.id;
             const yearlySavings = getYearlySavings(plan);
 
             return (
@@ -294,65 +278,63 @@ const Pricing = () => {
                 key={plan.id}
                 variants={cardVariants}
                 className={`relative transition-all duration-500 ${
-                  plan.isPopular ? "lg:scale-105 lg:-mt-8" : ""
+                  plan.isPopular ? "lg:scale-105" : ""
                 }`}
-                onMouseEnter={() => setHoveredPlan(plan.id)}
-                onMouseLeave={() => setHoveredPlan(null)}
-                whileHover={{ y: -8 }}
+                whileHover={{ y: -4 }}
               >
                 <div
-                  className={`relative bg-white/40 backdrop-blur-2xl border border-${plan.borderColor} rounded-3xl overflow-hidden transition-all duration-500 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] group ${
+                  className={`relative bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl overflow-hidden transition-all duration-500 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] group ${
                     plan.isPopular ? "ring-2 ring-red-500/20" : ""
                   }`}
                 >
                   {/* Glassy hover effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
 
-                  {/* Popular Badge */}
+                  {/* FIXED: Popular Badge - Proper positioning */}
                   {plan.badge && (
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                      <div className={`bg-gradient-to-r ${plan.gradient} text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg`}>
-                        <div className="flex items-center space-x-2">
-                          <Star className="w-4 h-4 fill-current" />
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
+                      <div className={`bg-gradient-to-r ${plan.gradient} text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg border-2 border-white`}>
+                        <div className="flex items-center space-x-1">
+                          <Star className="w-3 h-3 fill-current" />
                           <span>{plan.badge}</span>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  <div className="relative p-10">
+                  <div className="relative p-8 pt-12">
                     {/* Plan Header */}
-                    <div className="text-center mb-10">
+                    <div className="text-center mb-8">
                       <motion.div
-                        className={`w-20 h-20 bg-gradient-to-br ${plan.gradient} rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg`}
+                        className={`w-16 h-16 bg-gradient-to-br ${plan.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg`}
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ duration: 0.3 }}
                       >
-                        <plan.icon className="w-10 h-10 text-white" />
+                        <plan.icon className="w-8 h-8 text-white" />
                       </motion.div>
 
-                      <h3 className="text-3xl font-bold text-slate-800 mb-4">
+                      <h3 className="text-2xl font-bold text-slate-800 mb-3">
                         {plan.name}
                       </h3>
-                      <p className="text-slate-600 text-lg mb-8 leading-relaxed">
+                      <p className="text-slate-600 mb-6 leading-relaxed">
                         {plan.description}
                       </p>
 
                       {/* Price Display */}
-                      <div className="mb-8">
-                        <div className="flex items-baseline justify-center space-x-2 mb-2">
-                          <span className="text-5xl font-bold text-slate-800">
+                      <div className="mb-6">
+                        <div className="flex items-baseline justify-center space-x-1 mb-2">
+                          <span className="text-4xl font-bold text-slate-800">
                             {formatPrice(plan)}
                           </span>
                           {typeof plan.price[billingCycle] === "number" && plan.price[billingCycle] > 0 && (
-                            <span className="text-xl text-slate-500">
+                            <span className="text-lg text-slate-500">
                               /month
                             </span>
                           )}
                         </div>
                         
                         {billingCycle === "yearly" && yearlySavings && (
-                          <div className="text-green-600 text-sm font-medium mb-2">
+                          <div className="text-green-600 text-sm font-medium mb-1">
                             Save {yearlySavings}% annually
                           </div>
                         )}
@@ -365,50 +347,50 @@ const Pricing = () => {
                       </div>
 
                       {/* Credits Display */}
-                      <div className={`bg-gradient-to-br ${plan.bgGradient} backdrop-blur-sm border border-${plan.borderColor} rounded-2xl p-6 mb-10`}>
-                        <div className="flex items-center justify-center space-x-3 mb-3">
+                      <div className="bg-white/30 backdrop-blur-sm border border-red-100/40 rounded-2xl p-4 mb-6">
+                        <div className="flex items-center justify-center space-x-2 mb-2">
                           {plan.credits.amount === "Unlimited" ? (
-                            <Infinity className="w-6 h-6 text-slate-600" />
+                            <Infinity className="w-5 h-5 text-slate-600" />
                           ) : plan.credits.amount === "Custom" ? (
-                            <Target className="w-6 h-6 text-slate-600" />
+                            <Target className="w-5 h-5 text-slate-600" />
                           ) : (
-                            <CreditCard className="w-6 h-6 text-slate-600" />
+                            <Activity className="w-5 h-5 text-slate-600" />
                           )}
-                          <span className="text-xl font-bold text-slate-800">
+                          <span className="text-lg font-bold text-slate-800">
                             {plan.credits.amount} {plan.credits.amount !== "Unlimited" && plan.credits.amount !== "Custom" && "Credits"}
                           </span>
                         </div>
-                        <div className="text-slate-600">
+                        <div className="text-slate-600 text-sm">
                           {plan.credits.description}
                         </div>
                       </div>
                     </div>
 
                     {/* Features List */}
-                    <div className="mb-10">
-                      <h4 className="font-semibold text-slate-800 mb-6 flex items-center text-lg">
-                        <Sparkles className="w-5 h-5 mr-3 text-red-500" />
+                    <div className="mb-8">
+                      <h4 className="font-semibold text-slate-800 mb-4 flex items-center">
+                        <Sparkles className="w-4 h-4 mr-2 text-red-500" />
                         What's included
                       </h4>
-                      <div className="space-y-4">
-                        {plan.features.map((feature, featureIndex) => (
-                          <motion.div
+                      <div className="space-y-3">
+                        {plan.features.slice(0, 6).map((feature, featureIndex) => (
+                          <div
                             key={featureIndex}
-                            className="flex items-start space-x-4"
-                            custom={featureIndex}
-                            variants={featureVariants}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
+                            className="flex items-start space-x-3"
                           >
-                            <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                              <Check className="w-4 h-4 text-green-600" />
+                            <div className="flex-shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                              <Check className="w-3 h-3 text-green-600" />
                             </div>
-                            <span className="text-slate-600 leading-relaxed">
+                            <span className="text-slate-600 text-sm leading-relaxed">
                               {feature}
                             </span>
-                          </motion.div>
+                          </div>
                         ))}
+                        {plan.features.length > 6 && (
+                          <div className="text-slate-500 text-sm text-center pt-2">
+                            +{plan.features.length - 6} more features
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -419,7 +401,7 @@ const Pricing = () => {
                         plan.isPopular
                           ? `bg-gradient-to-r ${plan.gradient} text-white shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)]`
                           : "bg-white/60 backdrop-blur-sm border border-slate-200/50 text-slate-700 hover:bg-white/80"
-                      } px-8 py-5 rounded-2xl font-semibold text-lg transition-all duration-500 flex items-center justify-center space-x-3 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20`}
+                      } px-6 py-4 rounded-2xl font-semibold transition-all duration-500 flex items-center justify-center space-x-2 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20`}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
@@ -427,122 +409,13 @@ const Pricing = () => {
                       <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
                       <span className="relative z-10">{plan.buttonText}</span>
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
                     </motion.a>
                   </div>
                 </div>
               </motion.div>
             );
           })}
-        </motion.div>
-
-        {/* Bottom Features */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          {[
-            {
-              icon: Shield,
-              title: "Secure & Compliant",
-              description: "HIPAA-compliant with bank-level security and end-to-end encryption for all your ECG data.",
-              gradient: "from-emerald-500 to-teal-600",
-            },
-            {
-              icon: Clock,
-              title: "Lightning Fast",
-              description: "Get comprehensive ECG analysis results in under 30 seconds with our optimized AI engine.",
-              gradient: "from-amber-500 to-orange-500",
-            },
-            {
-              icon: Users,
-              title: "24/7 Support",
-              description: "Round-the-clock technical support and dedicated account management for enterprise customers.",
-              gradient: "from-blue-500 to-indigo-600",
-            },
-          ].map((feature, index) => (
-            <motion.div
-              key={index}
-              className="relative bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl p-8 transition-all duration-500 group shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] overflow-hidden"
-              whileHover={{ y: -5 }}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-            >
-              {/* Glassy hover effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
-
-              <motion.div
-                className={`relative w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 shadow-lg`}
-                whileHover={{ scale: 1.1, rotate: 5 }}
-              >
-                <feature.icon className="w-8 h-8 text-white" />
-              </motion.div>
-              <h3 className="relative text-xl font-bold text-slate-800 mb-4 transition-colors duration-300">
-                {feature.title}
-              </h3>
-              <p className="relative text-slate-600 leading-relaxed transition-colors duration-300">
-                {feature.description}
-              </p>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* FAQ Section */}
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          <div className="relative bg-white/30 backdrop-blur-2xl border border-red-100/50 rounded-3xl p-12 max-w-4xl mx-auto shadow-[0_20px_70px_rgba(255,63,74,0.1)] hover:shadow-[0_30px_90px_rgba(255,63,74,0.15)] transition-all duration-700 group overflow-hidden">
-            {/* Glassy hover effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
-
-            <div className="relative z-10">
-              <div className="inline-flex items-center space-x-2 bg-red-100/50 backdrop-blur-sm border border-red-200/50 rounded-full px-4 py-2 mb-6">
-                <Sparkles className="w-4 h-4 text-red-600" />
-                <span className="text-sm font-medium text-red-700">
-                  Questions about pricing?
-                </span>
-              </div>
-
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6 group-hover:text-slate-900 transition-colors duration-300">
-                Need help choosing a plan?
-              </h3>
-
-              <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-                Our team is here to help you find the perfect plan for your organization's needs and budget.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="relative bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white px-10 py-4 rounded-full font-semibold text-lg shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 overflow-hidden group flex items-center space-x-2"
-                >
-                  {/* Glassy hover effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                  <Mail className="w-5 h-5 relative z-10" />
-                  <span className="relative z-10">Contact Sales</span>
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="text-slate-600 hover:text-slate-800 font-medium transition-colors duration-300 flex items-center space-x-2"
-                >
-                  <Phone className="w-4 h-4" />
-                  <span>Schedule a call</span>
-                </motion.button>
-              </div>
-            </div>
-          </div>
         </motion.div>
       </div>
     </section>
