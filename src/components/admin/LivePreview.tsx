@@ -69,16 +69,18 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
       switch (section) {
         case "header":
           return (
-            <div className="min-h-screen">
+            <div className="min-h-screen bg-white relative">
               {/* Header with proper z-index and positioning */}
-              <div className="relative">
+              <div className="relative z-50">
                 <ComponentWrapper onElementClick={onElementClick}>
-                  <Header onElementClick={onElementClick} />
+                  <div className="bg-white border-b border-gray-200 shadow-sm">
+                    <Header onElementClick={onElementClick} />
+                  </div>
                 </ComponentWrapper>
               </div>
               
               {/* Content below header to show context */}
-              <div className="px-6 py-12 bg-white">
+              <div className="px-6 py-12">
                 <div className="max-w-7xl mx-auto">
                   <div className="text-center">
                     <h2 className="text-2xl font-bold text-gray-900 mb-3">Header Preview</h2>
@@ -94,37 +96,47 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
           
         case "hero":
           return (
-            <ComponentWrapper onElementClick={onElementClick}>
-              <Hero onElementClick={onElementClick} />
-            </ComponentWrapper>
+            <div className="min-h-screen bg-white">
+              <ComponentWrapper onElementClick={onElementClick}>
+                <Hero onElementClick={onElementClick} />
+              </ComponentWrapper>
+            </div>
           );
           
         case "features":
           return (
-            <ComponentWrapper onElementClick={onElementClick}>
-              <Features onElementClick={onElementClick} />
-            </ComponentWrapper>
+            <div className="min-h-screen bg-white">
+              <ComponentWrapper onElementClick={onElementClick}>
+                <Features />
+              </ComponentWrapper>
+            </div>
           );
           
         case "mobile-download":
           return (
-            <ComponentWrapper onElementClick={onElementClick}>
-              <MobileDownload onElementClick={onElementClick} />
-            </ComponentWrapper>
+            <div className="min-h-screen bg-white">
+              <ComponentWrapper onElementClick={onElementClick}>
+                <MobileDownload />
+              </ComponentWrapper>
+            </div>
           );
           
         case "faq":
           return (
-            <ComponentWrapper onElementClick={onElementClick}>
-              <FAQ onElementClick={onElementClick} />
-            </ComponentWrapper>
+            <div className="min-h-screen bg-white">
+              <ComponentWrapper onElementClick={onElementClick}>
+                <FAQ />
+              </ComponentWrapper>
+            </div>
           );
           
         case "about-arpi":
           return (
-            <ComponentWrapper onElementClick={onElementClick}>
-              <AboutARPI onElementClick={onElementClick} />
-            </ComponentWrapper>
+            <div className="min-h-screen bg-white">
+              <ComponentWrapper onElementClick={onElementClick}>
+                <AboutARPI />
+              </ComponentWrapper>
+            </div>
           );
           
         case "footer":
@@ -132,7 +144,7 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
             <div className="min-h-screen bg-white flex flex-col">
               <div className="flex-1"></div>
               <ComponentWrapper onElementClick={onElementClick}>
-                <Footer onElementClick={onElementClick} />
+                <Footer />
               </ComponentWrapper>
             </div>
           );
@@ -163,7 +175,7 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
   if (!isVisible) return null;
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-white">
       {/* Compact Preview Header */}
       <div className="flex-shrink-0 bg-white border-b border-gray-200 px-3 py-2">
         <div className="flex items-center justify-between">
@@ -231,74 +243,91 @@ export const LivePreview: React.FC<LivePreviewProps> = memo(({
         </div>
       </div>
 
-      {/* Live Preview Container - Clean and minimal */}
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full">
+      {/* Live Preview Container - Removed extra padding and spacing */}
+      <div className="flex-1 bg-gray-50 overflow-hidden">
+        <div className="h-full flex items-start justify-center">
           <div 
-            className={`h-full overflow-y-auto transition-all duration-300 ${
-              isFullscreen ? 'w-full' : ''
+            className={`bg-white shadow-lg overflow-hidden transition-all duration-300 ${
+              isFullscreen ? 'w-full h-full' : 'rounded-lg mt-2 mx-2 h-[calc(100%-1rem)]'
             }`}
             style={{ 
               width: isFullscreen ? '100%' : getViewportWidth(),
-              maxWidth: "100%",
+              maxWidth: isFullscreen ? '100%' : "100%",
             }}
           >
-            {/* PURE Landing Page Content - NO extra styling */}
-            <div className="admin-preview-container">
+            {/* LIVE Content from Landing Page Components */}
+            <div className="relative admin-preview-container h-full overflow-y-auto">
               {renderLivePreview}
             </div>
           </div>
         </div>
       </div>
 
+      {/* Compact Preview Info */}
+      <div className="flex-shrink-0 bg-gray-50 border-t border-gray-200 px-3 py-1">
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <span>
+            🔴 Live preview
+          </span>
+          <span className="font-medium">
+            {viewportMode.charAt(0).toUpperCase() + viewportMode.slice(1)} • {onElementClick ? 'Interactive' : 'Static'}
+          </span>
+        </div>
+      </div>
+
       {/* Enhanced Admin Preview Styles */}
       <style jsx global>{`
-        /* Clean preview container - no interference with original styles */
         .admin-preview-container {
+          /* Reduce animations in admin preview for better performance */
+          * {
+            animation-duration: 0.2s !important;
+            animation-delay: 0s !important;
+            transition-duration: 0.2s !important;
+            transition-delay: 0s !important;
+          }
+          
           /* Enable pointer events for interactive editing */
           pointer-events: auto;
-          /* Ensure proper overflow for dropdowns */
-          overflow: visible;
         }
         
         .admin-preview-wrapper {
           /* Ensure proper scaling */
           transform-origin: top left;
           width: 100%;
+          overflow: visible; /* Changed from hidden to visible for dropdowns */
           /* Enable interactions for editing */
           pointer-events: auto;
-          /* Allow overflow for dropdowns */
-          overflow: visible;
         }
 
-        /* Fix header positioning in preview */
+        /* Override fixed positioning for header in preview */
         .admin-preview-container header {
           position: relative !important;
           top: auto !important;
           left: auto !important;
           right: auto !important;
+          z-index: 50 !important; /* High z-index for dropdowns */
         }
 
-        /* Ensure dropdowns work properly in preview */
-        .admin-preview-container .absolute {
-          position: absolute !important;
-          z-index: 9999 !important;
+        /* Ensure header content is visible and dropdowns work */
+        .admin-preview-container .fixed {
+          position: relative !important;
         }
 
-        /* Fix mega menu visibility */
+        /* Ensure dropdowns are visible in preview */
         .admin-preview-container [class*="dropdown"],
         .admin-preview-container [class*="menu"] {
           z-index: 9999 !important;
+          position: absolute !important;
         }
 
-        /* Ensure hover states work */
-        .admin-preview-container .group:hover > div[class*="absolute"] {
+        /* Make sure mega menus are visible */
+        .admin-preview-container .absolute {
           z-index: 9999 !important;
         }
 
-        /* Remove any fixed positioning that might interfere */
-        .admin-preview-container .fixed {
-          position: relative !important;
+        /* Ensure proper stacking for interactive elements */
+        .admin-preview-container .group:hover > div[class*="absolute"] {
+          z-index: 9999 !important;
         }
       `}</style>
     </div>
