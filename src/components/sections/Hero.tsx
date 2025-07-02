@@ -350,7 +350,7 @@ const Hero = () => {
             </div>
           </motion.div>
 
-          {/* Enhanced CTA Buttons */}
+          {/* Enhanced CTA Buttons - Updated Text */}
           <motion.div
             className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-20"
             initial={{ opacity: 0, y: 30 }}
@@ -366,7 +366,7 @@ const Hero = () => {
               {/* Glassy hover effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
-              <span className="relative z-10">Start Analysis</span>
+              <span className="relative z-10">Try ECG Buddy</span>
               <motion.div
                 animate={{ x: [0, 5, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity }}

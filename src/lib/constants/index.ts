@@ -26,6 +26,7 @@ export const SOCIAL_LINKS = {
 export const NAV_SECTIONS = {
   HERO: "hero",
   FEATURES: "features",
+  PRICING: "pricing-section",
   FAQ: "faq-section",
   ABOUT: "about-arpi-section",
   MOBILE_DOWNLOAD: "mobile-download",

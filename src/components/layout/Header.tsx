@@ -21,13 +21,18 @@ import {
   Headphones,
   HelpCircle,
   Building2,
+  Check,
 } from "lucide-react";
+import Link from "next/link";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("KOR");
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const languageDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,7 +42,7 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Handle click outside to close dropdown
+  // Handle click outside to close dropdowns
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -46,16 +51,22 @@ const Header = () => {
       ) {
         setActiveDropdown(null);
       }
+      if (
+        languageDropdownRef.current &&
+        !languageDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsLanguageDropdownOpen(false);
+      }
     };
 
-    if (activeDropdown) {
+    if (activeDropdown || isLanguageDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [activeDropdown]);
+  }, [activeDropdown, isLanguageDropdownOpen]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -71,10 +82,39 @@ const Header = () => {
     setActiveDropdown(activeDropdown === key ? null : key);
   };
 
-  // FIXED: Remove loading state and scroll instantly
-  const handleCTAClick = () => {
-    scrollToSection("mobile-download");
+  const handleLanguageChange = (language: string) => {
+    setSelectedLanguage(language);
+    setIsLanguageDropdownOpen(false);
   };
+
+  const languages = [
+    {
+      code: "KOR",
+      name: "한국어",
+      flag: "🇰🇷",
+      nativeName: "Korean",
+    },
+    {
+      code: "ENG",
+      name: "English",
+      flag: "🇺🇸",
+      nativeName: "English",
+    },
+    {
+      code: "JPN",
+      name: "日本語",
+      flag: "🇯🇵",
+      nativeName: "Japanese",
+    },
+    {
+      code: "CHN",
+      name: "中文",
+      flag: "🇨🇳",
+      nativeName: "Chinese",
+    },
+  ];
+
+  const selectedLang = languages.find(lang => lang.code === selectedLanguage) || languages[0];
 
   const megaMenuItems = {
     Product: {
@@ -286,7 +326,7 @@ const Header = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             {/* Logo with improved hover state */}
-            <div className="flex items-center space-x-3 group cursor-pointer">
+            <Link href="/" className="flex items-center space-x-3 group cursor-pointer">
               <div className="relative">
                 <div className="w-8 h-8 bg-gradient-to-br from-red-400 via-red-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/25 group-hover:shadow-red-500/40 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
                   <Heart className="w-4 h-4 text-white" />
@@ -296,7 +336,7 @@ const Header = () => {
               <span className="text-xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 bg-clip-text text-transparent group-hover:from-red-600 group-hover:via-red-500 group-hover:to-pink-600 transition-all duration-300">
                 ECG Buddy
               </span>
-            </div>
+            </Link>
 
             {/* Desktop Navigation with improved focus states */}
             <nav
@@ -405,6 +445,22 @@ const Header = () => {
                 </div>
               ))}
 
+              {/* Careers Navigation - Direct Link */}
+              <Link
+                href="/careers"
+                className="flex items-center space-x-1 px-4 py-2 text-slate-700 hover:text-slate-900 transition-all duration-200 font-medium rounded-lg hover:bg-red-50/50 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:bg-red-50/50"
+              >
+                <span>Careers</span>
+              </Link>
+
+              {/* Pricing Navigation - Direct Click with focus state */}
+              <button
+                onClick={() => scrollToSection("pricing-section")}
+                className="flex items-center space-x-1 px-4 py-2 text-slate-700 hover:text-slate-900 transition-all duration-200 font-medium rounded-lg hover:bg-red-50/50 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:bg-red-50/50"
+              >
+                <span>Pricing</span>
+              </button>
+
               {/* FAQ Navigation - Direct Click with focus state */}
               <button
                 onClick={() => scrollToSection("faq-section")}
@@ -422,28 +478,83 @@ const Header = () => {
               </button>
             </nav>
 
-            {/* Right Side Actions with improved states */}
+            {/* Enhanced Right Side Actions - Premium Language Dropdown */}
             <div className="hidden lg:flex items-center space-x-4">
-              {/* Enhanced Language Toggle */}
-              <div className="flex items-center bg-red-50/50 backdrop-blur-sm rounded-full p-1 border border-red-100/50 hover:bg-red-50/70 transition-all duration-300">
-                <button className="px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-pink-600 rounded-full shadow-sm transition-all duration-300 hover:shadow-md">
-                  KOR
+              {/* Premium Language Dropdown */}
+              <div className="relative" ref={languageDropdownRef}>
+                <button
+                  onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+                  className="relative group bg-white/30 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 flex items-center space-x-3 shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] transition-all duration-500 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                >
+                  {/* Glassy hover effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+                  
+                  <div className="relative z-10 flex items-center space-x-2">
+                    <Globe className="w-4 h-4 text-slate-600" />
+                    <span className="text-sm font-medium text-slate-700">{selectedLang.flag}</span>
+                    <span className="text-sm font-medium text-slate-700">{selectedLang.code}</span>
+                    <ChevronDown 
+                      className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${
+                        isLanguageDropdownOpen ? "rotate-180" : ""
+                      }`} 
+                    />
+                  </div>
                 </button>
-                <button className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-full hover:bg-white/50">
-                  ENG
-                </button>
+
+                {/* Language Dropdown Menu */}
+                <div
+                  className={`absolute top-full right-0 mt-2 transition-all duration-300 ${
+                    isLanguageDropdownOpen
+                      ? "opacity-100 translate-y-0 pointer-events-auto"
+                      : "opacity-0 translate-y-2 pointer-events-none"
+                  }`}
+                >
+                  <div className="w-64 bg-white/90 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-[0_20px_70px_rgba(0,0,0,0.15)] p-2 overflow-hidden">
+                    {/* Header */}
+                    <div className="px-4 py-3 border-b border-slate-100/50">
+                      <div className="flex items-center space-x-2">
+                        <Globe className="w-4 h-4 text-slate-500" />
+                        <span className="text-sm font-medium text-slate-700">Select Language</span>
+                      </div>
+                    </div>
+
+                    {/* Language Options */}
+                    <div className="py-2">
+                      {languages.map((language) => (
+                        <button
+                          key={language.code}
+                          onClick={() => handleLanguageChange(language.code)}
+                          className={`w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-50/80 rounded-xl transition-all duration-200 group ${
+                            selectedLanguage === language.code ? "bg-red-50/50" : ""
+                          }`}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <span className="text-lg">{language.flag}</span>
+                            <div>
+                              <div className="text-sm font-medium text-slate-800">
+                                {language.name}
+                              </div>
+                              <div className="text-xs text-slate-500">
+                                {language.nativeName}
+                              </div>
+                            </div>
+                          </div>
+                          {selectedLanguage === language.code && (
+                            <Check className="w-4 h-4 text-red-500" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Footer */}
+                    <div className="px-4 py-2 border-t border-slate-100/50">
+                      <div className="text-xs text-slate-500 text-center">
+                        More languages coming soon
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-
-              {/* FIXED: Simplified CTA Button - No Loading State */}
-              <button
-                onClick={handleCTAClick}
-                className="relative group bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white px-6 py-2.5 rounded-full font-medium shadow-lg shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/20 overflow-hidden"
-              >
-                {/* Glassy hover effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-
-                <span className="relative z-10">Try ECG Buddy</span>
-              </button>
             </div>
 
             {/* Enhanced Mobile Menu Button */}
@@ -467,7 +578,60 @@ const Header = () => {
                 : "max-h-0 opacity-0 overflow-hidden"
             }`}
           >
-            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_20px_70px_rgba(0,0,0,0.15)] mt-4 p-6 max-h-[70vh] overflow-y-auto">
+            <div className="bg-white/80 backdrop-blur-2xl rounded-2xl border border-slate-200/80 shadow-[0_20px_70px_rgba(0,0,0,0.15)] mt-4 p-6 max-h-[70vh] overflow-y-auto">
+              {/* Mobile Language Dropdown */}
+              <div className="mb-6 pb-6 border-b border-slate-100">
+                <div className="flex items-center justify-center">
+                  <div className="relative w-full max-w-xs">
+                    <button
+                      onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+                      className="w-full bg-white/50 backdrop-blur-md border border-white/30 rounded-2xl px-4 py-3 flex items-center justify-between shadow-sm"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <Globe className="w-4 h-4 text-slate-600" />
+                        <span className="text-lg">{selectedLang.flag}</span>
+                        <span className="text-sm font-medium text-slate-700">{selectedLang.name}</span>
+                      </div>
+                      <ChevronDown 
+                        className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${
+                          isLanguageDropdownOpen ? "rotate-180" : ""
+                        }`} 
+                      />
+                    </button>
+
+                    {/* Mobile Language Options */}
+                    {isLanguageDropdownOpen && (
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-lg p-2 z-50">
+                        {languages.map((language) => (
+                          <button
+                            key={language.code}
+                            onClick={() => handleLanguageChange(language.code)}
+                            className={`w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-50/80 rounded-xl transition-all duration-200 ${
+                              selectedLanguage === language.code ? "bg-red-50/50" : ""
+                            }`}
+                          >
+                            <div className="flex items-center space-x-3">
+                              <span className="text-lg">{language.flag}</span>
+                              <div>
+                                <div className="text-sm font-medium text-slate-800">
+                                  {language.name}
+                                </div>
+                                <div className="text-xs text-slate-500">
+                                  {language.nativeName}
+                                </div>
+                              </div>
+                            </div>
+                            {selectedLanguage === language.code && (
+                              <Check className="w-4 h-4 text-red-500" />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               {/* Mobile Navigation */}
               {Object.entries(megaMenuItems).map(([key, menu], index) => (
                 <div
@@ -519,6 +683,32 @@ const Header = () => {
                 </div>
               ))}
 
+              {/* Mobile Careers */}
+              <div className="mt-6 pt-6 border-t border-slate-100">
+                <Link
+                  href="/careers"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full text-left font-semibold text-slate-900 mb-3 flex items-center p-2 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500/20"
+                >
+                  Careers
+                  <Building2 className="w-4 h-4 ml-2 text-slate-500" />
+                </Link>
+              </div>
+
+              {/* Mobile Pricing */}
+              <div className="mt-6 pt-6 border-t border-slate-100">
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    scrollToSection("pricing-section");
+                  }}
+                  className="w-full text-left font-semibold text-slate-900 mb-3 flex items-center p-2 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500/20"
+                >
+                  Pricing
+                  <Sparkles className="w-4 h-4 ml-2 text-slate-500" />
+                </button>
+              </div>
+
               {/* Mobile FAQ */}
               <div className="mt-6 pt-6 border-t border-slate-100">
                 <button
@@ -544,22 +734,6 @@ const Header = () => {
                 >
                   About Us
                   <Building2 className="w-4 h-4 ml-2 text-slate-500" />
-                </button>
-              </div>
-
-              {/* FIXED: Mobile CTA - No Loading State */}
-              <div className="mt-6 pt-6 border-t border-slate-100">
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    handleCTAClick();
-                  }}
-                  className="relative w-full bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white px-6 py-3 rounded-full font-medium shadow-lg shadow-red-500/25 overflow-hidden group"
-                >
-                  {/* Glassy hover effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-
-                  <span className="relative z-10">Try ECG Buddy</span>
                 </button>
               </div>
             </div>
