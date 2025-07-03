@@ -3,7 +3,7 @@
 import React, { ReactNode, useEffect, useState, useRef } from "react";
 import { useAdminEditing, EditableElement } from "@/lib/contexts/AdminEditingContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { Edit3, MousePointer, Type } from "lucide-react";
+import { Edit3, MousePointer, Type, Layers, Image } from "lucide-react";
 
 interface EditableWrapperProps {
   id: string;
@@ -166,7 +166,7 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
           onInput={handleInlineEdit}
           onBlur={handleInlineBlur}
           onKeyDown={handleKeyDown}
-          className="outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 rounded px-1"
+          className="outline-none focus:ring-2 focus:ring-blue-500/50 focus:bg-blue-50/30 rounded-lg px-2 py-1 transition-all duration-200"
           style={{ minHeight: "1em" }}
         >
           {inlineContent}
@@ -196,6 +196,17 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
     return <>{renderContent()}</>;
   }
 
+  const getElementIcon = () => {
+    switch (type) {
+      case "text": return Type;
+      case "image": return Image;
+      case "section": return Layers;
+      default: return Edit3;
+    }
+  };
+
+  const ElementIcon = getElementIcon();
+
   return (
     <div
       className={`relative ${className}`}
@@ -204,50 +215,54 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Hover/Selection Overlay */}
+      {/* Enhanced Hover/Selection Overlay */}
       <AnimatePresence>
         {(isHovered || isSelected) && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className={`absolute inset-0 pointer-events-none z-50 rounded-lg ${
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            className={`absolute inset-0 pointer-events-none z-50 rounded-lg transition-all duration-200 ${
               isSelected
-                ? "ring-2 ring-blue-500 bg-blue-500/10"
-                : "ring-1 ring-blue-300 bg-blue-300/5"
+                ? "ring-2 ring-blue-500/60 bg-blue-500/8 shadow-lg shadow-blue-500/20"
+                : "ring-1 ring-blue-300/60 bg-blue-300/5"
             }`}
             style={{ zIndex: 9999 }}
           />
         )}
       </AnimatePresence>
 
-      {/* Edit Label */}
+      {/* Enhanced Edit Label */}
       <AnimatePresence>
         {(isHovered || isSelected) && (
           <motion.div
             initial={{ opacity: 0, y: -10, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.9 }}
-            className="absolute -top-8 left-0 z-50 bg-blue-600 text-white text-xs px-2 py-1 rounded-md shadow-lg flex items-center space-x-1"
+            className={`absolute -top-10 left-0 z-50 px-3 py-2 rounded-lg shadow-lg flex items-center space-x-2 text-xs font-semibold backdrop-blur-sm border ${
+              isSelected
+                ? "bg-blue-600/90 text-white border-blue-500/50"
+                : "bg-gray-800/90 text-white border-gray-700/50"
+            }`}
             style={{ zIndex: 10000 }}
           >
-            {type === "text" ? <Type className="w-3 h-3" /> : <Edit3 className="w-3 h-3" />}
+            <ElementIcon className="w-3 h-3" />
             <span>{label}</span>
             {type === "text" && (
-              <span className="text-blue-200 text-xs">(double-click to edit)</span>
+              <span className="text-blue-200 text-xs opacity-75">(double-click to edit)</span>
             )}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Click Indicator */}
+      {/* Enhanced Click Indicator */}
       <AnimatePresence>
         {isHovered && !isSelected && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="absolute top-2 right-2 z-50 bg-white/90 backdrop-blur-sm text-blue-600 p-1 rounded-full shadow-lg"
+            className="absolute top-2 right-2 z-50 bg-white/95 backdrop-blur-sm text-blue-600 p-2 rounded-lg shadow-lg border border-blue-200/50"
             style={{ zIndex: 10000 }}
           >
             <MousePointer className="w-3 h-3" />
@@ -255,14 +270,14 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Inline Editing Indicator */}
+      {/* Enhanced Inline Editing Indicator */}
       <AnimatePresence>
         {isInlineEditing && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="absolute -top-8 right-0 z-50 bg-green-600 text-white text-xs px-2 py-1 rounded-md shadow-lg"
+            className="absolute -top-10 right-0 z-50 bg-green-600/90 text-white text-xs px-3 py-2 rounded-lg shadow-lg backdrop-blur-sm border border-green-500/50 font-semibold"
             style={{ zIndex: 10000 }}
           >
             Editing... (Enter to save, Esc to cancel)
