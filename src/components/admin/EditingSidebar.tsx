@@ -19,13 +19,13 @@ import {
   Smartphone,
   Monitor,
   Tablet,
-  Download,
-  Upload,
   RefreshCw,
   CheckCircle,
   Sparkles,
   Zap,
   Crown,
+  Globe,
+  AlertCircle,
 } from "lucide-react";
 
 export const EditingSidebar: React.FC = () => {
@@ -36,13 +36,17 @@ export const EditingSidebar: React.FC = () => {
     setIsEditMode,
     updateElement,
     saveChanges,
+    publishChanges,
     loadInitialContent,
     elements,
+    isPublished,
+    hasUnsavedChanges,
   } = useAdminEditing();
 
   const [activeTab, setActiveTab] = useState<"content" | "style" | "settings">("content");
   const [previewMode, setPreviewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [isSaving, setIsSaving] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const handleContentChange = (field: string, value: any) => {
     if (!selectedElement) return;
@@ -76,34 +80,14 @@ export const EditingSidebar: React.FC = () => {
     }
   };
 
-  const handleExportContent = () => {
-    const dataStr = JSON.stringify(elements, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'ecg-buddy-content.json';
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleImportContent = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const content = JSON.parse(e.target?.result as string);
-        Object.keys(content).forEach(id => {
-          updateElement(id, content[id]);
-        });
-        alert('Content imported successfully!');
-      } catch (error) {
-        alert('Failed to import content. Please check the file format.');
-      }
-    };
-    reader.readAsText(file);
+  const handlePublish = async () => {
+    setIsPublishing(true);
+    try {
+      await publishChanges();
+      setTimeout(() => setIsPublishing(false), 1000);
+    } catch (error) {
+      setIsPublishing(false);
+    }
   };
 
   const tabs = [
@@ -152,6 +136,32 @@ export const EditingSidebar: React.FC = () => {
           </motion.button>
         </div>
 
+        {/* Status Indicator */}
+        <div className="mb-6">
+          <div className="flex items-center space-x-3 p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-white/50">
+            <div className="flex items-center space-x-2">
+              {isPublished ? (
+                <>
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium text-green-700">Published</span>
+                </>
+              ) : (
+                <>
+                  <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium text-orange-700">Draft</span>
+                </>
+              )}
+            </div>
+            
+            {hasUnsavedChanges && (
+              <div className="flex items-center space-x-2 text-amber-600">
+                <AlertCircle className="w-4 h-4" />
+                <span className="text-xs font-medium">Unsaved changes</span>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Enhanced Preview Mode Selector */}
         <div className="flex items-center space-x-1 bg-white/80 backdrop-blur-sm rounded-xl p-1 mb-6 shadow-sm border border-white/50">
           {previewModes.map((mode) => (
@@ -172,12 +182,12 @@ export const EditingSidebar: React.FC = () => {
           ))}
         </div>
 
-        {/* Enhanced Quick Actions */}
+        {/* Save and Publish Buttons */}
         <div className="flex items-center space-x-3">
           <motion.button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-3 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 shadow-lg shadow-green-500/25 font-semibold"
+            className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-3 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 shadow-lg shadow-blue-500/25 font-semibold"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -195,29 +205,24 @@ export const EditingSidebar: React.FC = () => {
           </motion.button>
           
           <motion.button
-            onClick={handleExportContent}
-            className="p-3 bg-white/80 backdrop-blur-sm text-gray-700 rounded-xl hover:bg-white transition-all duration-300 shadow-md border border-white/50"
-            title="Export Content"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            onClick={handlePublish}
+            disabled={isPublishing}
+            className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-3 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 shadow-lg shadow-green-500/25 font-semibold"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <Download className="w-4 h-4" />
+            {isPublishing ? (
+              <>
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                <span>Publishing...</span>
+              </>
+            ) : (
+              <>
+                <Globe className="w-4 h-4" />
+                <span>Publish</span>
+              </>
+            )}
           </motion.button>
-          
-          <motion.label 
-            className="p-3 bg-white/80 backdrop-blur-sm text-gray-700 rounded-xl hover:bg-white transition-all duration-300 cursor-pointer shadow-md border border-white/50" 
-            title="Import Content"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Upload className="w-4 h-4" />
-            <input
-              type="file"
-              accept=".json"
-              onChange={handleImportContent}
-              className="hidden"
-            />
-          </motion.label>
         </div>
       </div>
 
@@ -784,7 +789,7 @@ export const EditingSidebar: React.FC = () => {
                     </li>
                     <li className="flex items-center space-x-2">
                       <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                      <span>Changes are saved automatically</span>
+                      <span>Save drafts and publish when ready</span>
                     </li>
                   </ul>
                 </motion.div>
@@ -796,20 +801,20 @@ export const EditingSidebar: React.FC = () => {
                 >
                   <div className="flex items-center space-x-2 text-green-700 mb-3">
                     <CheckCircle className="w-5 h-5" />
-                    <span className="text-sm font-bold">Content Management</span>
+                    <span className="text-sm font-bold">Publishing Workflow</span>
                   </div>
                   <ul className="text-xs text-green-600 space-y-2 text-left">
                     <li className="flex items-center space-x-2">
                       <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                      <span>Export/import content as JSON</span>
+                      <span>Save changes to create drafts</span>
                     </li>
                     <li className="flex items-center space-x-2">
                       <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                      <span>All changes persist in localStorage</span>
+                      <span>Publish to make changes live</span>
                     </li>
                     <li className="flex items-center space-x-2">
                       <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                      <span>Reset to defaults anytime</span>
+                      <span>Track published vs draft status</span>
                     </li>
                   </ul>
                 </motion.div>

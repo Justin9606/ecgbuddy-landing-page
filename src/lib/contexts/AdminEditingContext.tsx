@@ -22,7 +22,10 @@ interface AdminEditingContextType {
   registerElement: (element: EditableElement) => void;
   elements: Record<string, EditableElement>;
   saveChanges: () => void;
+  publishChanges: () => void;
   loadInitialContent: () => void;
+  isPublished: boolean;
+  hasUnsavedChanges: boolean;
 }
 
 const AdminEditingContext = createContext<AdminEditingContextType | undefined>(
@@ -154,11 +157,30 @@ export const AdminEditingProvider: React.FC<{ children: ReactNode }> = ({
   const [isEditMode, setIsEditMode] = useState(true);
   const [hoveredElement, setHoveredElement] = useState<string | null>(null);
   const [elements, setElements] = useState<Record<string, EditableElement>>({});
+  const [isPublished, setIsPublished] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // Load initial content on mount
   useEffect(() => {
     loadInitialContent();
+    
+    // Check if content is published
+    const publishedStatus = localStorage.getItem('ecg-buddy-admin-published');
+    setIsPublished(publishedStatus === 'true');
   }, []);
+
+  // Track changes
+  useEffect(() => {
+    const savedContent = localStorage.getItem('ecg-buddy-admin-content');
+    const publishedContent = localStorage.getItem('ecg-buddy-admin-published-content');
+    
+    if (savedContent && publishedContent) {
+      const hasChanges = savedContent !== publishedContent;
+      setHasUnsavedChanges(hasChanges);
+    } else if (savedContent) {
+      setHasUnsavedChanges(true);
+    }
+  }, [elements]);
 
   const loadInitialContent = () => {
     const savedContent = localStorage.getItem('ecg-buddy-admin-content');
@@ -184,6 +206,8 @@ export const AdminEditingProvider: React.FC<{ children: ReactNode }> = ({
     if (selectedElement?.id === id) {
       setSelectedElement(prev => prev ? { ...prev, ...updates } : null);
     }
+
+    setHasUnsavedChanges(true);
   };
 
   const registerElement = (element: EditableElement) => {
@@ -195,7 +219,9 @@ export const AdminEditingProvider: React.FC<{ children: ReactNode }> = ({
 
   const saveChanges = () => {
     try {
-      localStorage.setItem('ecg-buddy-admin-content', JSON.stringify(elements));
+      const contentString = JSON.stringify(elements);
+      localStorage.setItem('ecg-buddy-admin-content', contentString);
+      
       console.log('Changes saved successfully:', elements);
       
       // You can replace this with an API call to your backend
@@ -207,9 +233,46 @@ export const AdminEditingProvider: React.FC<{ children: ReactNode }> = ({
       
       // Show success notification
       alert('Changes saved successfully!');
+      
+      // Update unsaved changes status
+      const publishedContent = localStorage.getItem('ecg-buddy-admin-published-content');
+      if (publishedContent) {
+        setHasUnsavedChanges(contentString !== publishedContent);
+      }
+      
     } catch (error) {
       console.error('Failed to save changes:', error);
       alert('Failed to save changes. Please try again.');
+    }
+  };
+
+  const publishChanges = () => {
+    try {
+      const contentString = JSON.stringify(elements);
+      
+      // Save current content as published version
+      localStorage.setItem('ecg-buddy-admin-content', contentString);
+      localStorage.setItem('ecg-buddy-admin-published-content', contentString);
+      localStorage.setItem('ecg-buddy-admin-published', 'true');
+      
+      console.log('Content published successfully:', elements);
+      
+      // You can replace this with an API call to your backend
+      // await fetch('/api/admin/publish-content', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(elements)
+      // });
+      
+      setIsPublished(true);
+      setHasUnsavedChanges(false);
+      
+      // Show success notification
+      alert('Content published successfully! Your changes are now live.');
+      
+    } catch (error) {
+      console.error('Failed to publish changes:', error);
+      alert('Failed to publish changes. Please try again.');
     }
   };
 
@@ -226,7 +289,10 @@ export const AdminEditingProvider: React.FC<{ children: ReactNode }> = ({
         registerElement,
         elements,
         saveChanges,
+        publishChanges,
         loadInitialContent,
+        isPublished,
+        hasUnsavedChanges,
       }}
     >
       {children}
