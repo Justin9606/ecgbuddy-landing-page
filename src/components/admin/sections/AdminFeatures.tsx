@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Features from "@/components/sections/Features";
+import { Features } from "@/components/sections";
 import { EditableWrapper } from "@/components/admin/EditableWrapper";
 
 export const AdminFeatures: React.FC = () => {

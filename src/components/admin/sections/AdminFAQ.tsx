@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import FAQ from "@/components/sections/FAQ";
+import { FAQ } from "@/components/sections";
 import { EditableWrapper } from "@/components/admin/EditableWrapper";
 
 export const AdminFAQ: React.FC = () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import AboutARPI from "@/components/sections/AboutARPI";
+import { AboutARPI } from "@/components/sections";
 import { EditableWrapper } from "@/components/admin/EditableWrapper";
 
 export const AdminAboutARPI: React.FC = () => {

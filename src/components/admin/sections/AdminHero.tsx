@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Hero from "@/components/sections/Hero";
+import { Hero } from "@/components/sections";
 import { EditableWrapper } from "@/components/admin/EditableWrapper";
 
 export const AdminHero: React.FC = () => {

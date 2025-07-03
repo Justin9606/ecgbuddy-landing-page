@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import MobileDownload from "@/components/sections/MobileDownload";
+import { MobileDownload } from "@/components/sections";
 import { EditableWrapper } from "@/components/admin/EditableWrapper";
 
 export const AdminMobileDownload: React.FC = () => {
