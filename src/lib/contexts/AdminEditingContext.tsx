@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 
 export interface EditableElement {
   id: string;
-  type: "text" | "image" | "button" | "section";
+  type: "text" | "image" | "button" | "section" | "card";
   label: string;
   content: any;
   styles?: Record<string, any>;
@@ -32,7 +32,7 @@ const AdminEditingContext = createContext<AdminEditingContextType | undefined>(
   undefined
 );
 
-// Initial content structure with granular Hero and Features elements
+// Initial content structure with granular Hero, Features, and Pricing elements
 const getInitialContent = (): Record<string, EditableElement> => ({
   "hero-section": {
     id: "hero-section",
@@ -699,7 +699,7 @@ const getInitialContent = (): Record<string, EditableElement> => ({
       editable: true
     }
   },
-  // Continue with other features...
+  // Pricing section
   "pricing-section": {
     id: "pricing-section",
     type: "section",
@@ -717,6 +717,188 @@ const getInitialContent = (): Record<string, EditableElement> => ({
       section: "pricing",
       priority: "high",
       visible: true
+    }
+  },
+  "pricing-badge": {
+    id: "pricing-badge",
+    type: "text",
+    label: "Pricing Badge",
+    content: {
+      text: "Credit-Based Pricing"
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-medium",
+      color: "slate-700"
+    },
+    metadata: {
+      parent: "pricing-section",
+      editable: true
+    }
+  },
+  "pricing-title-part1": {
+    id: "pricing-title-part1",
+    type: "text",
+    label: "Pricing Title Part 1",
+    content: {
+      text: "Choose your plan"
+    },
+    styles: {
+      fontSize: "text-4xl md:text-5xl",
+      fontWeight: "font-bold",
+      color: "from-slate-900 via-slate-800 to-slate-700"
+    },
+    metadata: {
+      parent: "pricing-section",
+      editable: true
+    }
+  },
+  "pricing-title-part2": {
+    id: "pricing-title-part2",
+    type: "text",
+    label: "Pricing Title Part 2",
+    content: {
+      text: "Start analyzing today"
+    },
+    styles: {
+      fontSize: "text-4xl md:text-5xl",
+      fontWeight: "font-bold",
+      color: "from-red-600 via-red-500 to-pink-600"
+    },
+    metadata: {
+      parent: "pricing-section",
+      editable: true
+    }
+  },
+  "pricing-subtitle": {
+    id: "pricing-subtitle",
+    type: "text",
+    label: "Pricing Subtitle",
+    content: {
+      text: "Flexible credit-based pricing designed for healthcare professionals. Each credit equals one ECG analysis with our advanced AI system."
+    },
+    styles: {
+      fontSize: "text-lg",
+      color: "slate-600"
+    },
+    metadata: {
+      parent: "pricing-section",
+      editable: true
+    }
+  },
+  // Pricing cards
+  "pricing-card-free": {
+    id: "pricing-card-free",
+    type: "card",
+    label: "Free Plan Card",
+    content: {
+      name: "Free",
+      description: "Perfect for individual doctors getting started",
+      price: { monthly: 0, yearly: 0 },
+      credits: {
+        amount: 10,
+        period: "daily",
+        description: "10 ECG analyses per day"
+      },
+      features: [
+        "10 daily ECG analyses",
+        "Basic AI interpretation", 
+        "Standard processing speed",
+        "Email support",
+        "Mobile app access",
+        "Basic reporting"
+      ],
+      buttonText: "Start Free Trial",
+      buttonLink: "#signup",
+      isPopular: false,
+      badge: null,
+      icon: "Zap"
+    },
+    styles: {
+      gradient: "from-slate-500 to-slate-600",
+      iconBackground: "from-slate-500 to-slate-600"
+    },
+    metadata: {
+      parent: "pricing-section",
+      planId: "free",
+      planType: "free",
+      editable: true
+    }
+  },
+  "pricing-card-pro": {
+    id: "pricing-card-pro",
+    type: "card",
+    label: "Pro Plan Card",
+    content: {
+      name: "Pro",
+      description: "Advanced features for healthcare professionals",
+      price: { monthly: 99, yearly: 990 },
+      credits: {
+        amount: "Unlimited",
+        period: "monthly",
+        description: "Unlimited ECG analyses"
+      },
+      features: [
+        "Unlimited ECG analyses",
+        "Advanced AI interpretation",
+        "Priority processing (<15s)",
+        "24/7 priority support",
+        "All platform access",
+        "Advanced reporting & analytics"
+      ],
+      buttonText: "Start Pro Trial",
+      buttonLink: "#pro-signup",
+      isPopular: true,
+      badge: "Most Popular",
+      icon: "Crown"
+    },
+    styles: {
+      gradient: "from-red-500 to-pink-600",
+      iconBackground: "from-red-500 to-pink-600"
+    },
+    metadata: {
+      parent: "pricing-section",
+      planId: "pro",
+      planType: "pro",
+      editable: true
+    }
+  },
+  "pricing-card-enterprise": {
+    id: "pricing-card-enterprise",
+    type: "card",
+    label: "Enterprise Plan Card",
+    content: {
+      name: "Enterprise",
+      description: "Custom solutions for hospitals & health systems",
+      price: { monthly: "Custom", yearly: "Custom" },
+      credits: {
+        amount: "Custom",
+        period: "unlimited",
+        description: "Custom credit allocation"
+      },
+      features: [
+        "Custom credit allocation",
+        "White-label solutions", 
+        "Dedicated infrastructure",
+        "Custom AI model training",
+        "Dedicated account manager",
+        "SLA guarantees"
+      ],
+      buttonText: "Contact Sales",
+      buttonLink: "#contact-sales",
+      isPopular: false,
+      badge: "Enterprise",
+      icon: "Building2"
+    },
+    styles: {
+      gradient: "from-purple-500 to-indigo-600",
+      iconBackground: "from-purple-500 to-indigo-600"
+    },
+    metadata: {
+      parent: "pricing-section",
+      planId: "enterprise",
+      planType: "enterprise",
+      editable: true
     }
   }
 });

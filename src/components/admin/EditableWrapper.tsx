@@ -3,11 +3,11 @@
 import React, { ReactNode, useEffect, useState, useRef } from "react";
 import { useAdminEditing, EditableElement } from "@/lib/contexts/AdminEditingContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { Edit3, MousePointer, Type, Layers, Image } from "lucide-react";
+import { Edit3, MousePointer, Type, Layers, Image, CreditCard } from "lucide-react";
 
 interface EditableWrapperProps {
   id: string;
-  type: "text" | "image" | "button" | "section";
+  type: "text" | "image" | "button" | "section" | "card";
   label: string;
   content: any;
   styles?: Record<string, any>;
@@ -181,6 +181,14 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
       });
     }
 
+    // For card elements, pass dynamic content and styles as props
+    if (type === "card" && React.isValidElement(children)) {
+      return React.cloneElement(children as React.ReactElement, {
+        dynamicContent,
+        dynamicStyles
+      });
+    }
+
     // For other elements, apply dynamic styles
     if (dynamicStyles && React.isValidElement(children)) {
       const styleClasses = Object.values(dynamicStyles).filter(Boolean).join(" ");
@@ -201,6 +209,7 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
       case "text": return Type;
       case "image": return Image;
       case "section": return Layers;
+      case "card": return CreditCard;
       default: return Edit3;
     }
   };

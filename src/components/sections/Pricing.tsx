@@ -15,6 +15,7 @@ import {
   Target,
   Activity,
 } from "lucide-react";
+import { EditableWrapper } from "@/components/admin/EditableWrapper";
 
 const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
@@ -106,6 +107,10 @@ const Pricing = () => {
     },
   ];
 
+  const categories = [
+    { id: "all", name: "All Features", count: pricingPlans.length },
+  ];
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -160,6 +165,157 @@ const Pricing = () => {
     return null;
   };
 
+  // Pricing Card Component
+  const PricingCard: React.FC<{ plan: typeof pricingPlans[0]; index: number; dynamicContent?: any; dynamicStyles?: any }> = ({ 
+    plan, 
+    index, 
+    dynamicContent, 
+    dynamicStyles 
+  }) => {
+    // Use dynamic content if available, otherwise fall back to original plan data
+    const cardData = dynamicContent || plan;
+    const cardStyles = dynamicStyles || {};
+    
+    const yearlySavings = getYearlySavings(cardData);
+
+    return (
+      <motion.div
+        variants={cardVariants}
+        className={`relative transition-all duration-500 ${
+          cardData.isPopular ? "lg:scale-105" : ""
+        }`}
+        whileHover={{ y: -4 }}
+      >
+        {/* Badge positioned ABOVE the card with proper z-index */}
+        {cardData.badge && (
+          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+            <div className={`bg-gradient-to-r ${cardData.gradient} text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg border-2 border-white`}>
+              <div className="flex items-center space-x-1">
+                <Star className="w-3 h-3 fill-current" />
+                <span>{cardData.badge}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div
+          className={`relative bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl overflow-hidden transition-all duration-500 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] group ${
+            cardData.isPopular ? "ring-2 ring-red-500/20" : ""
+          }`}
+        >
+          {/* Glassy hover effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
+
+          <div className="relative p-6">
+            {/* Plan Header */}
+            <div className="text-center mb-6">
+              <motion.div
+                className={`w-14 h-14 bg-gradient-to-br ${cardData.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ duration: 0.3 }}
+              >
+                <cardData.icon className="w-7 h-7 text-white" />
+              </motion.div>
+
+              <h3 className="text-xl font-bold text-slate-800 mb-2">
+                {cardData.name}
+              </h3>
+              <p className="text-slate-600 mb-4 text-sm leading-relaxed">
+                {cardData.description}
+              </p>
+
+              {/* Price Display */}
+              <div className="mb-4">
+                <div className="flex items-baseline justify-center space-x-1 mb-1">
+                  <span className="text-3xl font-bold text-slate-800">
+                    {formatPrice(cardData)}
+                  </span>
+                  {typeof cardData.price[billingCycle] === "number" && cardData.price[billingCycle] > 0 && (
+                    <span className="text-lg text-slate-500">
+                      /month
+                    </span>
+                  )}
+                </div>
+                
+                {billingCycle === "yearly" && yearlySavings && (
+                  <div className="text-green-600 text-sm font-medium mb-1">
+                    Save {yearlySavings}% annually
+                  </div>
+                )}
+
+                {typeof cardData.price[billingCycle] === "number" && billingCycle === "yearly" && cardData.price[billingCycle] > 0 && (
+                  <div className="text-slate-500 text-sm">
+                    Billed ${cardData.price[billingCycle]} yearly
+                  </div>
+                )}
+              </div>
+
+              {/* Credits Display */}
+              <div className="bg-white/30 backdrop-blur-sm border border-red-100/40 rounded-2xl p-3 mb-4">
+                <div className="flex items-center justify-center space-x-2 mb-1">
+                  {cardData.credits.amount === "Unlimited" ? (
+                    <Infinity className="w-4 h-4 text-slate-600" />
+                  ) : cardData.credits.amount === "Custom" ? (
+                    <Target className="w-4 h-4 text-slate-600" />
+                  ) : (
+                    <Activity className="w-4 h-4 text-slate-600" />
+                  )}
+                  <span className="text-lg font-bold text-slate-800">
+                    {cardData.credits.amount} {cardData.credits.amount !== "Unlimited" && cardData.credits.amount !== "Custom" && "Credits"}
+                  </span>
+                </div>
+                <div className="text-slate-600 text-sm">
+                  {cardData.credits.description}
+                </div>
+              </div>
+            </div>
+
+            {/* Features List */}
+            <div className="mb-6">
+              <h4 className="font-semibold text-slate-800 mb-3 flex items-center text-sm">
+                <Sparkles className="w-4 h-4 mr-2 text-red-500" />
+                What's included
+              </h4>
+              <div className="space-y-2">
+                {cardData.features.map((feature: string, featureIndex: number) => (
+                  <div
+                    key={featureIndex}
+                    className="flex items-start space-x-2"
+                  >
+                    <div className="flex-shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                      <Check className="w-2.5 h-2.5 text-green-600" />
+                    </div>
+                    <span className="text-slate-600 text-sm leading-relaxed">
+                      {feature}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <motion.a
+              href={cardData.buttonLink}
+              className={`relative group w-full ${
+                cardData.isPopular
+                  ? `bg-gradient-to-r ${cardData.gradient} text-white shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)]`
+                  : "bg-white/60 backdrop-blur-sm border border-slate-200/50 text-slate-700 hover:bg-white/80"
+              } px-6 py-3 rounded-2xl font-semibold transition-all duration-500 flex items-center justify-center space-x-2 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              {/* Glassy hover effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+
+              <span className="relative z-10">{cardData.buttonText}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
+            </motion.a>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
   return (
     <section id="pricing-section" className="relative py-20 overflow-hidden">
       {/* Background */}
@@ -194,25 +350,96 @@ const Pricing = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <div className="inline-flex items-center space-x-3 bg-white/60 backdrop-blur-2xl border border-red-100/50 rounded-full px-6 py-3 mb-6 shadow-[0_8px_32px_rgba(255,63,74,0.08)]">
-            <CreditCard className="w-4 h-4 text-red-500" />
-            <span className="text-sm font-medium text-slate-700">
-              Credit-Based Pricing
-            </span>
-          </div>
+          <EditableWrapper
+            id="pricing-badge"
+            type="text"
+            label="Pricing Badge"
+            content={{
+              text: "Credit-Based Pricing"
+            }}
+            styles={{
+              fontSize: "text-sm",
+              fontWeight: "font-medium",
+              color: "slate-700"
+            }}
+            metadata={{
+              parent: "pricing-section",
+              editable: true
+            }}
+          >
+            <div className="inline-flex items-center space-x-3 bg-white/60 backdrop-blur-2xl border border-red-100/50 rounded-full px-6 py-3 mb-6 shadow-[0_8px_32px_rgba(255,63,74,0.08)]">
+              <CreditCard className="w-4 h-4 text-red-500" />
+              <span className="text-sm font-medium text-slate-700">
+                Credit-Based Pricing
+              </span>
+            </div>
+          </EditableWrapper>
 
           <h2 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            <span className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent mb-2">
-              Choose your plan
-            </span>
-            <span className="block bg-gradient-to-r from-red-600 via-red-500 to-pink-600 bg-clip-text text-transparent">
-              Start analyzing today
-            </span>
+            <EditableWrapper
+              id="pricing-title-part1"
+              type="text"
+              label="Pricing Title Part 1"
+              content={{
+                text: "Choose your plan"
+              }}
+              styles={{
+                fontSize: "text-4xl md:text-5xl",
+                fontWeight: "font-bold",
+                color: "from-slate-900 via-slate-800 to-slate-700"
+              }}
+              metadata={{
+                parent: "pricing-section",
+                editable: true
+              }}
+            >
+              <span className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent mb-2">
+                Choose your plan
+              </span>
+            </EditableWrapper>
+            <EditableWrapper
+              id="pricing-title-part2"
+              type="text"
+              label="Pricing Title Part 2"
+              content={{
+                text: "Start analyzing today"
+              }}
+              styles={{
+                fontSize: "text-4xl md:text-5xl",
+                fontWeight: "font-bold",
+                color: "from-red-600 via-red-500 to-pink-600"
+              }}
+              metadata={{
+                parent: "pricing-section",
+                editable: true
+              }}
+            >
+              <span className="block bg-gradient-to-r from-red-600 via-red-500 to-pink-600 bg-clip-text text-transparent">
+                Start analyzing today
+              </span>
+            </EditableWrapper>
           </h2>
 
-          <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed mb-8">
-            Flexible credit-based pricing designed for healthcare professionals. Each credit equals one ECG analysis with our advanced AI system.
-          </p>
+          <EditableWrapper
+            id="pricing-subtitle"
+            type="text"
+            label="Pricing Subtitle"
+            content={{
+              text: "Flexible credit-based pricing designed for healthcare professionals. Each credit equals one ECG analysis with our advanced AI system."
+            }}
+            styles={{
+              fontSize: "text-lg",
+              color: "slate-600"
+            }}
+            metadata={{
+              parent: "pricing-section",
+              editable: true
+            }}
+          >
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed mb-8">
+              Flexible credit-based pricing designed for healthcare professionals. Each credit equals one ECG analysis with our advanced AI system.
+            </p>
+          </EditableWrapper>
 
           {/* COMPLETELY FIXED: Monthly/Yearly Toggle */}
           <div className="relative inline-flex items-center bg-white/90 backdrop-blur-2xl border border-slate-200/60 rounded-2xl p-2 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
@@ -277,147 +504,38 @@ const Pricing = () => {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              {pricingPlans.map((plan, index) => {
-                const yearlySavings = getYearlySavings(plan);
-
-                return (
-                  <motion.div
-                    key={plan.id}
-                    variants={cardVariants}
-                    className={`relative transition-all duration-500 ${
-                      plan.isPopular ? "lg:scale-105" : ""
-                    }`}
-                    whileHover={{ y: -4 }}
-                  >
-                    {/* Badge positioned ABOVE the card with proper z-index */}
-                    {plan.badge && (
-                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
-                        <div className={`bg-gradient-to-r ${plan.gradient} text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg border-2 border-white`}>
-                          <div className="flex items-center space-x-1">
-                            <Star className="w-3 h-3 fill-current" />
-                            <span>{plan.badge}</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    <div
-                      className={`relative bg-white/40 backdrop-blur-2xl border border-red-100/50 rounded-3xl overflow-hidden transition-all duration-500 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_20px_60px_rgba(255,63,74,0.15)] group ${
-                        plan.isPopular ? "ring-2 ring-red-500/20" : ""
-                      }`}
-                    >
-                      {/* Glassy hover effect */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
-
-                      <div className="relative p-6">
-                        {/* Plan Header */}
-                        <div className="text-center mb-6">
-                          <motion.div
-                            className={`w-14 h-14 bg-gradient-to-br ${plan.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}
-                            whileHover={{ scale: 1.1, rotate: 5 }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            <plan.icon className="w-7 h-7 text-white" />
-                          </motion.div>
-
-                          <h3 className="text-xl font-bold text-slate-800 mb-2">
-                            {plan.name}
-                          </h3>
-                          <p className="text-slate-600 mb-4 text-sm leading-relaxed">
-                            {plan.description}
-                          </p>
-
-                          {/* Price Display */}
-                          <div className="mb-4">
-                            <div className="flex items-baseline justify-center space-x-1 mb-1">
-                              <span className="text-3xl font-bold text-slate-800">
-                                {formatPrice(plan)}
-                              </span>
-                              {typeof plan.price[billingCycle] === "number" && plan.price[billingCycle] > 0 && (
-                                <span className="text-lg text-slate-500">
-                                  /month
-                                </span>
-                              )}
-                            </div>
-                            
-                            {billingCycle === "yearly" && yearlySavings && (
-                              <div className="text-green-600 text-sm font-medium mb-1">
-                                Save {yearlySavings}% annually
-                              </div>
-                            )}
-
-                            {typeof plan.price[billingCycle] === "number" && billingCycle === "yearly" && plan.price[billingCycle] > 0 && (
-                              <div className="text-slate-500 text-sm">
-                                Billed ${plan.price[billingCycle]} yearly
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Credits Display */}
-                          <div className="bg-white/30 backdrop-blur-sm border border-red-100/40 rounded-2xl p-3 mb-4">
-                            <div className="flex items-center justify-center space-x-2 mb-1">
-                              {plan.credits.amount === "Unlimited" ? (
-                                <Infinity className="w-4 h-4 text-slate-600" />
-                              ) : plan.credits.amount === "Custom" ? (
-                                <Target className="w-4 h-4 text-slate-600" />
-                              ) : (
-                                <Activity className="w-4 h-4 text-slate-600" />
-                              )}
-                              <span className="text-lg font-bold text-slate-800">
-                                {plan.credits.amount} {plan.credits.amount !== "Unlimited" && plan.credits.amount !== "Custom" && "Credits"}
-                              </span>
-                            </div>
-                            <div className="text-slate-600 text-sm">
-                              {plan.credits.description}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Features List */}
-                        <div className="mb-6">
-                          <h4 className="font-semibold text-slate-800 mb-3 flex items-center text-sm">
-                            <Sparkles className="w-4 h-4 mr-2 text-red-500" />
-                            What's included
-                          </h4>
-                          <div className="space-y-2">
-                            {plan.features.map((feature, featureIndex) => (
-                              <div
-                                key={featureIndex}
-                                className="flex items-start space-x-2"
-                              >
-                                <div className="flex-shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                                  <Check className="w-2.5 h-2.5 text-green-600" />
-                                </div>
-                                <span className="text-slate-600 text-sm leading-relaxed">
-                                  {feature}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* CTA Button */}
-                        <motion.a
-                          href={plan.buttonLink}
-                          className={`relative group w-full ${
-                            plan.isPopular
-                              ? `bg-gradient-to-r ${plan.gradient} text-white shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)]`
-                              : "bg-white/60 backdrop-blur-sm border border-slate-200/50 text-slate-700 hover:bg-white/80"
-                          } px-6 py-3 rounded-2xl font-semibold transition-all duration-500 flex items-center justify-center space-x-2 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20`}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          {/* Glassy hover effect */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-
-                          <span className="relative z-10">{plan.buttonText}</span>
-                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
-                        </motion.a>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
+              {pricingPlans.map((plan, index) => (
+                <EditableWrapper
+                  key={plan.id}
+                  id={`pricing-card-${plan.id}`}
+                  type="card"
+                  label={`${plan.name} Plan Card`}
+                  content={{
+                    name: plan.name,
+                    description: plan.description,
+                    price: plan.price,
+                    credits: plan.credits,
+                    features: plan.features,
+                    buttonText: plan.buttonText,
+                    buttonLink: plan.buttonLink,
+                    isPopular: plan.isPopular,
+                    badge: plan.badge,
+                    icon: plan.icon
+                  }}
+                  styles={{
+                    gradient: plan.gradient,
+                    iconBackground: plan.gradient
+                  }}
+                  metadata={{
+                    parent: "pricing-section",
+                    planId: plan.id,
+                    planType: plan.name.toLowerCase(),
+                    editable: true
+                  }}
+                >
+                  <PricingCard plan={plan} index={index} />
+                </EditableWrapper>
+              ))}
             </motion.div>
           </div>
         </div>

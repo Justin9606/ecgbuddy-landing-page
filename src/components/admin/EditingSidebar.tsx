@@ -26,6 +26,8 @@ import {
   Crown,
   Globe,
   AlertCircle,
+  CreditCard,
+  Building2,
 } from "lucide-react";
 
 export const EditingSidebar: React.FC = () => {
@@ -239,6 +241,7 @@ export const EditingSidebar: React.FC = () => {
                     {selectedElement.type === "image" && <Image className="w-6 h-6 text-white" />}
                     {selectedElement.type === "button" && <MousePointer className="w-6 h-6 text-white" />}
                     {selectedElement.type === "section" && <Layers className="w-6 h-6 text-white" />}
+                    {selectedElement.type === "card" && <CreditCard className="w-6 h-6 text-white" />}
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-900 text-lg">{selectedElement.label}</h3>
@@ -508,6 +511,122 @@ export const EditingSidebar: React.FC = () => {
                         </div>
                       </>
                     )}
+
+                    {selectedElement.type === "card" && (
+                      <>
+                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                          <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center space-x-2">
+                            <CreditCard className="w-4 h-4 text-blue-500" />
+                            <span>Card Title</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={selectedElement.content?.name || ""}
+                            onChange={(e) => handleContentChange("name", e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                            placeholder="Card title..."
+                          />
+                        </div>
+                        
+                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                          <label className="block text-sm font-semibold text-gray-700 mb-3">
+                            Card Description
+                          </label>
+                          <textarea
+                            value={selectedElement.content?.description || ""}
+                            onChange={(e) => handleContentChange("description", e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
+                            rows={3}
+                            placeholder="Card description..."
+                          />
+                        </div>
+
+                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                          <label className="block text-sm font-semibold text-gray-700 mb-3">
+                            Badge Text
+                          </label>
+                          <input
+                            type="text"
+                            value={selectedElement.content?.badge || ""}
+                            onChange={(e) => handleContentChange("badge", e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                            placeholder="Badge text (optional)..."
+                          />
+                        </div>
+
+                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                          <label className="block text-sm font-semibold text-gray-700 mb-3">
+                            Button Text
+                          </label>
+                          <input
+                            type="text"
+                            value={selectedElement.content?.buttonText || ""}
+                            onChange={(e) => handleContentChange("buttonText", e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                            placeholder="Button text..."
+                          />
+                        </div>
+
+                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                          <label className="block text-sm font-semibold text-gray-700 mb-3">
+                            Button Link
+                          </label>
+                          <input
+                            type="url"
+                            value={selectedElement.content?.buttonLink || ""}
+                            onChange={(e) => handleContentChange("buttonLink", e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                            placeholder="https://..."
+                          />
+                        </div>
+
+                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                          <label className="block text-sm font-semibold text-gray-700 mb-3">
+                            Features (one per line)
+                          </label>
+                          <textarea
+                            value={selectedElement.content?.features?.join('\n') || ""}
+                            onChange={(e) => {
+                              const features = e.target.value.split('\n').filter(f => f.trim());
+                              handleContentChange("features", features);
+                            }}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
+                            rows={6}
+                            placeholder="Feature 1&#10;Feature 2&#10;Feature 3..."
+                          />
+                        </div>
+
+                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                          <label className="flex items-center space-x-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedElement.content?.isPopular || false}
+                              onChange={(e) => handleContentChange("isPopular", e.target.checked)}
+                              className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <span className="text-sm font-semibold text-gray-700">Popular Plan</span>
+                          </label>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                          <label className="block text-sm font-semibold text-gray-700 mb-3">
+                            Icon
+                          </label>
+                          <select
+                            value={selectedElement.content?.icon || ""}
+                            onChange={(e) => handleContentChange("icon", e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                          >
+                            <option value="">Select Icon</option>
+                            <option value="Zap">Zap</option>
+                            <option value="Crown">Crown</option>
+                            <option value="Building2">Building2</option>
+                            <option value="Star">Star</option>
+                            <option value="Heart">Heart</option>
+                          </select>
+                        </div>
+                      </>
+                    )}
                   </motion.div>
                 )}
 
@@ -561,6 +680,27 @@ export const EditingSidebar: React.FC = () => {
                         />
                       </div>
                     </div>
+
+                    {selectedElement.type === "card" && (
+                      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">
+                          Icon Background Gradient
+                        </label>
+                        <select
+                          value={selectedElement.styles?.gradient || ""}
+                          onChange={(e) => handleStyleChange("gradient", e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        >
+                          <option value="">Select Gradient</option>
+                          <option value="from-slate-500 to-slate-600">Slate</option>
+                          <option value="from-red-500 to-pink-600">Red to Pink</option>
+                          <option value="from-purple-500 to-indigo-600">Purple to Indigo</option>
+                          <option value="from-blue-500 to-cyan-600">Blue to Cyan</option>
+                          <option value="from-green-500 to-emerald-600">Green to Emerald</option>
+                          <option value="from-yellow-500 to-orange-600">Yellow to Orange</option>
+                        </select>
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
