@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Pricing } from "@/components/sections/Pricing";
+import Pricing from "@/components/sections/Pricing";
 import { EditableWrapper } from "@/components/admin/EditableWrapper";
 
 export const AdminPricing: React.FC = () => {
