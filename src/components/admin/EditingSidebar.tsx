@@ -4,961 +4,474 @@ import React, { useState } from "react";
 import { useAdminEditing } from "@/lib/contexts/AdminEditingContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Edit3,
+  Save,
+  Eye,
+  Settings,
   Type,
   Image,
-  MousePointer,
-  Palette,
-  Settings,
-  Save,
-  X,
-  Eye,
-  EyeOff,
   Layers,
-  Code,
-  Smartphone,
-  Monitor,
-  Tablet,
-  RefreshCw,
-  CheckCircle,
-  Sparkles,
-  Zap,
-  Crown,
-  Globe,
-  AlertCircle,
   CreditCard,
+  Edit3,
+  Palette,
+  Link,
+  ToggleLeft,
+  ToggleRight,
+  ChevronDown,
+  ChevronRight,
+  X,
+  Check,
+  AlertCircle,
+  Sparkles,
+  Crown,
   Building2,
+  Zap,
 } from "lucide-react";
 
 export const EditingSidebar: React.FC = () => {
   const {
     selectedElement,
     setSelectedElement,
-    isEditMode,
-    setIsEditMode,
     updateElement,
     saveChanges,
     publishChanges,
-    loadInitialContent,
-    elements,
     isPublished,
     hasUnsavedChanges,
   } = useAdminEditing();
 
   const [activeTab, setActiveTab] = useState<"content" | "style" | "settings">("content");
-  const [previewMode, setPreviewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
-  const [isSaving, setIsSaving] = useState(false);
-  const [isPublishing, setIsPublishing] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    content: true,
+    style: false,
+    settings: false,
+  });
+
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   const handleContentChange = (field: string, value: any) => {
     if (!selectedElement) return;
     
-    const updatedContent = {
-      ...selectedElement.content,
-      [field]: value,
-    };
-    
-    updateElement(selectedElement.id, { content: updatedContent });
+    updateElement(selectedElement.id, {
+      content: { ...selectedElement.content, [field]: value }
+    });
   };
 
-  const handleStyleChange = (property: string, value: string) => {
+  const handleStyleChange = (field: string, value: any) => {
     if (!selectedElement) return;
     
-    const updatedStyles = {
-      ...selectedElement.styles,
-      [property]: value,
-    };
-    
-    updateElement(selectedElement.id, { styles: updatedStyles });
+    updateElement(selectedElement.id, {
+      styles: { ...selectedElement.styles, [field]: value }
+    });
   };
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      await saveChanges();
-      setTimeout(() => setIsSaving(false), 1000);
-    } catch (error) {
-      setIsSaving(false);
+  const getElementIcon = (type: string) => {
+    switch (type) {
+      case "text": return Type;
+      case "image": return Image;
+      case "section": return Layers;
+      case "card": return CreditCard;
+      default: return Edit3;
     }
   };
 
-  const handlePublish = async () => {
-    setIsPublishing(true);
-    try {
-      await publishChanges();
-      setTimeout(() => setIsPublishing(false), 1000);
-    } catch (error) {
-      setIsPublishing(false);
+  const getIconOptions = () => [
+    { value: "Zap", label: "Zap", icon: Zap },
+    { value: "Crown", label: "Crown", icon: Crown },
+    { value: "Building2", label: "Building", icon: Building2 },
+    { value: "Sparkles", label: "Sparkles", icon: Sparkles },
+  ];
+
+  const renderContentEditor = () => {
+    if (!selectedElement) return null;
+
+    const { type, content } = selectedElement;
+
+    switch (type) {
+      case "text":
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Text Content
+              </label>
+              <textarea
+                value={content?.text || ""}
+                onChange={(e) => handleContentChange("text", e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                rows={3}
+                placeholder="Enter text content..."
+              />
+            </div>
+          </div>
+        );
+
+      case "button":
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Button Text
+              </label>
+              <input
+                type="text"
+                value={content?.text || ""}
+                onChange={(e) => handleContentChange("text", e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Button text..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Link URL
+              </label>
+              <input
+                type="text"
+                value={content?.href || ""}
+                onChange={(e) => handleContentChange("href", e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="https://..."
+              />
+            </div>
+          </div>
+        );
+
+      case "card":
+        return (
+          <div className="space-y-6">
+            {/* Basic Info */}
+            <div className="space-y-4">
+              <h4 className="font-medium text-gray-900 flex items-center">
+                <CreditCard className="w-4 h-4 mr-2" />
+                Card Information
+              </h4>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Plan Name
+                </label>
+                <input
+                  type="text"
+                  value={content?.name || ""}
+                  onChange={(e) => handleContentChange("name", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Plan name..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={content?.description || ""}
+                  onChange={(e) => handleContentChange("description", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  rows={2}
+                  placeholder="Plan description..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Badge Text
+                </label>
+                <input
+                  type="text"
+                  value={content?.badge || ""}
+                  onChange={(e) => handleContentChange("badge", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Badge text (optional)..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Button Text
+                </label>
+                <input
+                  type="text"
+                  value={content?.buttonText || ""}
+                  onChange={(e) => handleContentChange("buttonText", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Button text..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Button Link
+                </label>
+                <input
+                  type="text"
+                  value={content?.buttonLink || ""}
+                  onChange={(e) => handleContentChange("buttonLink", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Button link..."
+                />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isPopular"
+                  checked={content?.isPopular || false}
+                  onChange={(e) => handleContentChange("isPopular", e.target.checked)}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <label htmlFor="isPopular" className="text-sm font-medium text-gray-700">
+                  Popular Plan
+                </label>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="space-y-4">
+              <h4 className="font-medium text-gray-900">Features</h4>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Features List (one per line)
+                </label>
+                <textarea
+                  value={content?.features?.join('\n') || ""}
+                  onChange={(e) => handleContentChange("features", e.target.value.split('\n').filter(f => f.trim()))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  rows={6}
+                  placeholder="Feature 1&#10;Feature 2&#10;Feature 3..."
+                />
+              </div>
+            </div>
+
+            {/* Icon Selection */}
+            <div className="space-y-4">
+              <h4 className="font-medium text-gray-900">Icon</h4>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Icon
+                </label>
+                <select
+                  value={content?.icon || "Zap"}
+                  onChange={(e) => handleContentChange("icon", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  {getIconOptions().map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return (
+          <div className="text-center py-8 text-gray-500">
+            <Edit3 className="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <p>Select an element to edit its content</p>
+          </div>
+        );
     }
   };
 
-  const tabs = [
-    { id: "content", label: "Content", icon: Type },
-    { id: "style", label: "Style", icon: Palette },
-    { id: "settings", label: "Settings", icon: Settings },
-  ];
+  const renderStyleEditor = () => {
+    if (!selectedElement) return null;
 
-  const previewModes = [
-    { id: "desktop", icon: Monitor, label: "Desktop" },
-    { id: "tablet", icon: Tablet, label: "Tablet" },
-    { id: "mobile", icon: Smartphone, label: "Mobile" },
-  ];
+    return (
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Gradient Colors
+          </label>
+          <select
+            value={selectedElement.styles?.gradient || ""}
+            onChange={(e) => handleStyleChange("gradient", e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="from-red-500 to-pink-600">Red to Pink</option>
+            <option value="from-blue-500 to-indigo-600">Blue to Indigo</option>
+            <option value="from-green-500 to-emerald-600">Green to Emerald</option>
+            <option value="from-purple-500 to-violet-600">Purple to Violet</option>
+            <option value="from-slate-500 to-slate-600">Slate</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Font Size
+          </label>
+          <select
+            value={selectedElement.styles?.fontSize || ""}
+            onChange={(e) => handleStyleChange("fontSize", e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="text-xs">Extra Small</option>
+            <option value="text-sm">Small</option>
+            <option value="text-base">Base</option>
+            <option value="text-lg">Large</option>
+            <option value="text-xl">Extra Large</option>
+            <option value="text-2xl">2X Large</option>
+            <option value="text-3xl">3X Large</option>
+            <option value="text-4xl">4X Large</option>
+            <option value="text-5xl">5X Large</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Font Weight
+          </label>
+          <select
+            value={selectedElement.styles?.fontWeight || ""}
+            onChange={(e) => handleStyleChange("fontWeight", e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="font-light">Light</option>
+            <option value="font-normal">Normal</option>
+            <option value="font-medium">Medium</option>
+            <option value="font-semibold">Semibold</option>
+            <option value="font-bold">Bold</option>
+          </select>
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <div className="w-full h-full flex flex-col">
-      {/* Enhanced Header */}
-      <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <motion.div 
-              className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg"
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              transition={{ duration: 0.2 }}
+    <div className="h-full flex flex-col bg-white">
+      {/* Header */}
+      <div className="p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">Content Editor</h2>
+          {selectedElement && (
+            <button
+              onClick={() => setSelectedElement(null)}
+              className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <Edit3 className="w-5 h-5 text-white" />
-            </motion.div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">Content Editor</h2>
-              <p className="text-sm text-gray-600">Customize your landing page</p>
-            </div>
-          </div>
-          
-          <motion.button
-            onClick={() => setIsEditMode(!isEditMode)}
-            className={`p-3 rounded-xl transition-all duration-300 shadow-md ${
-              isEditMode
-                ? "bg-blue-500 text-white shadow-blue-500/25"
-                : "bg-white text-gray-600 hover:bg-gray-50 shadow-gray-200"
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Save/Publish Actions */}
+        <div className="space-y-2">
+          <button
+            onClick={saveChanges}
+            disabled={!hasUnsavedChanges}
+            className={`w-full flex items-center justify-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+              hasUnsavedChanges
+                ? "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+                : "bg-gray-100 text-gray-400 cursor-not-allowed"
             }`}
-            title={isEditMode ? "Exit Edit Mode" : "Enter Edit Mode"}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
           >
-            {isEditMode ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-          </motion.button>
-        </div>
+            <Save className="w-4 h-4" />
+            <span>Save Changes</span>
+          </button>
 
-        {/* Status Indicator */}
-        <div className="mb-6">
-          <div className="flex items-center space-x-3 p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-white/50">
-            <div className="flex items-center space-x-2">
-              {isPublished ? (
-                <>
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium text-green-700">Published</span>
-                </>
-              ) : (
-                <>
-                  <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium text-orange-700">Draft</span>
-                </>
-              )}
-            </div>
-            
+          <button
+            onClick={publishChanges}
+            disabled={!hasUnsavedChanges}
+            className={`w-full flex items-center justify-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+              hasUnsavedChanges
+                ? "bg-green-600 text-white hover:bg-green-700 shadow-sm"
+                : "bg-gray-100 text-gray-400 cursor-not-allowed"
+            }`}
+          >
+            <Eye className="w-4 h-4" />
+            <span>Publish Live</span>
+          </button>
+
+          {/* Status Indicator */}
+          <div className="flex items-center justify-center space-x-2 text-xs">
+            {isPublished ? (
+              <>
+                <Check className="w-3 h-3 text-green-500" />
+                <span className="text-green-600">Published</span>
+              </>
+            ) : (
+              <>
+                <AlertCircle className="w-3 h-3 text-orange-500" />
+                <span className="text-orange-600">Draft</span>
+              </>
+            )}
             {hasUnsavedChanges && (
-              <div className="flex items-center space-x-2 text-amber-600">
-                <AlertCircle className="w-4 h-4" />
-                <span className="text-xs font-medium">Unsaved changes</span>
-              </div>
+              <span className="text-orange-600">• Unsaved changes</span>
             )}
           </div>
-        </div>
-
-        {/* Enhanced Preview Mode Selector */}
-        <div className="flex items-center space-x-1 bg-white/80 backdrop-blur-sm rounded-xl p-1 mb-6 shadow-sm border border-white/50">
-          {previewModes.map((mode) => (
-            <motion.button
-              key={mode.id}
-              onClick={() => setPreviewMode(mode.id as any)}
-              className={`flex items-center space-x-2 px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-300 flex-1 justify-center ${
-                previewMode === mode.id
-                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-white/60"
-              }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <mode.icon className="w-4 h-4" />
-              <span className="hidden sm:inline">{mode.label}</span>
-            </motion.button>
-          ))}
-        </div>
-
-        {/* Save and Publish Buttons */}
-        <div className="flex items-center space-x-3">
-          <motion.button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-3 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 shadow-lg shadow-blue-500/25 font-semibold"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            {isSaving ? (
-              <>
-                <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>Saving...</span>
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4" />
-                <span>Save</span>
-              </>
-            )}
-          </motion.button>
-          
-          <motion.button
-            onClick={handlePublish}
-            disabled={isPublishing}
-            className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-3 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 shadow-lg shadow-green-500/25 font-semibold"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            {isPublishing ? (
-              <>
-                <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>Publishing...</span>
-              </>
-            ) : (
-              <>
-                <Globe className="w-4 h-4" />
-                <span>Publish</span>
-              </>
-            )}
-          </motion.button>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-hidden">
-        {selectedElement ? (
-          <div className="h-full flex flex-col">
-            {/* Enhanced Element Info */}
-            <div className="p-6 bg-gradient-to-r from-gray-50 to-slate-50 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
-                    {selectedElement.type === "text" && <Type className="w-6 h-6 text-white" />}
-                    {selectedElement.type === "image" && <Image className="w-6 h-6 text-white" />}
-                    {selectedElement.type === "button" && <MousePointer className="w-6 h-6 text-white" />}
-                    {selectedElement.type === "section" && <Layers className="w-6 h-6 text-white" />}
-                    {selectedElement.type === "card" && <CreditCard className="w-6 h-6 text-white" />}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 text-lg">{selectedElement.label}</h3>
-                    <p className="text-sm text-gray-600 capitalize flex items-center space-x-2">
-                      <span>{selectedElement.type} element</span>
-                      <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                      <span className="text-xs text-gray-400">ID: {selectedElement.id}</span>
-                    </p>
-                  </div>
-                </div>
-                <motion.button
-                  onClick={() => setSelectedElement(null)}
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <X className="w-5 h-5" />
-                </motion.button>
-              </div>
+      {/* Selected Element Info */}
+      {selectedElement && (
+        <div className="p-6 border-b border-gray-200 bg-blue-50/50">
+          <div className="flex items-center space-x-3">
+            {React.createElement(getElementIcon(selectedElement.type), {
+              className: "w-5 h-5 text-blue-600"
+            })}
+            <div>
+              <h3 className="font-medium text-gray-900">{selectedElement.label}</h3>
+              <p className="text-sm text-gray-500 capitalize">{selectedElement.type} element</p>
             </div>
+          </div>
+        </div>
+      )}
 
-            {/* Enhanced Tabs */}
-            <div className="flex border-b border-gray-200 bg-white">
-              {tabs.map((tab) => (
-                <motion.button
+      {/* Content Area */}
+      <div className="flex-1 overflow-y-auto">
+        {selectedElement ? (
+          <div className="p-6">
+            {/* Tabs */}
+            <div className="flex space-x-1 mb-6 bg-gray-100 rounded-lg p-1">
+              {[
+                { id: "content", label: "Content", icon: Type },
+                { id: "style", label: "Style", icon: Palette },
+                { id: "settings", label: "Settings", icon: Settings },
+              ].map((tab) => (
+                <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center space-x-2 px-6 py-4 text-sm font-semibold border-b-3 transition-all duration-300 flex-1 justify-center ${
+                  className={`flex-1 flex items-center justify-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                     activeTab === tab.id
-                      ? "border-blue-500 text-blue-600 bg-blue-50/50"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                      ? "bg-white text-blue-600 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
                   }`}
-                  whileHover={{ y: -1 }}
-                  whileTap={{ y: 0 }}
                 >
                   <tab.icon className="w-4 h-4" />
                   <span>{tab.label}</span>
-                </motion.button>
+                </button>
               ))}
             </div>
 
-            {/* Enhanced Tab Content */}
-            <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
-              <AnimatePresence mode="wait">
-                {activeTab === "content" && (
-                  <motion.div
-                    key="content"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    className="space-y-6"
-                  >
-                    {selectedElement.type === "text" && (
-                      <>
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center space-x-2">
-                            <Type className="w-4 h-4 text-blue-500" />
-                            <span>Text Content</span>
-                          </label>
-                          <textarea
-                            value={selectedElement.content?.text || ""}
-                            onChange={(e) => handleContentChange("text", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
-                            rows={4}
-                            placeholder="Enter text content..."
-                          />
-                          <p className="text-xs text-gray-500 mt-2 flex items-center space-x-1">
-                            <Sparkles className="w-3 h-3" />
-                            <span>Tip: You can also double-click the text on the page to edit inline</span>
-                          </p>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                            <label className="block text-sm font-semibold text-gray-700 mb-3">
-                              Font Size
-                            </label>
-                            <select
-                              value={selectedElement.styles?.fontSize || ""}
-                              onChange={(e) => handleStyleChange("fontSize", e.target.value)}
-                              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                            >
-                              <option value="">Default</option>
-                              <option value="text-xs">Extra Small</option>
-                              <option value="text-sm">Small</option>
-                              <option value="text-base">Base</option>
-                              <option value="text-lg">Large</option>
-                              <option value="text-xl">Extra Large</option>
-                              <option value="text-2xl">2X Large</option>
-                              <option value="text-3xl">3X Large</option>
-                              <option value="text-4xl">4X Large</option>
-                              <option value="text-5xl">5X Large</option>
-                              <option value="text-6xl">6X Large</option>
-                            </select>
-                          </div>
-
-                          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                            <label className="block text-sm font-semibold text-gray-700 mb-3">
-                              Font Weight
-                            </label>
-                            <select
-                              value={selectedElement.styles?.fontWeight || ""}
-                              onChange={(e) => handleStyleChange("fontWeight", e.target.value)}
-                              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                            >
-                              <option value="">Default</option>
-                              <option value="font-light">Light</option>
-                              <option value="font-normal">Normal</option>
-                              <option value="font-medium">Medium</option>
-                              <option value="font-semibold">Semibold</option>
-                              <option value="font-bold">Bold</option>
-                              <option value="font-extrabold">Extra Bold</option>
-                            </select>
-                          </div>
-                        </div>
-                      </>
-                    )}
-
-                    {selectedElement.type === "button" && (
-                      <>
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center space-x-2">
-                            <MousePointer className="w-4 h-4 text-blue-500" />
-                            <span>Button Text</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={selectedElement.content?.text || ""}
-                            onChange={(e) => handleContentChange("text", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                            placeholder="Button text..."
-                          />
-                        </div>
-                        
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Link URL
-                          </label>
-                          <input
-                            type="url"
-                            value={selectedElement.content?.href || ""}
-                            onChange={(e) => handleContentChange("href", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                            placeholder="https://..."
-                          />
-                        </div>
-
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Button Style
-                          </label>
-                          <div className="grid grid-cols-2 gap-3">
-                            {[
-                              { value: "primary", label: "Primary", icon: Crown },
-                              { value: "secondary", label: "Secondary", icon: Zap },
-                              { value: "outline", label: "Outline", icon: Code },
-                              { value: "ghost", label: "Ghost", icon: Eye },
-                            ].map((style) => (
-                              <motion.button
-                                key={style.value}
-                                onClick={() => handleStyleChange("buttonStyle", style.value)}
-                                className={`p-3 rounded-lg border-2 transition-all duration-200 flex items-center space-x-2 ${
-                                  selectedElement.styles?.buttonStyle === style.value
-                                    ? "border-blue-500 bg-blue-50 text-blue-700"
-                                    : "border-gray-200 hover:border-gray-300 text-gray-600"
-                                }`}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                              >
-                                <style.icon className="w-4 h-4" />
-                                <span className="text-sm font-medium">{style.label}</span>
-                              </motion.button>
-                            ))}
-                          </div>
-                        </div>
-                      </>
-                    )}
-
-                    {selectedElement.type === "image" && (
-                      <>
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center space-x-2">
-                            <Image className="w-4 h-4 text-blue-500" />
-                            <span>Image URL</span>
-                          </label>
-                          <input
-                            type="url"
-                            value={selectedElement.content?.src || ""}
-                            onChange={(e) => handleContentChange("src", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                            placeholder="https://..."
-                          />
-                        </div>
-                        
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Alt Text
-                          </label>
-                          <input
-                            type="text"
-                            value={selectedElement.content?.alt || ""}
-                            onChange={(e) => handleContentChange("alt", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                            placeholder="Image description..."
-                          />
-                        </div>
-
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Image Size
-                          </label>
-                          <select
-                            value={selectedElement.styles?.imageSize || ""}
-                            onChange={(e) => handleStyleChange("imageSize", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                          >
-                            <option value="">Default</option>
-                            <option value="w-32 h-32">Small (128px)</option>
-                            <option value="w-48 h-48">Medium (192px)</option>
-                            <option value="w-64 h-64">Large (256px)</option>
-                            <option value="w-full">Full Width</option>
-                          </select>
-                        </div>
-                      </>
-                    )}
-
-                    {selectedElement.type === "section" && (
-                      <>
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center space-x-2">
-                            <Layers className="w-4 h-4 text-blue-500" />
-                            <span>Section Title</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={selectedElement.content?.title || ""}
-                            onChange={(e) => handleContentChange("title", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                            placeholder="Section title..."
-                          />
-                        </div>
-                        
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Section Subtitle
-                          </label>
-                          <textarea
-                            value={selectedElement.content?.subtitle || ""}
-                            onChange={(e) => handleContentChange("subtitle", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
-                            rows={3}
-                            placeholder="Section subtitle..."
-                          />
-                        </div>
-
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Badge Text
-                          </label>
-                          <input
-                            type="text"
-                            value={selectedElement.content?.badge || ""}
-                            onChange={(e) => handleContentChange("badge", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                            placeholder="Badge text..."
-                          />
-                        </div>
-                      </>
-                    )}
-
-                    {selectedElement.type === "card" && (
-                      <>
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center space-x-2">
-                            <CreditCard className="w-4 h-4 text-blue-500" />
-                            <span>Card Title</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={selectedElement.content?.name || ""}
-                            onChange={(e) => handleContentChange("name", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                            placeholder="Card title..."
-                          />
-                        </div>
-                        
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Card Description
-                          </label>
-                          <textarea
-                            value={selectedElement.content?.description || ""}
-                            onChange={(e) => handleContentChange("description", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
-                            rows={3}
-                            placeholder="Card description..."
-                          />
-                        </div>
-
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Badge Text
-                          </label>
-                          <input
-                            type="text"
-                            value={selectedElement.content?.badge || ""}
-                            onChange={(e) => handleContentChange("badge", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                            placeholder="Badge text (optional)..."
-                          />
-                        </div>
-
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Button Text
-                          </label>
-                          <input
-                            type="text"
-                            value={selectedElement.content?.buttonText || ""}
-                            onChange={(e) => handleContentChange("buttonText", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                            placeholder="Button text..."
-                          />
-                        </div>
-
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Button Link
-                          </label>
-                          <input
-                            type="url"
-                            value={selectedElement.content?.buttonLink || ""}
-                            onChange={(e) => handleContentChange("buttonLink", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                            placeholder="https://..."
-                          />
-                        </div>
-
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Features (one per line)
-                          </label>
-                          <textarea
-                            value={selectedElement.content?.features?.join('\n') || ""}
-                            onChange={(e) => {
-                              const features = e.target.value.split('\n').filter(f => f.trim());
-                              handleContentChange("features", features);
-                            }}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
-                            rows={6}
-                            placeholder="Feature 1&#10;Feature 2&#10;Feature 3..."
-                          />
-                        </div>
-
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="flex items-center space-x-3">
-                            <input
-                              type="checkbox"
-                              checked={selectedElement.content?.isPopular || false}
-                              onChange={(e) => handleContentChange("isPopular", e.target.checked)}
-                              className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                            />
-                            <span className="text-sm font-semibold text-gray-700">Popular Plan</span>
-                          </label>
-                        </div>
-
-                        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                          <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Icon
-                          </label>
-                          <select
-                            value={selectedElement.content?.icon || ""}
-                            onChange={(e) => handleContentChange("icon", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                          >
-                            <option value="">Select Icon</option>
-                            <option value="Zap">Zap</option>
-                            <option value="Crown">Crown</option>
-                            <option value="Building2">Building2</option>
-                            <option value="Star">Star</option>
-                            <option value="Heart">Heart</option>
-                          </select>
-                        </div>
-                      </>
-                    )}
-                  </motion.div>
-                )}
-
-                {activeTab === "style" && (
-                  <motion.div
-                    key="style"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    className="space-y-6"
-                  >
-                    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                      <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center space-x-2">
-                        <Palette className="w-4 h-4 text-blue-500" />
-                        <span>Background Color</span>
-                      </label>
-                      <div className="flex space-x-3">
-                        <input
-                          type="color"
-                          value={selectedElement.styles?.backgroundColor || "#ffffff"}
-                          onChange={(e) => handleStyleChange("backgroundColor", e.target.value)}
-                          className="w-14 h-12 border border-gray-300 rounded-xl cursor-pointer"
-                        />
-                        <input
-                          type="text"
-                          value={selectedElement.styles?.backgroundColor || ""}
-                          onChange={(e) => handleStyleChange("backgroundColor", e.target.value)}
-                          className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                          placeholder="#ffffff or gradient class"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                      <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        Text Color
-                      </label>
-                      <div className="flex space-x-3">
-                        <input
-                          type="color"
-                          value={selectedElement.styles?.color || "#000000"}
-                          onChange={(e) => handleStyleChange("color", e.target.value)}
-                          className="w-14 h-12 border border-gray-300 rounded-xl cursor-pointer"
-                        />
-                        <input
-                          type="text"
-                          value={selectedElement.styles?.color || ""}
-                          onChange={(e) => handleStyleChange("color", e.target.value)}
-                          className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                          placeholder="#000000 or color class"
-                        />
-                      </div>
-                    </div>
-
-                    {selectedElement.type === "card" && (
-                      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                          Icon Background Gradient
-                        </label>
-                        <select
-                          value={selectedElement.styles?.gradient || ""}
-                          onChange={(e) => handleStyleChange("gradient", e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                        >
-                          <option value="">Select Gradient</option>
-                          <option value="from-slate-500 to-slate-600">Slate</option>
-                          <option value="from-red-500 to-pink-600">Red to Pink</option>
-                          <option value="from-purple-500 to-indigo-600">Purple to Indigo</option>
-                          <option value="from-blue-500 to-cyan-600">Blue to Cyan</option>
-                          <option value="from-green-500 to-emerald-600">Green to Emerald</option>
-                          <option value="from-yellow-500 to-orange-600">Yellow to Orange</option>
-                        </select>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                          Padding
-                        </label>
-                        <select
-                          value={selectedElement.styles?.padding || ""}
-                          onChange={(e) => handleStyleChange("padding", e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                        >
-                          <option value="">Default</option>
-                          <option value="p-0">None</option>
-                          <option value="p-2">Small</option>
-                          <option value="p-4">Medium</option>
-                          <option value="p-6">Large</option>
-                          <option value="p-8">Extra Large</option>
-                          <option value="py-16">Vertical Large</option>
-                          <option value="py-20">Vertical XL</option>
-                          <option value="py-32">Vertical 2XL</option>
-                        </select>
-                      </div>
-
-                      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                          Border Radius
-                        </label>
-                        <select
-                          value={selectedElement.styles?.borderRadius || ""}
-                          onChange={(e) => handleStyleChange("borderRadius", e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                        >
-                          <option value="">None</option>
-                          <option value="rounded-sm">Small</option>
-                          <option value="rounded">Medium</option>
-                          <option value="rounded-lg">Large</option>
-                          <option value="rounded-xl">Extra Large</option>
-                          <option value="rounded-2xl">2X Large</option>
-                          <option value="rounded-3xl">3X Large</option>
-                          <option value="rounded-full">Full</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                      <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        Text Alignment
-                      </label>
-                      <div className="grid grid-cols-4 gap-2">
-                        {[
-                          { value: "text-left", label: "Left" },
-                          { value: "text-center", label: "Center" },
-                          { value: "text-right", label: "Right" },
-                          { value: "text-justify", label: "Justify" },
-                        ].map((align) => (
-                          <motion.button
-                            key={align.value}
-                            onClick={() => handleStyleChange("textAlign", align.value)}
-                            className={`p-3 rounded-lg border-2 transition-all duration-200 text-sm font-medium ${
-                              selectedElement.styles?.textAlign === align.value
-                                ? "border-blue-500 bg-blue-50 text-blue-700"
-                                : "border-gray-200 hover:border-gray-300 text-gray-600"
-                            }`}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            {align.label}
-                          </motion.button>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-
+            {/* Tab Content */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                {activeTab === "content" && renderContentEditor()}
+                {activeTab === "style" && renderStyleEditor()}
                 {activeTab === "settings" && (
-                  <motion.div
-                    key="settings"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    className="space-y-6"
-                  >
-                    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                      <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        Element ID
-                      </label>
-                      <input
-                        type="text"
-                        value={selectedElement.id}
-                        disabled
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-500"
-                      />
-                    </div>
-
-                    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                      <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        Element Type
-                      </label>
-                      <input
-                        type="text"
-                        value={selectedElement.type}
-                        disabled
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-500 capitalize"
-                      />
-                    </div>
-
-                    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                      <label className="flex items-center space-x-3">
-                        <input
-                          type="checkbox"
-                          checked={selectedElement.metadata?.visible !== false}
-                          onChange={(e) => {
-                            const updatedMetadata = {
-                              ...selectedElement.metadata,
-                              visible: e.target.checked,
-                            };
-                            updateElement(selectedElement.id, { metadata: updatedMetadata });
-                          }}
-                          className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <span className="text-sm font-semibold text-gray-700">Visible</span>
-                      </label>
-                    </div>
-
-                    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                      <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        Priority
-                      </label>
-                      <select
-                        value={selectedElement.metadata?.priority || "medium"}
-                        onChange={(e) => {
-                          const updatedMetadata = {
-                            ...selectedElement.metadata,
-                            priority: e.target.value,
-                          };
-                          updateElement(selectedElement.id, { metadata: updatedMetadata });
-                        }}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                      >
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                      </select>
-                    </div>
-
-                    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                      <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        Custom CSS Classes
-                      </label>
-                      <textarea
-                        value={selectedElement.styles?.customClasses || ""}
-                        onChange={(e) => handleStyleChange("customClasses", e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
-                        rows={3}
-                        placeholder="custom-class another-class"
-                      />
-                    </div>
-
-                    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-                      <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        Notes
-                      </label>
-                      <textarea
-                        value={selectedElement.metadata?.notes || ""}
-                        onChange={(e) => {
-                          const updatedMetadata = {
-                            ...selectedElement.metadata,
-                            notes: e.target.value,
-                          };
-                          updateElement(selectedElement.id, { metadata: updatedMetadata });
-                        }}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
-                        rows={3}
-                        placeholder="Add notes about this element..."
-                      />
-                    </div>
-                  </motion.div>
+                  <div className="text-center py-8 text-gray-500">
+                    <Settings className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p>Settings panel coming soon</p>
+                  </div>
                 )}
-              </AnimatePresence>
-            </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
         ) : (
-          <div className="h-full flex items-center justify-center p-8">
-            <div className="text-center max-w-md">
-              <motion.div 
-                className="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6"
-                animate={{ 
-                  scale: [1, 1.05, 1],
-                  rotate: [0, 5, 0]
-                }}
-                transition={{ 
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                <MousePointer className="w-10 h-10 text-blue-500" />
-              </motion.div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">No Element Selected</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-8">
-                Click on any element in the preview to start editing its content, style, and settings.
-              </p>
-              
-              <div className="space-y-4">
-                <motion.div 
-                  className="p-5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="flex items-center space-x-2 text-blue-700 mb-3">
-                    <Layers className="w-5 h-5" />
-                    <span className="text-sm font-bold">Quick Tips</span>
-                  </div>
-                  <ul className="text-xs text-blue-600 space-y-2 text-left">
-                    <li className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                      <span>Hover over elements to see edit options</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                      <span>Double-click text to edit inline</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                      <span>Use preview modes to test responsiveness</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                      <span>Save drafts and publish when ready</span>
-                    </li>
-                  </ul>
-                </motion.div>
-
-                <motion.div 
-                  className="p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="flex items-center space-x-2 text-green-700 mb-3">
-                    <CheckCircle className="w-5 h-5" />
-                    <span className="text-sm font-bold">Publishing Workflow</span>
-                  </div>
-                  <ul className="text-xs text-green-600 space-y-2 text-left">
-                    <li className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                      <span>Save changes to create drafts</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                      <span>Publish to make changes live</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                      <span>Track published vs draft status</span>
-                    </li>
-                  </ul>
-                </motion.div>
-              </div>
+          <div className="flex-1 flex items-center justify-center p-6">
+            <div className="text-center text-gray-500">
+              <Edit3 className="w-12 h-12 mx-auto mb-4 opacity-30" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Element Selected</h3>
+              <p className="text-sm">Click on any element in the page to start editing</p>
             </div>
           </div>
         )}
