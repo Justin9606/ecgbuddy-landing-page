@@ -29,33 +29,8 @@ export const AdminHero: React.FC = () => {
           visible: true
         }}
       >
-        <div className="relative">
-          {/* Individual editable elements within Hero */}
-          <div className="relative z-10 max-w-7xl mx-auto px-6">
-            <div className="text-center">
-              {/* Hero Title */}
-              <EditableWrapper
-                id="hero-title"
-                type="text"
-                label="Hero Title"
-                content={{
-                  text: "Revolutionize ECG Analysis"
-                }}
-                styles={{
-                  fontSize: "text-6xl md:text-8xl",
-                  fontWeight: "font-bold",
-                  color: "from-slate-900 via-slate-800 to-slate-700"
-                }}
-                metadata={{
-                  parent: "hero-section",
-                  editable: true
-                }}
-              >
-                <Hero />
-              </EditableWrapper>
-            </div>
-          </div>
-        </div>
+        {/* The Hero component now contains its own granular EditableWrapper components */}
+        <Hero />
       </EditableWrapper>
     </div>
   );

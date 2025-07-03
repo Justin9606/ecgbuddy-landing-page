@@ -20,6 +20,7 @@ import {
   CheckCircle,
   Star,
 } from "lucide-react";
+import { EditableWrapper } from "@/components/admin/EditableWrapper";
 
 const Hero = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -158,42 +159,60 @@ const Hero = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         <div className="text-center">
           {/* Enhanced Floating Badge with Social Proof */}
-          <motion.div
-            className="inline-flex items-center space-x-3 bg-white/60 backdrop-blur-2xl border border-red-100/50 rounded-full px-6 py-3 mb-12 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.12)] transition-all duration-500 group cursor-pointer mt-8"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            whileHover={{ scale: 1.05 }}
+          <EditableWrapper
+            id="hero-badge"
+            type="text"
+            label="Hero Badge"
+            content={{
+              text: "Trusted by 10,000+ Healthcare Professionals"
+            }}
+            styles={{
+              fontSize: "text-sm",
+              fontWeight: "font-medium",
+              color: "slate-700"
+            }}
+            metadata={{
+              parent: "hero-section",
+              editable: true
+            }}
           >
-            <div className="relative">
-              <motion.div
-                className="w-2 h-2 bg-red-400 rounded-full"
-                animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-              <motion.div
-                className="absolute inset-0 w-2 h-2 bg-red-400 rounded-full"
-                animate={{ scale: [1, 2, 1], opacity: [0.5, 0, 0.5] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-            </div>
-            <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">
-              Trusted by 10,000+ Healthcare Professionals
-            </span>
-            <div className="flex items-center space-x-1">
-              <Users className="w-4 h-4 text-red-500" />
-              <motion.div
-                animate={{ rotate: [0, 12, 0] }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <Sparkles className="w-4 h-4 text-red-500" />
-              </motion.div>
-            </div>
-          </motion.div>
+            <motion.div
+              className="inline-flex items-center space-x-3 bg-white/60 backdrop-blur-2xl border border-red-100/50 rounded-full px-6 py-3 mb-12 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.12)] transition-all duration-500 group cursor-pointer mt-8"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="relative">
+                <motion.div
+                  className="w-2 h-2 bg-red-400 rounded-full"
+                  animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <motion.div
+                  className="absolute inset-0 w-2 h-2 bg-red-400 rounded-full"
+                  animate={{ scale: [1, 2, 1], opacity: [0.5, 0, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+              </div>
+              <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">
+                Trusted by 10,000+ Healthcare Professionals
+              </span>
+              <div className="flex items-center space-x-1">
+                <Users className="w-4 h-4 text-red-500" />
+                <motion.div
+                  animate={{ rotate: [0, 12, 0] }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <Sparkles className="w-4 h-4 text-red-500" />
+                </motion.div>
+              </div>
+            </motion.div>
+          </EditableWrapper>
 
           {/* Enhanced Main Heading with Typewriter Effect */}
           <motion.div
@@ -203,22 +222,58 @@ const Hero = () => {
             transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
           >
             <h1 className="text-6xl md:text-8xl font-bold leading-none mb-4">
-              <motion.span
-                className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent"
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
+              <EditableWrapper
+                id="hero-title-part1"
+                type="text"
+                label="Hero Title Part 1"
+                content={{
+                  text: "Revolutionize"
+                }}
+                styles={{
+                  fontSize: "text-6xl md:text-8xl",
+                  fontWeight: "font-bold",
+                  color: "from-slate-900 via-slate-800 to-slate-700"
+                }}
+                metadata={{
+                  parent: "hero-section",
+                  editable: true
+                }}
               >
-                Revolutionize
-              </motion.span>
-              <motion.span
-                className="block bg-gradient-to-r from-red-600 via-red-500 to-pink-600 bg-clip-text text-transparent"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
+                <motion.span
+                  className="block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent"
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                >
+                  Revolutionize
+                </motion.span>
+              </EditableWrapper>
+              <EditableWrapper
+                id="hero-title-part2"
+                type="text"
+                label="Hero Title Part 2"
+                content={{
+                  text: "ECG Analysis"
+                }}
+                styles={{
+                  fontSize: "text-6xl md:text-8xl",
+                  fontWeight: "font-bold",
+                  color: "from-red-600 via-red-500 to-pink-600"
+                }}
+                metadata={{
+                  parent: "hero-section",
+                  editable: true
+                }}
               >
-                ECG Analysis
-              </motion.span>
+                <motion.span
+                  className="block bg-gradient-to-r from-red-600 via-red-500 to-pink-600 bg-clip-text text-transparent"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.6 }}
+                >
+                  ECG Analysis
+                </motion.span>
+              </EditableWrapper>
             </h1>
             <motion.div
               className="h-1 w-32 bg-gradient-to-r from-red-500 to-pink-500 rounded-full mx-auto opacity-60"
@@ -229,25 +284,43 @@ const Hero = () => {
           </motion.div>
 
           {/* Enhanced Subtitle */}
-          <motion.p
-            className="text-xl md:text-2xl text-slate-600 mb-8 max-w-4xl mx-auto leading-relaxed font-light"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
+          <EditableWrapper
+            id="hero-subtitle"
+            type="text"
+            label="Hero Subtitle"
+            content={{
+              text: "Transform complex cardiac data into clear, actionable insights with our AI-powered platform trusted by healthcare professionals worldwide."
+            }}
+            styles={{
+              fontSize: "text-xl md:text-2xl",
+              color: "slate-600",
+              fontWeight: "font-light"
+            }}
+            metadata={{
+              parent: "hero-section",
+              editable: true
+            }}
           >
-            Transform complex cardiac data into clear, actionable insights with
-            our
-            <span className="font-medium text-slate-800">
-              {" "}
-              AI-powered platform
-            </span>{" "}
-            trusted by
-            <span className="font-medium text-red-600">
-              {" "}
-              healthcare professionals worldwide
-            </span>
-            .
-          </motion.p>
+            <motion.p
+              className="text-xl md:text-2xl text-slate-600 mb-8 max-w-4xl mx-auto leading-relaxed font-light"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+            >
+              Transform complex cardiac data into clear, actionable insights with
+              our
+              <span className="font-medium text-slate-800">
+                {" "}
+                AI-powered platform
+              </span>{" "}
+              trusted by
+              <span className="font-medium text-red-600">
+                {" "}
+                healthcare professionals worldwide
+              </span>
+              .
+            </motion.p>
+          </EditableWrapper>
 
           {/* Interactive Testimonial Carousel */}
           <motion.div
@@ -357,35 +430,77 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.4 }}
           >
-            <motion.button
-              onClick={handleStartAnalysis}
-              className="group relative bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white px-10 py-4 rounded-full font-semibold text-lg shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center space-x-3 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <EditableWrapper
+              id="hero-primary-cta"
+              type="button"
+              label="Primary CTA Button"
+              content={{
+                text: "Try ECG Buddy",
+                href: "#mobile-download"
+              }}
+              styles={{
+                backgroundColor: "from-red-500 via-red-600 to-pink-600",
+                textColor: "white",
+                padding: "px-10 py-4",
+                borderRadius: "rounded-full",
+                fontSize: "text-lg"
+              }}
+              metadata={{
+                parent: "hero-section",
+                buttonType: "primary"
+              }}
             >
-              {/* Glassy hover effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-
-              <span className="relative z-10">Try ECG Buddy</span>
-              <motion.div
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+              <motion.button
+                onClick={handleStartAnalysis}
+                className="group relative bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white px-10 py-4 rounded-full font-semibold text-lg shadow-[0_8px_32px_rgba(255,63,74,0.3)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.4)] transition-all duration-500 flex items-center space-x-3 overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <ArrowRight className="w-5 h-5 relative z-10" />
-              </motion.div>
-            </motion.button>
+                {/* Glassy hover effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
-            <motion.button
-              className="group relative bg-white/60 backdrop-blur-2xl border border-red-100/50 text-slate-700 px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 flex items-center space-x-3 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.12)] overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+                <span className="relative z-10">Try ECG Buddy</span>
+                <motion.div
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <ArrowRight className="w-5 h-5 relative z-10" />
+                </motion.div>
+              </motion.button>
+            </EditableWrapper>
+
+            <EditableWrapper
+              id="hero-secondary-cta"
+              type="button"
+              label="Secondary CTA Button"
+              content={{
+                text: "Watch Demo",
+                href: "#demo"
+              }}
+              styles={{
+                backgroundColor: "white/60",
+                textColor: "slate-700",
+                padding: "px-10 py-4",
+                borderRadius: "rounded-full",
+                fontSize: "text-lg"
+              }}
+              metadata={{
+                parent: "hero-section",
+                buttonType: "secondary"
+              }}
             >
-              {/* Glassy hover effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+              <motion.button
+                className="group relative bg-white/60 backdrop-blur-2xl border border-red-100/50 text-slate-700 px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 flex items-center space-x-3 shadow-[0_8px_32px_rgba(255,63,74,0.08)] hover:shadow-[0_12px_40px_rgba(255,63,74,0.12)] overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {/* Glassy hover effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
-              <Play className="w-5 h-5 transition-transform duration-300 relative z-10" />
-              <span className="relative z-10">Watch Demo</span>
-            </motion.button>
+                <Play className="w-5 h-5 transition-transform duration-300 relative z-10" />
+                <span className="relative z-10">Watch Demo</span>
+              </motion.button>
+            </EditableWrapper>
           </motion.div>
 
           {/* Enhanced Stats Cards with Better Animations */}

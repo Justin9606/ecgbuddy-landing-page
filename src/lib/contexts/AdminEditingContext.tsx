@@ -32,7 +32,7 @@ const AdminEditingContext = createContext<AdminEditingContextType | undefined>(
   undefined
 );
 
-// Initial content structure based on your landing page
+// Initial content structure with granular Hero elements
 const getInitialContent = (): Record<string, EditableElement> => ({
   "hero-section": {
     id: "hero-section",
@@ -56,17 +56,51 @@ const getInitialContent = (): Record<string, EditableElement> => ({
       visible: true
     }
   },
-  "hero-title": {
-    id: "hero-title",
+  "hero-badge": {
+    id: "hero-badge",
     type: "text",
-    label: "Hero Title",
+    label: "Hero Badge",
     content: {
-      text: "Revolutionize ECG Analysis"
+      text: "Trusted by 10,000+ Healthcare Professionals"
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-medium",
+      color: "slate-700"
+    },
+    metadata: {
+      parent: "hero-section",
+      editable: true
+    }
+  },
+  "hero-title-part1": {
+    id: "hero-title-part1",
+    type: "text",
+    label: "Hero Title Part 1",
+    content: {
+      text: "Revolutionize"
     },
     styles: {
       fontSize: "text-6xl md:text-8xl",
       fontWeight: "font-bold",
       color: "from-slate-900 via-slate-800 to-slate-700"
+    },
+    metadata: {
+      parent: "hero-section",
+      editable: true
+    }
+  },
+  "hero-title-part2": {
+    id: "hero-title-part2",
+    type: "text",
+    label: "Hero Title Part 2",
+    content: {
+      text: "ECG Analysis"
+    },
+    styles: {
+      fontSize: "text-6xl md:text-8xl",
+      fontWeight: "font-bold",
+      color: "from-red-600 via-red-500 to-pink-600"
     },
     metadata: {
       parent: "hero-section",
@@ -108,6 +142,26 @@ const getInitialContent = (): Record<string, EditableElement> => ({
     metadata: {
       parent: "hero-section",
       buttonType: "primary"
+    }
+  },
+  "hero-secondary-cta": {
+    id: "hero-secondary-cta",
+    type: "button",
+    label: "Secondary CTA Button",
+    content: {
+      text: "Watch Demo",
+      href: "#demo"
+    },
+    styles: {
+      backgroundColor: "white/60",
+      textColor: "slate-700",
+      padding: "px-10 py-4",
+      borderRadius: "rounded-full",
+      fontSize: "text-lg"
+    },
+    metadata: {
+      parent: "hero-section",
+      buttonType: "secondary"
     }
   },
   "features-section": {
