@@ -26,6 +26,8 @@ interface AdminEditingContextType {
   loadInitialContent: () => void;
   isPublished: boolean;
   hasUnsavedChanges: boolean;
+  pageStructure: string[];
+  updatePageStructure: (newStructure: string[]) => void;
 }
 
 const AdminEditingContext = createContext<AdminEditingContextType | undefined>(
@@ -33,874 +35,242 @@ const AdminEditingContext = createContext<AdminEditingContextType | undefined>(
 );
 
 // Initial content structure with granular Hero, Features, and Pricing elements
-const getInitialContent = (): Record<string, EditableElement> => ({
-  "hero-section": {
-    id: "hero-section",
-    type: "section",
-    label: "Hero Section",
-    content: {
-      title: "Revolutionize ECG Analysis",
-      subtitle: "Transform complex cardiac data into clear, actionable insights with our AI-powered platform trusted by healthcare professionals worldwide.",
-      primaryCTA: "Try ECG Buddy",
-      secondaryCTA: "Watch Demo",
-      badge: "Trusted by 10,000+ Healthcare Professionals"
-    },
-    styles: {
-      backgroundColor: "from-red-50/30 via-white to-pink-50/20",
-      textColor: "slate-900",
-      padding: "py-32"
-    },
-    metadata: {
-      section: "hero",
-      priority: "high",
-      visible: true
-    }
-  },
-  "hero-badge": {
-    id: "hero-badge",
-    type: "text",
-    label: "Hero Badge",
-    content: {
-      text: "Trusted by 10,000+ Healthcare Professionals"
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-medium",
-      color: "slate-700"
-    },
-    metadata: {
-      parent: "hero-section",
-      editable: true
-    }
-  },
-  "hero-title-part1": {
-    id: "hero-title-part1",
-    type: "text",
-    label: "Hero Title Part 1",
-    content: {
-      text: "Revolutionize"
-    },
-    styles: {
-      fontSize: "text-6xl md:text-8xl",
-      fontWeight: "font-bold",
-      color: "from-slate-900 via-slate-800 to-slate-700"
-    },
-    metadata: {
-      parent: "hero-section",
-      editable: true
-    }
-  },
-  "hero-title-part2": {
-    id: "hero-title-part2",
-    type: "text",
-    label: "Hero Title Part 2",
-    content: {
-      text: "ECG Analysis"
-    },
-    styles: {
-      fontSize: "text-6xl md:text-8xl",
-      fontWeight: "font-bold",
-      color: "from-red-600 via-red-500 to-pink-600"
-    },
-    metadata: {
-      parent: "hero-section",
-      editable: true
-    }
-  },
-  "hero-subtitle": {
-    id: "hero-subtitle",
-    type: "text",
-    label: "Hero Subtitle",
-    content: {
-      text: "Transform complex cardiac data into clear, actionable insights with our AI-powered platform trusted by healthcare professionals worldwide."
-    },
-    styles: {
-      fontSize: "text-xl md:text-2xl",
-      color: "slate-600",
-      fontWeight: "font-light"
-    },
-    metadata: {
-      parent: "hero-section",
-      editable: true
-    }
-  },
-  "hero-primary-cta": {
-    id: "hero-primary-cta",
-    type: "button",
-    label: "Primary CTA Button",
-    content: {
-      text: "Try ECG Buddy",
-      href: "#mobile-download"
-    },
-    styles: {
-      backgroundColor: "from-red-500 via-red-600 to-pink-600",
-      textColor: "white",
-      padding: "px-10 py-4",
-      borderRadius: "rounded-full",
-      fontSize: "text-lg"
-    },
-    metadata: {
-      parent: "hero-section",
-      buttonType: "primary"
-    }
-  },
-  "hero-secondary-cta": {
-    id: "hero-secondary-cta",
-    type: "button",
-    label: "Secondary CTA Button",
-    content: {
-      text: "Watch Demo",
-      href: "#demo"
-    },
-    styles: {
-      backgroundColor: "white/60",
-      textColor: "slate-700",
-      padding: "px-10 py-4",
-      borderRadius: "rounded-full",
-      fontSize: "text-lg"
-    },
-    metadata: {
-      parent: "hero-section",
-      buttonType: "secondary"
-    }
-  },
-  "features-section": {
-    id: "features-section",
-    type: "section",
-    label: "Features Section",
-    content: {
-      title: "Professional-grade tools for modern healthcare",
-      subtitle: "Comprehensive suite of advanced features designed to enhance diagnostic accuracy and streamline cardiac care workflows for healthcare professionals.",
-      badge: "Core Features"
-    },
-    styles: {
-      backgroundColor: "from-slate-50 via-white to-gray-50",
-      padding: "py-32"
-    },
-    metadata: {
-      section: "features",
-      priority: "high",
-      visible: true
-    }
-  },
-  "features-badge": {
-    id: "features-badge",
-    type: "text",
-    label: "Features Badge",
-    content: {
-      text: "Core Features"
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-medium",
-      color: "slate-700"
-    },
-    metadata: {
-      parent: "features-section",
-      editable: true
-    }
-  },
-  "features-title-part1": {
-    id: "features-title-part1",
-    type: "text",
-    label: "Features Title Part 1",
-    content: {
-      text: "Professional-grade tools"
-    },
-    styles: {
-      fontSize: "text-5xl md:text-6xl",
-      fontWeight: "font-bold",
-      color: "slate-900"
-    },
-    metadata: {
-      parent: "features-section",
-      editable: true
-    }
-  },
-  "features-title-part2": {
-    id: "features-title-part2",
-    type: "text",
-    label: "Features Title Part 2",
-    content: {
-      text: "for modern healthcare"
-    },
-    styles: {
-      fontSize: "text-5xl md:text-6xl",
-      fontWeight: "font-bold",
-      color: "from-blue-600 via-purple-600 to-indigo-600"
-    },
-    metadata: {
-      parent: "features-section",
-      editable: true
-    }
-  },
-  "features-subtitle": {
-    id: "features-subtitle",
-    type: "text",
-    label: "Features Subtitle",
-    content: {
-      text: "Comprehensive suite of advanced features designed to enhance diagnostic accuracy and streamline cardiac care workflows for healthcare professionals."
-    },
-    styles: {
-      fontSize: "text-xl",
-      color: "slate-600"
-    },
-    metadata: {
-      parent: "features-section",
-      editable: true
-    }
-  },
-  // Category filters
-  "features-category-all": {
-    id: "features-category-all",
-    type: "text",
-    label: "Category: All Features",
-    content: {
-      text: "All Features",
-      count: 6
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-medium"
-    },
-    metadata: {
-      parent: "features-section",
-      categoryId: "all",
-      editable: true
-    }
-  },
-  "features-category-ai": {
-    id: "features-category-ai",
-    type: "text",
-    label: "Category: AI & ML",
-    content: {
-      text: "AI & ML",
-      count: 1
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-medium"
-    },
-    metadata: {
-      parent: "features-section",
-      categoryId: "ai",
-      editable: true
-    }
-  },
-  "features-category-performance": {
-    id: "features-category-performance",
-    type: "text",
-    label: "Category: Performance",
-    content: {
-      text: "Performance",
-      count: 1
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-medium"
-    },
-    metadata: {
-      parent: "features-section",
-      categoryId: "performance",
-      editable: true
-    }
-  },
-  "features-category-security": {
-    id: "features-category-security",
-    type: "text",
-    label: "Category: Security",
-    content: {
-      text: "Security",
-      count: 1
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-medium"
-    },
-    metadata: {
-      parent: "features-section",
-      categoryId: "security",
-      editable: true
-    }
-  },
-  "features-category-collaboration": {
-    id: "features-category-collaboration",
-    type: "text",
-    label: "Category: Collaboration",
-    content: {
-      text: "Collaboration",
-      count: 1
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-medium"
-    },
-    metadata: {
-      parent: "features-section",
-      categoryId: "collaboration",
-      editable: true
-    }
-  },
-  "features-category-analytics": {
-    id: "features-category-analytics",
-    type: "text",
-    label: "Category: Analytics",
-    content: {
-      text: "Analytics",
-      count: 1
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-medium"
-    },
-    metadata: {
-      parent: "features-section",
-      categoryId: "analytics",
-      editable: true
-    }
-  },
-  "features-category-integration": {
-    id: "features-category-integration",
-    type: "text",
-    label: "Category: Integration",
-    content: {
-      text: "Integration",
-      count: 1
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-medium"
-    },
-    metadata: {
-      parent: "features-section",
-      categoryId: "integration",
-      editable: true
-    }
-  },
-  // Feature cards
-  "feature-badge-ai-powered-analysis": {
-    id: "feature-badge-ai-powered-analysis",
-    type: "text",
-    label: "AI-Powered Analysis Badge",
-    content: {
-      text: "Most Popular"
-    },
-    styles: {
-      fontSize: "text-xs",
-      fontWeight: "font-semibold",
-      color: "slate-700"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "ai-powered-analysis",
-      editable: true
-    }
-  },
-  "feature-title-ai-powered-analysis": {
-    id: "feature-title-ai-powered-analysis",
-    type: "text",
-    label: "AI-Powered Analysis Title",
-    content: {
-      text: "AI-Powered Analysis"
-    },
-    styles: {
-      fontSize: "text-xl",
-      fontWeight: "font-bold",
-      color: "slate-900"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "ai-powered-analysis",
-      editable: true
-    }
-  },
-  "feature-description-ai-powered-analysis": {
-    id: "feature-description-ai-powered-analysis",
-    type: "text",
-    label: "AI-Powered Analysis Description",
-    content: {
-      text: "Advanced machine learning algorithms trained on millions of ECG patterns for unprecedented accuracy and reliability."
-    },
-    styles: {
-      fontSize: "text-sm",
-      color: "slate-600"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "ai-powered-analysis",
-      editable: true
-    }
-  },
-  "feature-rating-ai-powered-analysis": {
-    id: "feature-rating-ai-powered-analysis",
-    type: "text",
-    label: "AI-Powered Analysis Rating",
-    content: {
-      text: "4.9"
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-semibold",
-      color: "slate-700"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "ai-powered-analysis",
-      editable: true
-    }
-  },
-  "feature-stats-ai-powered-analysis": {
-    id: "feature-stats-ai-powered-analysis",
-    type: "text",
-    label: "AI-Powered Analysis Stats",
-    content: {
-      text: "99.2% Accuracy"
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-semibold",
-      color: "slate-900"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "ai-powered-analysis",
-      editable: true
-    }
-  },
-  "feature-highlight-ai-powered-analysis": {
-    id: "feature-highlight-ai-powered-analysis",
-    type: "text",
-    label: "AI-Powered Analysis Highlight",
-    content: {
-      text: "Deep Learning"
-    },
-    styles: {
-      fontSize: "text-xs",
-      color: "slate-500"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "ai-powered-analysis",
-      editable: true
-    }
-  },
-  "feature-benefit-ai-powered-analysis-0": {
-    id: "feature-benefit-ai-powered-analysis-0",
-    type: "text",
-    label: "AI-Powered Analysis Benefit 1",
-    content: {
-      text: "Real-time interpretation"
-    },
-    styles: {
-      fontSize: "text-sm",
-      color: "slate-600"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "ai-powered-analysis",
-      benefitIndex: 0,
-      editable: true
-    }
-  },
-  "feature-benefit-ai-powered-analysis-1": {
-    id: "feature-benefit-ai-powered-analysis-1",
-    type: "text",
-    label: "AI-Powered Analysis Benefit 2",
-    content: {
-      text: "Continuous learning"
-    },
-    styles: {
-      fontSize: "text-sm",
-      color: "slate-600"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "ai-powered-analysis",
-      benefitIndex: 1,
-      editable: true
-    }
-  },
-  "feature-benefit-ai-powered-analysis-2": {
-    id: "feature-benefit-ai-powered-analysis-2",
-    type: "text",
-    label: "AI-Powered Analysis Benefit 3",
-    content: {
-      text: "Pattern recognition"
-    },
-    styles: {
-      fontSize: "text-sm",
-      color: "slate-600"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "ai-powered-analysis",
-      benefitIndex: 2,
-      editable: true
-    }
-  },
-  // Real-time Processing feature
-  "feature-badge-real-time-processing": {
-    id: "feature-badge-real-time-processing",
-    type: "text",
-    label: "Real-time Processing Badge",
-    content: {
-      text: "Speed Champion"
-    },
-    styles: {
-      fontSize: "text-xs",
-      fontWeight: "font-semibold",
-      color: "slate-700"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "real-time-processing",
-      editable: true
-    }
-  },
-  "feature-title-real-time-processing": {
-    id: "feature-title-real-time-processing",
-    type: "text",
-    label: "Real-time Processing Title",
-    content: {
-      text: "Real-time Processing"
-    },
-    styles: {
-      fontSize: "text-xl",
-      fontWeight: "font-bold",
-      color: "slate-900"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "real-time-processing",
-      editable: true
-    }
-  },
-  "feature-description-real-time-processing": {
-    id: "feature-description-real-time-processing",
-    type: "text",
-    label: "Real-time Processing Description",
-    content: {
-      text: "Get comprehensive ECG analysis results in under 30 seconds with our optimized cloud processing engine."
-    },
-    styles: {
-      fontSize: "text-sm",
-      color: "slate-600"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "real-time-processing",
-      editable: true
-    }
-  },
-  "feature-rating-real-time-processing": {
-    id: "feature-rating-real-time-processing",
-    type: "text",
-    label: "Real-time Processing Rating",
-    content: {
-      text: "4.8"
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-semibold",
-      color: "slate-700"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "real-time-processing",
-      editable: true
-    }
-  },
-  "feature-stats-real-time-processing": {
-    id: "feature-stats-real-time-processing",
-    type: "text",
-    label: "Real-time Processing Stats",
-    content: {
-      text: "<30s Processing"
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-semibold",
-      color: "slate-900"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "real-time-processing",
-      editable: true
-    }
-  },
-  "feature-highlight-real-time-processing": {
-    id: "feature-highlight-real-time-processing",
-    type: "text",
-    label: "Real-time Processing Highlight",
-    content: {
-      text: "Lightning Fast"
-    },
-    styles: {
-      fontSize: "text-xs",
-      color: "slate-500"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "real-time-processing",
-      editable: true
-    }
-  },
-  "feature-benefit-real-time-processing-0": {
-    id: "feature-benefit-real-time-processing-0",
-    type: "text",
-    label: "Real-time Processing Benefit 1",
-    content: {
-      text: "Instant results"
-    },
-    styles: {
-      fontSize: "text-sm",
-      color: "slate-600"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "real-time-processing",
-      benefitIndex: 0,
-      editable: true
-    }
-  },
-  "feature-benefit-real-time-processing-1": {
-    id: "feature-benefit-real-time-processing-1",
-    type: "text",
-    label: "Real-time Processing Benefit 2",
-    content: {
-      text: "Cloud optimization"
-    },
-    styles: {
-      fontSize: "text-sm",
-      color: "slate-600"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "real-time-processing",
-      benefitIndex: 1,
-      editable: true
-    }
-  },
-  "feature-benefit-real-time-processing-2": {
-    id: "feature-benefit-real-time-processing-2",
-    type: "text",
-    label: "Real-time Processing Benefit 3",
-    content: {
-      text: "Batch processing"
-    },
-    styles: {
-      fontSize: "text-sm",
-      color: "slate-600"
-    },
-    metadata: {
-      parent: "features-section",
-      featureId: "real-time-processing",
-      benefitIndex: 2,
-      editable: true
-    }
-  },
-  // Pricing section
-  "pricing-section": {
-    id: "pricing-section",
-    type: "section",
-    label: "Pricing Section",
-    content: {
-      title: "Choose your plan",
-      subtitle: "Flexible credit-based pricing designed for healthcare professionals. Each credit equals one ECG analysis with our advanced AI system.",
-      badge: "Credit-Based Pricing"
-    },
-    styles: {
-      backgroundColor: "from-red-50/30 via-white to-pink-50/20",
-      padding: "py-20"
-    },
-    metadata: {
-      section: "pricing",
-      priority: "high",
-      visible: true
-    }
-  },
-  "pricing-badge": {
-    id: "pricing-badge",
-    type: "text",
-    label: "Pricing Badge",
-    content: {
-      text: "Credit-Based Pricing"
-    },
-    styles: {
-      fontSize: "text-sm",
-      fontWeight: "font-medium",
-      color: "slate-700"
-    },
-    metadata: {
-      parent: "pricing-section",
-      editable: true
-    }
-  },
-  "pricing-title-part1": {
-    id: "pricing-title-part1",
-    type: "text",
-    label: "Pricing Title Part 1",
-    content: {
-      text: "Choose your plan"
-    },
-    styles: {
-      fontSize: "text-4xl md:text-5xl",
-      fontWeight: "font-bold",
-      color: "from-slate-900 via-slate-800 to-slate-700"
-    },
-    metadata: {
-      parent: "pricing-section",
-      editable: true
-    }
-  },
-  "pricing-title-part2": {
-    id: "pricing-title-part2",
-    type: "text",
-    label: "Pricing Title Part 2",
-    content: {
-      text: "Start analyzing today"
-    },
-    styles: {
-      fontSize: "text-4xl md:text-5xl",
-      fontWeight: "font-bold",
-      color: "from-red-600 via-red-500 to-pink-600"
-    },
-    metadata: {
-      parent: "pricing-section",
-      editable: true
-    }
-  },
-  "pricing-subtitle": {
-    id: "pricing-subtitle",
-    type: "text",
-    label: "Pricing Subtitle",
-    content: {
-      text: "Flexible credit-based pricing designed for healthcare professionals. Each credit equals one ECG analysis with our advanced AI system."
-    },
-    styles: {
-      fontSize: "text-lg",
-      color: "slate-600"
-    },
-    metadata: {
-      parent: "pricing-section",
-      editable: true
-    }
-  },
-  // Pricing cards
-  "pricing-card-free": {
-    id: "pricing-card-free",
-    type: "card",
-    label: "Free Plan Card",
-    content: {
-      name: "Free",
-      description: "Perfect for individual doctors getting started",
-      price: { monthly: 0, yearly: 0 },
-      credits: {
-        amount: 10,
-        period: "daily",
-        description: "10 ECG analyses per day"
+const getInitialContent = (): { elements: Record<string, EditableElement>; pageStructure: string[] } => ({
+  elements: {
+    "hero-section": {
+      id: "hero-section",
+      type: "section",
+      label: "Hero Section",
+      content: {
+        title: "Revolutionize ECG Analysis",
+        subtitle: "Transform complex cardiac data into clear, actionable insights with our AI-powered platform trusted by healthcare professionals worldwide.",
+        primaryCTA: "Try ECG Buddy",
+        secondaryCTA: "Watch Demo",
+        badge: "Trusted by 10,000+ Healthcare Professionals"
       },
-      features: [
-        "10 daily ECG analyses",
-        "Basic AI interpretation", 
-        "Standard processing speed",
-        "Email support",
-        "Mobile app access",
-        "Basic reporting"
-      ],
-      buttonText: "Start Free Trial",
-      buttonLink: "#signup",
-      isPopular: false,
-      badge: null,
-      icon: "Zap"
+      styles: {
+        backgroundColor: "from-red-50/30 via-white to-pink-50/20",
+        textColor: "slate-900",
+        padding: "py-32"
+      },
+      metadata: {
+        section: "hero",
+        priority: "high",
+        visible: true
+      }
     },
-    styles: {
-      gradient: "from-slate-500 to-slate-600",
-      iconBackground: "from-slate-500 to-slate-600"
+    "hero-badge": {
+      id: "hero-badge",
+      type: "text",
+      label: "Hero Badge",
+      content: {
+        text: "Trusted by 10,000+ Healthcare Professionals"
+      },
+      styles: {
+        fontSize: "text-sm",
+        fontWeight: "font-medium",
+        color: "slate-700"
+      },
+      metadata: {
+        parent: "hero-section",
+        editable: true
+      }
     },
-    metadata: {
-      parent: "pricing-section",
-      planId: "free",
-      planType: "free",
-      editable: true
+    "hero-title-part1": {
+      id: "hero-title-part1",
+      type: "text",
+      label: "Hero Title Part 1",
+      content: {
+        text: "Revolutionize"
+      },
+      styles: {
+        fontSize: "text-6xl md:text-8xl",
+        fontWeight: "font-bold",
+        color: "from-slate-900 via-slate-800 to-slate-700"
+      },
+      metadata: {
+        parent: "hero-section",
+        editable: true
+      }
+    },
+    "hero-title-part2": {
+      id: "hero-title-part2",
+      type: "text",
+      label: "Hero Title Part 2",
+      content: {
+        text: "ECG Analysis"
+      },
+      styles: {
+        fontSize: "text-6xl md:text-8xl",
+        fontWeight: "font-bold",
+        color: "from-red-600 via-red-500 to-pink-600"
+      },
+      metadata: {
+        parent: "hero-section",
+        editable: true
+      }
+    },
+    "hero-subtitle": {
+      id: "hero-subtitle",
+      type: "text",
+      label: "Hero Subtitle",
+      content: {
+        text: "Transform complex cardiac data into clear, actionable insights with our AI-powered platform trusted by healthcare professionals worldwide."
+      },
+      styles: {
+        fontSize: "text-xl md:text-2xl",
+        color: "slate-600",
+        fontWeight: "font-light"
+      },
+      metadata: {
+        parent: "hero-section",
+        editable: true
+      }
+    },
+    "hero-primary-cta": {
+      id: "hero-primary-cta",
+      type: "button",
+      label: "Primary CTA Button",
+      content: {
+        text: "Try ECG Buddy",
+        href: "#mobile-download"
+      },
+      styles: {
+        backgroundColor: "from-red-500 via-red-600 to-pink-600",
+        textColor: "white",
+        padding: "px-10 py-4",
+        borderRadius: "rounded-full",
+        fontSize: "text-lg"
+      },
+      metadata: {
+        parent: "hero-section",
+        buttonType: "primary"
+      }
+    },
+    "hero-secondary-cta": {
+      id: "hero-secondary-cta",
+      type: "button",
+      label: "Secondary CTA Button",
+      content: {
+        text: "Watch Demo",
+        href: "#demo"
+      },
+      styles: {
+        backgroundColor: "white/60",
+        textColor: "slate-700",
+        padding: "px-10 py-4",
+        borderRadius: "rounded-full",
+        fontSize: "text-lg"
+      },
+      metadata: {
+        parent: "hero-section",
+        buttonType: "secondary"
+      }
+    },
+    "features-section": {
+      id: "features-section",
+      type: "section",
+      label: "Features Section",
+      content: {
+        title: "Professional-grade tools for modern healthcare",
+        subtitle: "Comprehensive suite of advanced features designed to enhance diagnostic accuracy and streamline cardiac care workflows for healthcare professionals.",
+        badge: "Core Features"
+      },
+      styles: {
+        backgroundColor: "from-slate-50 via-white to-gray-50",
+        padding: "py-32"
+      },
+      metadata: {
+        section: "features",
+        priority: "high",
+        visible: true
+      }
+    },
+    "pricing-section": {
+      id: "pricing-section",
+      type: "section",
+      label: "Pricing Section",
+      content: {
+        title: "Choose your plan",
+        subtitle: "Flexible credit-based pricing designed for healthcare professionals. Each credit equals one ECG analysis with our advanced AI system.",
+        badge: "Credit-Based Pricing"
+      },
+      styles: {
+        backgroundColor: "from-red-50/30 via-white to-pink-50/20",
+        padding: "py-20"
+      },
+      metadata: {
+        section: "pricing",
+        priority: "high",
+        visible: true
+      }
+    },
+    "mobile-download-section": {
+      id: "mobile-download-section",
+      type: "section",
+      label: "Mobile Download Section",
+      content: {
+        title: "Take ECG Buddy everywhere you go",
+        subtitle: "Access powerful ECG analysis on any device. Download our native apps for seamless real-time analysis, cloud sync, and platform-specific integrations.",
+        badge: "Mobile & Desktop Apps"
+      },
+      styles: {
+        backgroundColor: "from-red-50/30 via-white to-pink-50/20",
+        padding: "py-32"
+      },
+      metadata: {
+        section: "mobile-download",
+        priority: "medium",
+        visible: true
+      }
+    },
+    "faq-section": {
+      id: "faq-section",
+      type: "section",
+      label: "FAQ Section",
+      content: {
+        title: "Got questions? We have answers",
+        subtitle: "Everything you need to know about ECG Buddy, from getting started to advanced features and enterprise solutions.",
+        badge: "Frequently Asked Questions"
+      },
+      styles: {
+        backgroundColor: "from-red-50/30 via-white to-pink-50/20",
+        padding: "py-32"
+      },
+      metadata: {
+        section: "faq",
+        priority: "medium",
+        visible: true
+      }
+    },
+    "about-arpi-section": {
+      id: "about-arpi-section",
+      type: "section",
+      label: "About ARPI Section",
+      content: {
+        title: "Leading AI Healthcare Innovation",
+        subtitle: "ARPI Inc. develops cutting-edge artificial intelligence solutions for healthcare, with ECG Buddy as our flagship product revolutionizing cardiac care.",
+        badge: "About ARPI"
+      },
+      styles: {
+        backgroundColor: "from-slate-50 via-white to-gray-50",
+        padding: "py-32"
+      },
+      metadata: {
+        section: "about-arpi",
+        priority: "medium",
+        visible: true
+      }
     }
   },
-  "pricing-card-pro": {
-    id: "pricing-card-pro",
-    type: "card",
-    label: "Pro Plan Card",
-    content: {
-      name: "Pro",
-      description: "Advanced features for healthcare professionals",
-      price: { monthly: 99, yearly: 990 },
-      credits: {
-        amount: "Unlimited",
-        period: "monthly",
-        description: "Unlimited ECG analyses"
-      },
-      features: [
-        "Unlimited ECG analyses",
-        "Advanced AI interpretation",
-        "Priority processing (<15s)",
-        "24/7 priority support",
-        "All platform access",
-        "Advanced reporting & analytics"
-      ],
-      buttonText: "Start Pro Trial",
-      buttonLink: "#pro-signup",
-      isPopular: true,
-      badge: "Most Popular",
-      icon: "Crown"
-    },
-    styles: {
-      gradient: "from-red-500 to-pink-600",
-      iconBackground: "from-red-500 to-pink-600"
-    },
-    metadata: {
-      parent: "pricing-section",
-      planId: "pro",
-      planType: "pro",
-      editable: true
-    }
-  },
-  "pricing-card-enterprise": {
-    id: "pricing-card-enterprise",
-    type: "card",
-    label: "Enterprise Plan Card",
-    content: {
-      name: "Enterprise",
-      description: "Custom solutions for hospitals & health systems",
-      price: { monthly: "Custom", yearly: "Custom" },
-      credits: {
-        amount: "Custom",
-        period: "unlimited",
-        description: "Custom credit allocation"
-      },
-      features: [
-        "Custom credit allocation",
-        "White-label solutions", 
-        "Dedicated infrastructure",
-        "Custom AI model training",
-        "Dedicated account manager",
-        "SLA guarantees"
-      ],
-      buttonText: "Contact Sales",
-      buttonLink: "#contact-sales",
-      isPopular: false,
-      badge: "Enterprise",
-      icon: "Building2"
-    },
-    styles: {
-      gradient: "from-purple-500 to-indigo-600",
-      iconBackground: "from-purple-500 to-indigo-600"
-    },
-    metadata: {
-      parent: "pricing-section",
-      planId: "enterprise",
-      planType: "enterprise",
-      editable: true
-    }
-  }
+  pageStructure: [
+    "hero-section",
+    "features-section", 
+    "pricing-section",
+    "mobile-download-section",
+    "faq-section",
+    "about-arpi-section"
+  ]
 });
 
 export const AdminEditingProvider: React.FC<{ children: ReactNode }> = ({
@@ -910,6 +280,7 @@ export const AdminEditingProvider: React.FC<{ children: ReactNode }> = ({
   const [isEditMode, setIsEditMode] = useState(true);
   const [hoveredElement, setHoveredElement] = useState<string | null>(null);
   const [elements, setElements] = useState<Record<string, EditableElement>>({});
+  const [pageStructure, setPageStructure] = useState<string[]>([]);
   const [isPublished, setIsPublished] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
@@ -925,28 +296,39 @@ export const AdminEditingProvider: React.FC<{ children: ReactNode }> = ({
   // Track changes
   useEffect(() => {
     const savedContent = localStorage.getItem('ecg-buddy-admin-content');
+    const savedPageStructure = localStorage.getItem('ecg-buddy-admin-page-structure');
     const publishedContent = localStorage.getItem('ecg-buddy-admin-published-content');
+    const publishedPageStructure = localStorage.getItem('ecg-buddy-admin-published-page-structure');
     
-    if (savedContent && publishedContent) {
-      const hasChanges = savedContent !== publishedContent;
-      setHasUnsavedChanges(hasChanges);
-    } else if (savedContent) {
+    if (savedContent && publishedContent && savedPageStructure && publishedPageStructure) {
+      const hasContentChanges = savedContent !== publishedContent;
+      const hasStructureChanges = savedPageStructure !== publishedPageStructure;
+      setHasUnsavedChanges(hasContentChanges || hasStructureChanges);
+    } else if (savedContent || savedPageStructure) {
       setHasUnsavedChanges(true);
     }
-  }, [elements]);
+  }, [elements, pageStructure]);
 
   const loadInitialContent = () => {
     const savedContent = localStorage.getItem('ecg-buddy-admin-content');
-    if (savedContent) {
+    const savedPageStructure = localStorage.getItem('ecg-buddy-admin-page-structure');
+    
+    if (savedContent && savedPageStructure) {
       try {
         const parsedContent = JSON.parse(savedContent);
+        const parsedPageStructure = JSON.parse(savedPageStructure);
         setElements(parsedContent);
+        setPageStructure(parsedPageStructure);
       } catch (error) {
         console.error('Failed to load saved content:', error);
-        setElements(getInitialContent());
+        const initialData = getInitialContent();
+        setElements(initialData.elements);
+        setPageStructure(initialData.pageStructure);
       }
     } else {
-      setElements(getInitialContent());
+      const initialData = getInitialContent();
+      setElements(initialData.elements);
+      setPageStructure(initialData.pageStructure);
     }
   };
 
@@ -963,6 +345,11 @@ export const AdminEditingProvider: React.FC<{ children: ReactNode }> = ({
     setHasUnsavedChanges(true);
   };
 
+  const updatePageStructure = (newStructure: string[]) => {
+    setPageStructure(newStructure);
+    setHasUnsavedChanges(true);
+  };
+
   const registerElement = (element: EditableElement) => {
     setElements(prev => ({
       ...prev,
@@ -973,15 +360,18 @@ export const AdminEditingProvider: React.FC<{ children: ReactNode }> = ({
   const saveChanges = () => {
     try {
       const contentString = JSON.stringify(elements);
-      localStorage.setItem('ecg-buddy-admin-content', contentString);
+      const pageStructureString = JSON.stringify(pageStructure);
       
-      console.log('Changes saved successfully:', elements);
+      localStorage.setItem('ecg-buddy-admin-content', contentString);
+      localStorage.setItem('ecg-buddy-admin-page-structure', pageStructureString);
+      
+      console.log('Changes saved successfully:', { elements, pageStructure });
       
       // You can replace this with an API call to your backend
       // await fetch('/api/admin/save-content', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(elements)
+      //   body: JSON.stringify({ elements, pageStructure })
       // });
       
       // Show success notification
@@ -989,8 +379,12 @@ export const AdminEditingProvider: React.FC<{ children: ReactNode }> = ({
       
       // Update unsaved changes status
       const publishedContent = localStorage.getItem('ecg-buddy-admin-published-content');
-      if (publishedContent) {
-        setHasUnsavedChanges(contentString !== publishedContent);
+      const publishedPageStructure = localStorage.getItem('ecg-buddy-admin-published-page-structure');
+      
+      if (publishedContent && publishedPageStructure) {
+        const hasContentChanges = contentString !== publishedContent;
+        const hasStructureChanges = pageStructureString !== publishedPageStructure;
+        setHasUnsavedChanges(hasContentChanges || hasStructureChanges);
       }
       
     } catch (error) {
@@ -1002,19 +396,22 @@ export const AdminEditingProvider: React.FC<{ children: ReactNode }> = ({
   const publishChanges = () => {
     try {
       const contentString = JSON.stringify(elements);
+      const pageStructureString = JSON.stringify(pageStructure);
       
       // Save current content as published version
       localStorage.setItem('ecg-buddy-admin-content', contentString);
+      localStorage.setItem('ecg-buddy-admin-page-structure', pageStructureString);
       localStorage.setItem('ecg-buddy-admin-published-content', contentString);
+      localStorage.setItem('ecg-buddy-admin-published-page-structure', pageStructureString);
       localStorage.setItem('ecg-buddy-admin-published', 'true');
       
-      console.log('Content published successfully:', elements);
+      console.log('Content published successfully:', { elements, pageStructure });
       
       // You can replace this with an API call to your backend
       // await fetch('/api/admin/publish-content', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(elements)
+      //   body: JSON.stringify({ elements, pageStructure })
       // });
       
       setIsPublished(true);
@@ -1046,6 +443,8 @@ export const AdminEditingProvider: React.FC<{ children: ReactNode }> = ({
         loadInitialContent,
         isPublished,
         hasUnsavedChanges,
+        pageStructure,
+        updatePageStructure,
       }}
     >
       {children}
