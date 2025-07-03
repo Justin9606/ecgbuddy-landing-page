@@ -56,3 +56,7 @@ export const BRAND_COLORS = {
   ACCENT: "rose",
   NEUTRAL: "slate",
 } as const;
+
+// Language and internationalization
+export { LanguageProvider, useLanguage } from "@/lib/contexts/LanguageContext";
+export type { Language, Translations } from "@/lib/contexts/LanguageContext";

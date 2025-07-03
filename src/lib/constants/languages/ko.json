@@ -1,0 +1,236 @@
+{
+  "header": {
+    "logo": "ECG Buddy",
+    "navigation": {
+      "about": "회사 소개",
+      "products": "ECG Buddy",
+      "research": "연구",
+      "faq": "FAQ"
+    },
+    "subNavigation": {
+      "about": {
+        "company": "회사 개요",
+        "blog": "블로그",
+        "media": "미디어"
+      },
+      "products": {
+        "userGuide": "사용법",
+        "securityPrivacy": "보안보고서 해석방법",
+        "realTimeAnalysis": "지원 심전도 양식"
+      },
+      "research": {
+        "papers": "논문",
+        "whitepapers": "학회발표",
+        "researchNetwork": "연구자 네트워크",
+        "researchApplication": "연구자 신청"
+      }
+    },
+    "cta": {
+      "tryEcgBuddy": "ECG Buddy 체험하기",
+      "getStarted": "시작하기"
+    },
+
+    "languages": [
+      {
+        "code": "ko",
+        "name": "한국어",
+        "flag": "🇰🇷"
+      }
+    ]
+  },
+  "hero": {
+    "badge": "AI 기반 심전도 분석",
+    "title": {
+      "main": "첨단 심전도 분석",
+      "highlight": "AI로 구현"
+    },
+    "subtitle": "전 세계 의료진을 위한 즉각적이고 정확한 심전도 해석을 제공하는 혁신적인 인공지능 기술입니다.",
+    "cta": {
+      "primary": "ECG Buddy 체험하기",
+      "secondary": "데모 보기",
+      "learnMore": "자세히 알아보기"
+    },
+    "stats": {
+      "accuracy": {
+        "value": "99.2%",
+        "label": "정확도"
+      },
+      "analyses": {
+        "value": "100만+",
+        "label": "심전도 분석"
+      },
+      "hospitals": {
+        "value": "500+",
+        "label": "파트너 병원"
+      }
+    }
+  },
+  "features": {
+    "badge": "핵심 기능",
+    "title": {
+      "main": "지능형 심전도 분석",
+      "highlight": "간단하게"
+    },
+    "subtitle": "고급 AI 알고리즘이 임상급 정밀도로 즉각적이고 정확한 심전도 해석을 제공합니다.",
+    "items": [
+      {
+        "title": "실시간 분석",
+        "description": "AI 기반 분석으로 몇 초 만에 결과를 제공하는 즉각적인 심전도 해석.",
+        "benefits": ["즉시 결과", "임상 정확도", "24시간 이용 가능"]
+      },
+      {
+        "title": "다중 리드 지원",
+        "description": "12리드, 6리드, 단일 리드 심전도 형식을 지원하는 포괄적인 분석.",
+        "benefits": ["범용 호환성", "유연한 입력", "표준 준수"]
+      },
+      {
+        "title": "임상 통합",
+        "description": "기존 병원 시스템 및 전자 건강 기록과의 원활한 통합.",
+        "benefits": ["EMR 통합", "워크플로우 최적화", "데이터 보안"]
+      }
+    ]
+  },
+  "about": {
+    "badge": "ARPI 소개",
+    "title": {
+      "main": "AI 헬스케어",
+      "highlight": "혁신 선도"
+    },
+    "subtitle": "ARPI Inc.는 의료용 첨단 인공지능 솔루션을 개발하며, ECG Buddy를 통해 심장 치료 혁신을 이끌고 있습니다.",
+    "milestones": [
+      {
+        "year": "2021년 7월",
+        "title": "ARPI Inc. 설립",
+        "description": "인공지능과 머신러닝 기술을 통해 의료를 혁신한다는 사명으로 ARPI Inc. 설립",
+        "achievement": "회사 설립",
+        "metrics": ["설립", "AI 집중", "헬스케어"]
+      },
+      {
+        "year": "2021년 11월",
+        "title": "시드 펀딩 완료",
+        "description": "AI 헬스케어 개발 가속화와 심전도 분석 기술 핵심 팀 구축을 위한 시드 펀딩 성공적 조달",
+        "achievement": "초기 투자 유치",
+        "metrics": ["시드 라운드", "팀 확장", "연구개발"]
+      },
+      {
+        "year": "2023년 5월",
+        "title": "프리-A 라운드 완료",
+        "description": "운영 확장, AI 알고리즘 개선, 규제 승인 준비를 위한 프리-시리즈 A 펀딩 조달",
+        "achievement": "성장 투자 유치",
+        "metrics": ["프리-A 라운드", "AI 개선", "규모 확장"]
+      },
+      {
+        "year": "2024년 1월",
+        "title": "식약처 승인 획득",
+        "description": "ECG Buddy가 한국 식품의약품안전처(MFDS) 승인을 받아 주요 규제 이정표 달성",
+        "achievement": "규제 승인",
+        "metrics": ["식약처 승인", "규제", "시장 출시"]
+      }
+    ],
+    "products": [
+      {
+        "name": "ECG Buddy",
+        "description": "의료진을 위한 즉각적이고 정확한 심장 리듬 해석을 제공하는 AI 기반 심전도 분석 플랫폼.",
+        "status": "서비스 중",
+        "users": "1만+",
+        "accuracy": "99.2%"
+      },
+      {
+        "name": "심장 AI 스위트",
+        "description": "부정맥 감지, 위험 평가, 예측 분석을 포함한 포괄적인 심장 분석 도구.",
+        "status": "출시 예정",
+        "users": "베타",
+        "accuracy": "98.8%"
+      },
+      {
+        "name": "모바일 ECG 앱",
+        "description": "개인 건강 추적 및 조기 발견을 위한 소비자용 심전도 모니터링 애플리케이션.",
+        "status": "개발 중",
+        "users": "미정",
+        "accuracy": "97.5%"
+      }
+    ]
+  },
+  "faq": {
+    "badge": "자주 묻는 질문",
+    "title": {
+      "main": "일반적인 질문",
+      "highlight": "ECG Buddy 관련"
+    },
+    "subtitle": "AI 기반 심전도 분석 플랫폼에 대해 가장 자주 묻는 질문들의 답변을 찾아보세요.",
+    "items": [
+      {
+        "question": "ECG Buddy의 분석 정확도는 어느 정도인가요?",
+        "answer": "ECG Buddy는 99.2%의 심전도 해석 정확도를 달성하며, 500개 이상의 의료 시설에서의 광범위한 임상 시험과 실제 배포를 통해 검증되었습니다."
+      },
+      {
+        "question": "ECG Buddy는 임상 사용 승인을 받았나요?",
+        "answer": "네, ECG Buddy는 한국 식품의약품안전처(MFDS) 승인을 받았으며 의료 환경에서의 임상 사용 인증을 받았습니다."
+      },
+      {
+        "question": "ECG Buddy는 어떤 심전도 형식을 지원하나요?",
+        "answer": "ECG Buddy는 12리드, 6리드, 단일 리드 심전도를 포함한 여러 형식을 지원하며, DICOM 및 SCP-ECG와 같은 표준 업계 형식과 호환됩니다."
+      },
+      {
+        "question": "ECG Buddy는 기존 시스템과 어떻게 통합되나요?",
+        "answer": "ECG Buddy는 API와 직접 EMR 연결을 통해 원활한 통합을 제공하며, 병원 시스템과의 상호 운용성을 위해 HL7 FHIR 표준을 지원합니다."
+      },
+      {
+        "question": "환자 데이터 보호를 위한 보안 조치는 무엇인가요?",
+        "answer": "ECG Buddy는 환자 데이터 보호를 위해 종단 간 암호화, HIPAA 준수, SOC 2 Type II 인증을 포함한 엔터프라이즈급 보안을 사용합니다."
+      }
+    ]
+  },
+  "mobileDownload": {
+    "badge": "ECG Buddy 받기",
+    "title": {
+      "main": "ECG Buddy 다운로드",
+      "highlight": "오늘 시작하기"
+    },
+    "subtitle": "AI 기반 심전도 분석의 힘을 경험해보세요. 의료진과 의료 기관을 위해 제공됩니다.",
+    "platforms": {
+      "web": "웹 플랫폼",
+      "ios": "iOS 앱",
+      "android": "안드로이드 앱"
+    },
+    "cta": {
+      "primary": "지금 시작하기",
+      "secondary": "데모 요청"
+    }
+  },
+  "footer": {
+    "company": {
+      "name": "ARPI Inc.",
+      "description": "생명을 구하는 혁신 기술로 AI 기반 헬스케어 솔루션의 미래를 선도합니다.",
+      "copyright": "© 2024 ARPI Inc. 모든 권리 보유."
+    },
+    "links": {
+      "product": {
+        "title": "제품",
+        "items": ["ECG Buddy", "기능", "가격", "API 문서"]
+      },
+      "company": {
+        "title": "회사",
+        "items": ["회사 소개", "채용", "보도자료", "연락처"]
+      },
+      "resources": {
+        "title": "리소스",
+        "items": ["블로그", "연구 논문", "사용 가이드", "지원"]
+      },
+      "legal": {
+        "title": "법적 고지",
+        "items": ["개인정보 처리방침", "서비스 약관", "보안", "규정 준수"]
+      }
+    },
+    "contact": {
+      "email": "contact@arpi.ai",
+      "phone": "+82-2-1234-5678",
+      "address": "서울, 대한민국"
+    },
+    "social": {
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter",
+      "github": "GitHub"
+    }
+  }
+}

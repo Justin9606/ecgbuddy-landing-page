@@ -1,0 +1,253 @@
+{
+  "header": {
+    "logo": "ECG Buddy",
+    "navigation": {
+      "about": "About Us",
+      "products": "ECG Buddy",
+      "research": "Research",
+      "faq": "FAQ"
+    },
+    "subNavigation": {
+      "about": {
+        "company": "Company Overview",
+        "blog": "Blog",
+        "media": "Media"
+      },
+      "products": {
+        "userGuide": "User Guide",
+        "securityPrivacy": "Security & Privacy",
+        "realTimeAnalysis": "Real-time Analysis"
+      },
+      "research": {
+        "papers": "Papers",
+        "whitepapers": "Whitepapers",
+        "researchNetwork": "Research Network",
+        "researchApplication": "Research Application"
+      }
+    },
+    "cta": {
+      "tryEcgBuddy": "Try ECG Buddy",
+      "getStarted": "Get Started"
+    },
+
+    "languages": [
+      {
+        "code": "en",
+        "name": "English",
+        "flag": "🇺🇸"
+      }
+    ]
+  },
+  "hero": {
+    "badge": "AI-Powered ECG Analysis",
+    "title": {
+      "main": "Advanced ECG Analysis",
+      "highlight": "Powered by AI"
+    },
+    "subtitle": "Revolutionary artificial intelligence technology that provides instant, accurate ECG interpretation for healthcare professionals worldwide.",
+    "cta": {
+      "primary": "Try ECG Buddy Now",
+      "secondary": "Watch Demo",
+      "learnMore": "Learn More"
+    },
+    "stats": {
+      "accuracy": {
+        "value": "99.2%",
+        "label": "Accuracy Rate"
+      },
+      "analyses": {
+        "value": "1M+",
+        "label": "ECG Analyses"
+      },
+      "hospitals": {
+        "value": "500+",
+        "label": "Partner Hospitals"
+      }
+    }
+  },
+  "features": {
+    "badge": "Core Features",
+    "title": {
+      "main": "Intelligent ECG Analysis",
+      "highlight": "Made Simple"
+    },
+    "subtitle": "Advanced AI algorithms provide instant, accurate ECG interpretation with clinical-grade precision.",
+    "items": [
+      {
+        "title": "Real-time Analysis",
+        "description": "Instant ECG interpretation with AI-powered analysis providing results in seconds.",
+        "benefits": [
+          "Immediate Results",
+          "Clinical Accuracy",
+          "24/7 Availability"
+        ]
+      },
+      {
+        "title": "Multi-lead Support",
+        "description": "Comprehensive analysis supporting 12-lead, 6-lead, and single-lead ECG formats.",
+        "benefits": [
+          "Universal Compatibility",
+          "Flexible Input",
+          "Standard Compliance"
+        ]
+      },
+      {
+        "title": "Clinical Integration",
+        "description": "Seamless integration with existing hospital systems and electronic health records.",
+        "benefits": [
+          "EMR Integration",
+          "Workflow Optimization",
+          "Data Security"
+        ]
+      }
+    ]
+  },
+  "about": {
+    "badge": "About ARPI",
+    "title": {
+      "main": "Leading AI Healthcare",
+      "highlight": "Innovation"
+    },
+    "subtitle": "ARPI Inc. develops cutting-edge artificial intelligence solutions for healthcare, with ECG Buddy as our flagship product revolutionizing cardiac care.",
+    "milestones": [
+      {
+        "year": "July 2021",
+        "title": "ARPI Inc. Founded",
+        "description": "ARPI Inc. established with the mission to revolutionize healthcare through artificial intelligence and machine learning technologies",
+        "achievement": "Company Launch",
+        "metrics": ["Founded", "AI Focus", "Healthcare"]
+      },
+      {
+        "year": "November 2021",
+        "title": "Seed Funding Completed",
+        "description": "Successfully raised seed funding to accelerate AI healthcare development and build the core team for ECG analysis technology",
+        "achievement": "Initial Funding",
+        "metrics": ["Seed Round", "Team Growth", "R&D"]
+      },
+      {
+        "year": "May 2023",
+        "title": "Pre-A Round Completed",
+        "description": "Raised Pre-Series A funding to scale operations, enhance AI algorithms, and prepare for regulatory approvals",
+        "achievement": "Growth Funding",
+        "metrics": ["Pre-A Round", "AI Enhancement", "Scale Up"]
+      },
+      {
+        "year": "January 2024",
+        "title": "MFDS Approval Received",
+        "description": "ECG Buddy received approval from Korea's Ministry of Food and Drug Safety (MFDS), marking a major regulatory milestone",
+        "achievement": "Regulatory Approval",
+        "metrics": ["MFDS Approved", "Regulatory", "Market Ready"]
+      }
+    ],
+    "products": [
+      {
+        "name": "ECG Buddy",
+        "description": "AI-powered ECG analysis platform providing instant, accurate cardiac rhythm interpretation for healthcare professionals.",
+        "status": "Live",
+        "users": "10K+",
+        "accuracy": "99.2%"
+      },
+      {
+        "name": "Cardiac AI Suite",
+        "description": "Comprehensive cardiac analysis tools including arrhythmia detection, risk assessment, and predictive analytics.",
+        "status": "Coming Soon",
+        "users": "Beta",
+        "accuracy": "98.8%"
+      },
+      {
+        "name": "Mobile ECG App",
+        "description": "Consumer-grade ECG monitoring application for personal health tracking and early detection.",
+        "status": "Development",
+        "users": "TBD",
+        "accuracy": "97.5%"
+      }
+    ]
+  },
+  "faq": {
+    "badge": "Frequently Asked Questions",
+    "title": {
+      "main": "Common Questions",
+      "highlight": "About ECG Buddy"
+    },
+    "subtitle": "Find answers to the most commonly asked questions about our AI-powered ECG analysis platform.",
+    "items": [
+      {
+        "question": "How accurate is ECG Buddy's analysis?",
+        "answer": "ECG Buddy achieves 99.2% accuracy in ECG interpretation, validated through extensive clinical trials and real-world deployment in over 500 healthcare facilities."
+      },
+      {
+        "question": "Is ECG Buddy approved for clinical use?",
+        "answer": "Yes, ECG Buddy has received approval from Korea's Ministry of Food and Drug Safety (MFDS) and is certified for clinical use in healthcare settings."
+      },
+      {
+        "question": "What ECG formats does ECG Buddy support?",
+        "answer": "ECG Buddy supports multiple formats including 12-lead, 6-lead, and single-lead ECGs, with compatibility for standard industry formats like DICOM and SCP-ECG."
+      },
+      {
+        "question": "How does ECG Buddy integrate with existing systems?",
+        "answer": "ECG Buddy offers seamless integration through APIs and direct EMR connectivity, supporting HL7 FHIR standards for interoperability with hospital systems."
+      },
+      {
+        "question": "What security measures protect patient data?",
+        "answer": "ECG Buddy employs enterprise-grade security including end-to-end encryption, HIPAA compliance, and SOC 2 Type II certification to ensure patient data protection."
+      }
+    ]
+  },
+  "mobileDownload": {
+    "badge": "Get ECG Buddy",
+    "title": {
+      "main": "Download ECG Buddy",
+      "highlight": "Start Today"
+    },
+    "subtitle": "Experience the power of AI-driven ECG analysis. Available for healthcare professionals and medical institutions.",
+    "platforms": {
+      "web": "Web Platform",
+      "ios": "iOS App",
+      "android": "Android App"
+    },
+    "cta": {
+      "primary": "Get Started Now",
+      "secondary": "Request Demo"
+    }
+  },
+  "footer": {
+    "company": {
+      "name": "ARPI Inc.",
+      "description": "Leading the future of AI-powered healthcare solutions with innovative technology that saves lives.",
+      "copyright": "© 2024 ARPI Inc. All rights reserved."
+    },
+    "links": {
+      "product": {
+        "title": "Product",
+        "items": ["ECG Buddy", "Features", "Pricing", "API Documentation"]
+      },
+      "company": {
+        "title": "Company",
+        "items": ["About Us", "Careers", "Press", "Contact"]
+      },
+      "resources": {
+        "title": "Resources",
+        "items": ["Blog", "Research Papers", "User Guide", "Support"]
+      },
+      "legal": {
+        "title": "Legal",
+        "items": [
+          "Privacy Policy",
+          "Terms of Service",
+          "Security",
+          "Compliance"
+        ]
+      }
+    },
+    "contact": {
+      "email": "contact@arpi.ai",
+      "phone": "+82-2-1234-5678",
+      "address": "Seoul, South Korea"
+    },
+    "social": {
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter",
+      "github": "GitHub"
+    }
+  }
+}

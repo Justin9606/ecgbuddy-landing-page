@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
+import { LanguageProvider } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "ECG Buddy - Revolutionize ECG Analysis",
@@ -34,7 +35,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <LanguageProvider>{children}</LanguageProvider>
+      </body>
     </html>
   );
 }
