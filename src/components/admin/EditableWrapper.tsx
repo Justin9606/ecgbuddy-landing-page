@@ -1,9 +1,9 @@
 "use client";
 
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useState, useRef } from "react";
 import { useAdminEditing, EditableElement } from "@/lib/contexts/AdminEditingContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { Edit3, MousePointer } from "lucide-react";
+import { Edit3, MousePointer, Type } from "lucide-react";
 
 interface EditableWrapperProps {
   id: string;
@@ -33,12 +33,19 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
     hoveredElement,
     setHoveredElement,
     elements,
+    updateElement,
+    registerElement,
   } = useAdminEditing();
+
+  const [isInlineEditing, setIsInlineEditing] = useState(false);
+  const [inlineContent, setInlineContent] = useState("");
+  const editableRef = useRef<HTMLDivElement>(null);
 
   const isSelected = selectedElement?.id === id;
   const isHovered = hoveredElement === id;
+  const elementData = elements[id];
 
-  // Register this element
+  // Register this element on mount
   useEffect(() => {
     const element: EditableElement = {
       id,
@@ -49,11 +56,15 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
       metadata,
     };
     
-    // Store element data for editing
-    if (!elements[id]) {
-      // Initial registration - you might want to load from your CMS here
+    registerElement(element);
+  }, [id, type, label, content, styles, metadata, registerElement]);
+
+  // Initialize inline content
+  useEffect(() => {
+    if (elementData?.content?.text) {
+      setInlineContent(elementData.content.text);
     }
-  }, [id, type, label, content, styles, metadata, elements]);
+  }, [elementData?.content?.text]);
 
   const handleClick = (e: React.MouseEvent) => {
     if (!isEditMode) return;
@@ -61,7 +72,7 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
     e.preventDefault();
     e.stopPropagation();
     
-    const element: EditableElement = {
+    const element: EditableElement = elementData || {
       id,
       type,
       label,
@@ -71,6 +82,61 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
     };
     
     setSelectedElement(element);
+
+    // Enable inline editing for text elements
+    if (type === "text" && !isInlineEditing) {
+      setIsInlineEditing(true);
+      setTimeout(() => {
+        if (editableRef.current) {
+          editableRef.current.focus();
+          // Select all text
+          const range = document.createRange();
+          range.selectNodeContents(editableRef.current);
+          const selection = window.getSelection();
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+        }
+      }, 100);
+    }
+  };
+
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    if (!isEditMode || type !== "text") return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setIsInlineEditing(true);
+    setTimeout(() => {
+      if (editableRef.current) {
+        editableRef.current.focus();
+      }
+    }, 100);
+  };
+
+  const handleInlineEdit = (e: React.FormEvent<HTMLDivElement>) => {
+    const newContent = e.currentTarget.textContent || "";
+    setInlineContent(newContent);
+  };
+
+  const handleInlineBlur = () => {
+    setIsInlineEditing(false);
+    if (inlineContent !== elementData?.content?.text) {
+      updateElement(id, {
+        content: { ...elementData?.content, text: inlineContent }
+      });
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleInlineBlur();
+    }
+    if (e.key === "Escape") {
+      setIsInlineEditing(false);
+      setInlineContent(elementData?.content?.text || "");
+    }
   };
 
   const handleMouseEnter = () => {
@@ -85,14 +151,56 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
     }
   };
 
+  // Apply dynamic styles from the elements state
+  const dynamicStyles = elementData?.styles || styles;
+  const dynamicContent = elementData?.content || content;
+
+  // Render content based on element data
+  const renderContent = () => {
+    if (type === "text" && isEditMode && isInlineEditing) {
+      return (
+        <div
+          ref={editableRef}
+          contentEditable
+          suppressContentEditableWarning
+          onInput={handleInlineEdit}
+          onBlur={handleInlineBlur}
+          onKeyDown={handleKeyDown}
+          className="outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 rounded px-1"
+          style={{ minHeight: "1em" }}
+        >
+          {inlineContent}
+        </div>
+      );
+    }
+
+    // For text elements, use the dynamic content if available
+    if (type === "text" && dynamicContent?.text) {
+      return React.cloneElement(children as React.ReactElement, {
+        children: dynamicContent.text
+      });
+    }
+
+    // For other elements, apply dynamic styles
+    if (dynamicStyles && React.isValidElement(children)) {
+      const styleClasses = Object.values(dynamicStyles).filter(Boolean).join(" ");
+      return React.cloneElement(children as React.ReactElement, {
+        className: `${(children as any).props.className || ""} ${styleClasses}`.trim()
+      });
+    }
+
+    return children;
+  };
+
   if (!isEditMode) {
-    return <>{children}</>;
+    return <>{renderContent()}</>;
   }
 
   return (
     <div
       className={`relative ${className}`}
       onClick={handleClick}
+      onDoubleClick={handleDoubleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -123,8 +231,11 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
             className="absolute -top-8 left-0 z-50 bg-blue-600 text-white text-xs px-2 py-1 rounded-md shadow-lg flex items-center space-x-1"
             style={{ zIndex: 10000 }}
           >
-            <Edit3 className="w-3 h-3" />
+            {type === "text" ? <Type className="w-3 h-3" /> : <Edit3 className="w-3 h-3" />}
             <span>{label}</span>
+            {type === "text" && (
+              <span className="text-blue-200 text-xs">(double-click to edit)</span>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -144,7 +255,22 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
         )}
       </AnimatePresence>
 
-      {children}
+      {/* Inline Editing Indicator */}
+      <AnimatePresence>
+        {isInlineEditing && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="absolute -top-8 right-0 z-50 bg-green-600 text-white text-xs px-2 py-1 rounded-md shadow-lg"
+            style={{ zIndex: 10000 }}
+          >
+            Editing... (Enter to save, Esc to cancel)
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {renderContent()}
     </div>
   );
 };

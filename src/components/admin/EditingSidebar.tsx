@@ -19,6 +19,10 @@ import {
   Smartphone,
   Monitor,
   Tablet,
+  Download,
+  Upload,
+  RefreshCw,
+  CheckCircle,
 } from "lucide-react";
 
 export const EditingSidebar: React.FC = () => {
@@ -28,10 +32,14 @@ export const EditingSidebar: React.FC = () => {
     isEditMode,
     setIsEditMode,
     updateElement,
+    saveChanges,
+    loadInitialContent,
+    elements,
   } = useAdminEditing();
 
   const [activeTab, setActiveTab] = useState<"content" | "style" | "settings">("content");
   const [previewMode, setPreviewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleContentChange = (field: string, value: any) => {
     if (!selectedElement) return;
@@ -53,6 +61,46 @@ export const EditingSidebar: React.FC = () => {
     };
     
     updateElement(selectedElement.id, { styles: updatedStyles });
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await saveChanges();
+      setTimeout(() => setIsSaving(false), 1000);
+    } catch (error) {
+      setIsSaving(false);
+    }
+  };
+
+  const handleExportContent = () => {
+    const dataStr = JSON.stringify(elements, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'ecg-buddy-content.json';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportContent = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = JSON.parse(e.target?.result as string);
+        Object.keys(content).forEach(id => {
+          updateElement(id, content[id]);
+        });
+        alert('Content imported successfully!');
+      } catch (error) {
+        alert('Failed to import content. Please check the file format.');
+      }
+    };
+    reader.readAsText(file);
   };
 
   const tabs = [
@@ -95,7 +143,7 @@ export const EditingSidebar: React.FC = () => {
         </div>
 
         {/* Preview Mode Selector */}
-        <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
+        <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1 mb-4">
           {previewModes.map((mode) => (
             <button
               key={mode.id}
@@ -111,6 +159,45 @@ export const EditingSidebar: React.FC = () => {
             </button>
           ))}
         </div>
+
+        {/* Quick Actions */}
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
+          >
+            {isSaving ? (
+              <>
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                <span>Saving...</span>
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4" />
+                <span>Save</span>
+              </>
+            )}
+          </button>
+          
+          <button
+            onClick={handleExportContent}
+            className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+            title="Export Content"
+          >
+            <Download className="w-4 h-4" />
+          </button>
+          
+          <label className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer" title="Import Content">
+            <Upload className="w-4 h-4" />
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImportContent}
+              className="hidden"
+            />
+          </label>
+        </div>
       </div>
 
       {/* Content */}
@@ -123,6 +210,7 @@ export const EditingSidebar: React.FC = () => {
                 <div>
                   <h3 className="font-medium text-gray-900">{selectedElement.label}</h3>
                   <p className="text-sm text-gray-500 capitalize">{selectedElement.type} element</p>
+                  <p className="text-xs text-gray-400">ID: {selectedElement.id}</p>
                 </div>
                 <button
                   onClick={() => setSelectedElement(null)}
@@ -175,6 +263,9 @@ export const EditingSidebar: React.FC = () => {
                             rows={4}
                             placeholder="Enter text content..."
                           />
+                          <p className="text-xs text-gray-500 mt-1">
+                            Tip: You can also double-click the text on the page to edit inline
+                          </p>
                         </div>
                         
                         <div>
@@ -187,12 +278,35 @@ export const EditingSidebar: React.FC = () => {
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                           >
                             <option value="">Default</option>
+                            <option value="text-xs">Extra Small</option>
                             <option value="text-sm">Small</option>
                             <option value="text-base">Base</option>
                             <option value="text-lg">Large</option>
                             <option value="text-xl">Extra Large</option>
                             <option value="text-2xl">2X Large</option>
                             <option value="text-3xl">3X Large</option>
+                            <option value="text-4xl">4X Large</option>
+                            <option value="text-5xl">5X Large</option>
+                            <option value="text-6xl">6X Large</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Font Weight
+                          </label>
+                          <select
+                            value={selectedElement.styles?.fontWeight || ""}
+                            onChange={(e) => handleStyleChange("fontWeight", e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          >
+                            <option value="">Default</option>
+                            <option value="font-light">Light</option>
+                            <option value="font-normal">Normal</option>
+                            <option value="font-medium">Medium</option>
+                            <option value="font-semibold">Semibold</option>
+                            <option value="font-bold">Bold</option>
+                            <option value="font-extrabold">Extra Bold</option>
                           </select>
                         </div>
                       </>
@@ -225,6 +339,22 @@ export const EditingSidebar: React.FC = () => {
                             placeholder="https://..."
                           />
                         </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Button Style
+                          </label>
+                          <select
+                            value={selectedElement.styles?.buttonStyle || "primary"}
+                            onChange={(e) => handleStyleChange("buttonStyle", e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          >
+                            <option value="primary">Primary</option>
+                            <option value="secondary">Secondary</option>
+                            <option value="outline">Outline</option>
+                            <option value="ghost">Ghost</option>
+                          </select>
+                        </div>
                       </>
                     )}
 
@@ -253,6 +383,66 @@ export const EditingSidebar: React.FC = () => {
                             onChange={(e) => handleContentChange("alt", e.target.value)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Image description..."
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Image Size
+                          </label>
+                          <select
+                            value={selectedElement.styles?.imageSize || ""}
+                            onChange={(e) => handleStyleChange("imageSize", e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          >
+                            <option value="">Default</option>
+                            <option value="w-32 h-32">Small (128px)</option>
+                            <option value="w-48 h-48">Medium (192px)</option>
+                            <option value="w-64 h-64">Large (256px)</option>
+                            <option value="w-full">Full Width</option>
+                          </select>
+                        </div>
+                      </>
+                    )}
+
+                    {selectedElement.type === "section" && (
+                      <>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Section Title
+                          </label>
+                          <input
+                            type="text"
+                            value={selectedElement.content?.title || ""}
+                            onChange={(e) => handleContentChange("title", e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Section title..."
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Section Subtitle
+                          </label>
+                          <textarea
+                            value={selectedElement.content?.subtitle || ""}
+                            onChange={(e) => handleContentChange("subtitle", e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            rows={3}
+                            placeholder="Section subtitle..."
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Badge Text
+                          </label>
+                          <input
+                            type="text"
+                            value={selectedElement.content?.badge || ""}
+                            onChange={(e) => handleContentChange("badge", e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Badge text..."
                           />
                         </div>
                       </>
@@ -284,7 +474,7 @@ export const EditingSidebar: React.FC = () => {
                           value={selectedElement.styles?.backgroundColor || ""}
                           onChange={(e) => handleStyleChange("backgroundColor", e.target.value)}
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="#ffffff"
+                          placeholder="#ffffff or gradient class"
                         />
                       </div>
                     </div>
@@ -305,7 +495,7 @@ export const EditingSidebar: React.FC = () => {
                           value={selectedElement.styles?.color || ""}
                           onChange={(e) => handleStyleChange("color", e.target.value)}
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="#000000"
+                          placeholder="#000000 or color class"
                         />
                       </div>
                     </div>
@@ -320,10 +510,14 @@ export const EditingSidebar: React.FC = () => {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       >
                         <option value="">Default</option>
+                        <option value="p-0">None</option>
                         <option value="p-2">Small</option>
                         <option value="p-4">Medium</option>
                         <option value="p-6">Large</option>
                         <option value="p-8">Extra Large</option>
+                        <option value="py-16">Vertical Large</option>
+                        <option value="py-20">Vertical XL</option>
+                        <option value="py-32">Vertical 2XL</option>
                       </select>
                     </div>
 
@@ -341,7 +535,26 @@ export const EditingSidebar: React.FC = () => {
                         <option value="rounded">Medium</option>
                         <option value="rounded-lg">Large</option>
                         <option value="rounded-xl">Extra Large</option>
+                        <option value="rounded-2xl">2X Large</option>
+                        <option value="rounded-3xl">3X Large</option>
                         <option value="rounded-full">Full</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Text Alignment
+                      </label>
+                      <select
+                        value={selectedElement.styles?.textAlign || ""}
+                        onChange={(e) => handleStyleChange("textAlign", e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="">Default</option>
+                        <option value="text-left">Left</option>
+                        <option value="text-center">Center</option>
+                        <option value="text-right">Right</option>
+                        <option value="text-justify">Justify</option>
                       </select>
                     </div>
                   </motion.div>
@@ -399,6 +612,27 @@ export const EditingSidebar: React.FC = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Priority
+                      </label>
+                      <select
+                        value={selectedElement.metadata?.priority || "medium"}
+                        onChange={(e) => {
+                          const updatedMetadata = {
+                            ...selectedElement.metadata,
+                            priority: e.target.value,
+                          };
+                          updateElement(selectedElement.id, { metadata: updatedMetadata });
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Custom CSS Classes
                       </label>
                       <textarea
@@ -409,17 +643,28 @@ export const EditingSidebar: React.FC = () => {
                         placeholder="custom-class another-class"
                       />
                     </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Notes
+                      </label>
+                      <textarea
+                        value={selectedElement.metadata?.notes || ""}
+                        onChange={(e) => {
+                          const updatedMetadata = {
+                            ...selectedElement.metadata,
+                            notes: e.target.value,
+                          };
+                          updateElement(selectedElement.id, { metadata: updatedMetadata });
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        rows={3}
+                        placeholder="Add notes about this element..."
+                      />
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
-
-            {/* Save Button */}
-            <div className="p-4 border-t border-gray-200">
-              <button className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2">
-                <Save className="w-4 h-4" />
-                <span>Save Changes</span>
-              </button>
             </div>
           </div>
         ) : (
@@ -429,20 +674,35 @@ export const EditingSidebar: React.FC = () => {
                 <MousePointer className="w-8 h-8 text-gray-400" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">No Element Selected</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">
+              <p className="text-gray-500 text-sm leading-relaxed mb-6">
                 Click on any element in the preview to start editing its content, style, and settings.
               </p>
               
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <div className="flex items-center space-x-2 text-blue-700 mb-2">
-                  <Layers className="w-4 h-4" />
-                  <span className="text-sm font-medium">Quick Tips</span>
+              <div className="space-y-4">
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <div className="flex items-center space-x-2 text-blue-700 mb-2">
+                    <Layers className="w-4 h-4" />
+                    <span className="text-sm font-medium">Quick Tips</span>
+                  </div>
+                  <ul className="text-xs text-blue-600 space-y-1 text-left">
+                    <li>• Hover over elements to see edit options</li>
+                    <li>• Double-click text to edit inline</li>
+                    <li>• Use the preview modes to test responsiveness</li>
+                    <li>• Changes are saved automatically</li>
+                  </ul>
                 </div>
-                <ul className="text-xs text-blue-600 space-y-1 text-left">
-                  <li>• Hover over elements to see edit options</li>
-                  <li>• Use the preview modes to test responsiveness</li>
-                  <li>• Changes are saved automatically</li>
-                </ul>
+
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <div className="flex items-center space-x-2 text-green-700 mb-2">
+                    <CheckCircle className="w-4 h-4" />
+                    <span className="text-sm font-medium">Content Management</span>
+                  </div>
+                  <ul className="text-xs text-green-600 space-y-1 text-left">
+                    <li>• Export/import content as JSON</li>
+                    <li>• All changes persist in localStorage</li>
+                    <li>• Reset to defaults anytime</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
