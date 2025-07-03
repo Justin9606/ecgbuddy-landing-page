@@ -1,3 +1,10 @@
+import { AdminHero } from "./AdminHero";
+import { AdminFeatures } from "./AdminFeatures";
+import { AdminPricing } from "./AdminPricing";
+import { AdminMobileDownload } from "./AdminMobileDownload";
+import { AdminFAQ } from "./AdminFAQ";
+import { AdminAboutARPI } from "./AdminAboutARPI";
+
 export { AdminHero } from "./AdminHero";
 export { AdminFeatures } from "./AdminFeatures";
 export { AdminPricing } from "./AdminPricing";
