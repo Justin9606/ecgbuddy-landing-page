@@ -32,7 +32,7 @@ const AdminEditingContext = createContext<AdminEditingContextType | undefined>(
   undefined
 );
 
-// Initial content structure with granular Hero elements
+// Initial content structure with granular Hero and Features elements
 const getInitialContent = (): Record<string, EditableElement> => ({
   "hero-section": {
     id: "hero-section",
@@ -183,6 +183,523 @@ const getInitialContent = (): Record<string, EditableElement> => ({
       visible: true
     }
   },
+  "features-badge": {
+    id: "features-badge",
+    type: "text",
+    label: "Features Badge",
+    content: {
+      text: "Core Features"
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-medium",
+      color: "slate-700"
+    },
+    metadata: {
+      parent: "features-section",
+      editable: true
+    }
+  },
+  "features-title-part1": {
+    id: "features-title-part1",
+    type: "text",
+    label: "Features Title Part 1",
+    content: {
+      text: "Professional-grade tools"
+    },
+    styles: {
+      fontSize: "text-5xl md:text-6xl",
+      fontWeight: "font-bold",
+      color: "slate-900"
+    },
+    metadata: {
+      parent: "features-section",
+      editable: true
+    }
+  },
+  "features-title-part2": {
+    id: "features-title-part2",
+    type: "text",
+    label: "Features Title Part 2",
+    content: {
+      text: "for modern healthcare"
+    },
+    styles: {
+      fontSize: "text-5xl md:text-6xl",
+      fontWeight: "font-bold",
+      color: "from-blue-600 via-purple-600 to-indigo-600"
+    },
+    metadata: {
+      parent: "features-section",
+      editable: true
+    }
+  },
+  "features-subtitle": {
+    id: "features-subtitle",
+    type: "text",
+    label: "Features Subtitle",
+    content: {
+      text: "Comprehensive suite of advanced features designed to enhance diagnostic accuracy and streamline cardiac care workflows for healthcare professionals."
+    },
+    styles: {
+      fontSize: "text-xl",
+      color: "slate-600"
+    },
+    metadata: {
+      parent: "features-section",
+      editable: true
+    }
+  },
+  // Category filters
+  "features-category-all": {
+    id: "features-category-all",
+    type: "text",
+    label: "Category: All Features",
+    content: {
+      text: "All Features",
+      count: 6
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-medium"
+    },
+    metadata: {
+      parent: "features-section",
+      categoryId: "all",
+      editable: true
+    }
+  },
+  "features-category-ai": {
+    id: "features-category-ai",
+    type: "text",
+    label: "Category: AI & ML",
+    content: {
+      text: "AI & ML",
+      count: 1
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-medium"
+    },
+    metadata: {
+      parent: "features-section",
+      categoryId: "ai",
+      editable: true
+    }
+  },
+  "features-category-performance": {
+    id: "features-category-performance",
+    type: "text",
+    label: "Category: Performance",
+    content: {
+      text: "Performance",
+      count: 1
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-medium"
+    },
+    metadata: {
+      parent: "features-section",
+      categoryId: "performance",
+      editable: true
+    }
+  },
+  "features-category-security": {
+    id: "features-category-security",
+    type: "text",
+    label: "Category: Security",
+    content: {
+      text: "Security",
+      count: 1
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-medium"
+    },
+    metadata: {
+      parent: "features-section",
+      categoryId: "security",
+      editable: true
+    }
+  },
+  "features-category-collaboration": {
+    id: "features-category-collaboration",
+    type: "text",
+    label: "Category: Collaboration",
+    content: {
+      text: "Collaboration",
+      count: 1
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-medium"
+    },
+    metadata: {
+      parent: "features-section",
+      categoryId: "collaboration",
+      editable: true
+    }
+  },
+  "features-category-analytics": {
+    id: "features-category-analytics",
+    type: "text",
+    label: "Category: Analytics",
+    content: {
+      text: "Analytics",
+      count: 1
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-medium"
+    },
+    metadata: {
+      parent: "features-section",
+      categoryId: "analytics",
+      editable: true
+    }
+  },
+  "features-category-integration": {
+    id: "features-category-integration",
+    type: "text",
+    label: "Category: Integration",
+    content: {
+      text: "Integration",
+      count: 1
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-medium"
+    },
+    metadata: {
+      parent: "features-section",
+      categoryId: "integration",
+      editable: true
+    }
+  },
+  // Feature cards
+  "feature-badge-ai-powered-analysis": {
+    id: "feature-badge-ai-powered-analysis",
+    type: "text",
+    label: "AI-Powered Analysis Badge",
+    content: {
+      text: "Most Popular"
+    },
+    styles: {
+      fontSize: "text-xs",
+      fontWeight: "font-semibold",
+      color: "slate-700"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "ai-powered-analysis",
+      editable: true
+    }
+  },
+  "feature-title-ai-powered-analysis": {
+    id: "feature-title-ai-powered-analysis",
+    type: "text",
+    label: "AI-Powered Analysis Title",
+    content: {
+      text: "AI-Powered Analysis"
+    },
+    styles: {
+      fontSize: "text-xl",
+      fontWeight: "font-bold",
+      color: "slate-900"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "ai-powered-analysis",
+      editable: true
+    }
+  },
+  "feature-description-ai-powered-analysis": {
+    id: "feature-description-ai-powered-analysis",
+    type: "text",
+    label: "AI-Powered Analysis Description",
+    content: {
+      text: "Advanced machine learning algorithms trained on millions of ECG patterns for unprecedented accuracy and reliability."
+    },
+    styles: {
+      fontSize: "text-sm",
+      color: "slate-600"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "ai-powered-analysis",
+      editable: true
+    }
+  },
+  "feature-rating-ai-powered-analysis": {
+    id: "feature-rating-ai-powered-analysis",
+    type: "text",
+    label: "AI-Powered Analysis Rating",
+    content: {
+      text: "4.9"
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-semibold",
+      color: "slate-700"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "ai-powered-analysis",
+      editable: true
+    }
+  },
+  "feature-stats-ai-powered-analysis": {
+    id: "feature-stats-ai-powered-analysis",
+    type: "text",
+    label: "AI-Powered Analysis Stats",
+    content: {
+      text: "99.2% Accuracy"
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-semibold",
+      color: "slate-900"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "ai-powered-analysis",
+      editable: true
+    }
+  },
+  "feature-highlight-ai-powered-analysis": {
+    id: "feature-highlight-ai-powered-analysis",
+    type: "text",
+    label: "AI-Powered Analysis Highlight",
+    content: {
+      text: "Deep Learning"
+    },
+    styles: {
+      fontSize: "text-xs",
+      color: "slate-500"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "ai-powered-analysis",
+      editable: true
+    }
+  },
+  "feature-benefit-ai-powered-analysis-0": {
+    id: "feature-benefit-ai-powered-analysis-0",
+    type: "text",
+    label: "AI-Powered Analysis Benefit 1",
+    content: {
+      text: "Real-time interpretation"
+    },
+    styles: {
+      fontSize: "text-sm",
+      color: "slate-600"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "ai-powered-analysis",
+      benefitIndex: 0,
+      editable: true
+    }
+  },
+  "feature-benefit-ai-powered-analysis-1": {
+    id: "feature-benefit-ai-powered-analysis-1",
+    type: "text",
+    label: "AI-Powered Analysis Benefit 2",
+    content: {
+      text: "Continuous learning"
+    },
+    styles: {
+      fontSize: "text-sm",
+      color: "slate-600"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "ai-powered-analysis",
+      benefitIndex: 1,
+      editable: true
+    }
+  },
+  "feature-benefit-ai-powered-analysis-2": {
+    id: "feature-benefit-ai-powered-analysis-2",
+    type: "text",
+    label: "AI-Powered Analysis Benefit 3",
+    content: {
+      text: "Pattern recognition"
+    },
+    styles: {
+      fontSize: "text-sm",
+      color: "slate-600"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "ai-powered-analysis",
+      benefitIndex: 2,
+      editable: true
+    }
+  },
+  // Real-time Processing feature
+  "feature-badge-real-time-processing": {
+    id: "feature-badge-real-time-processing",
+    type: "text",
+    label: "Real-time Processing Badge",
+    content: {
+      text: "Speed Champion"
+    },
+    styles: {
+      fontSize: "text-xs",
+      fontWeight: "font-semibold",
+      color: "slate-700"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "real-time-processing",
+      editable: true
+    }
+  },
+  "feature-title-real-time-processing": {
+    id: "feature-title-real-time-processing",
+    type: "text",
+    label: "Real-time Processing Title",
+    content: {
+      text: "Real-time Processing"
+    },
+    styles: {
+      fontSize: "text-xl",
+      fontWeight: "font-bold",
+      color: "slate-900"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "real-time-processing",
+      editable: true
+    }
+  },
+  "feature-description-real-time-processing": {
+    id: "feature-description-real-time-processing",
+    type: "text",
+    label: "Real-time Processing Description",
+    content: {
+      text: "Get comprehensive ECG analysis results in under 30 seconds with our optimized cloud processing engine."
+    },
+    styles: {
+      fontSize: "text-sm",
+      color: "slate-600"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "real-time-processing",
+      editable: true
+    }
+  },
+  "feature-rating-real-time-processing": {
+    id: "feature-rating-real-time-processing",
+    type: "text",
+    label: "Real-time Processing Rating",
+    content: {
+      text: "4.8"
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-semibold",
+      color: "slate-700"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "real-time-processing",
+      editable: true
+    }
+  },
+  "feature-stats-real-time-processing": {
+    id: "feature-stats-real-time-processing",
+    type: "text",
+    label: "Real-time Processing Stats",
+    content: {
+      text: "<30s Processing"
+    },
+    styles: {
+      fontSize: "text-sm",
+      fontWeight: "font-semibold",
+      color: "slate-900"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "real-time-processing",
+      editable: true
+    }
+  },
+  "feature-highlight-real-time-processing": {
+    id: "feature-highlight-real-time-processing",
+    type: "text",
+    label: "Real-time Processing Highlight",
+    content: {
+      text: "Lightning Fast"
+    },
+    styles: {
+      fontSize: "text-xs",
+      color: "slate-500"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "real-time-processing",
+      editable: true
+    }
+  },
+  "feature-benefit-real-time-processing-0": {
+    id: "feature-benefit-real-time-processing-0",
+    type: "text",
+    label: "Real-time Processing Benefit 1",
+    content: {
+      text: "Instant results"
+    },
+    styles: {
+      fontSize: "text-sm",
+      color: "slate-600"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "real-time-processing",
+      benefitIndex: 0,
+      editable: true
+    }
+  },
+  "feature-benefit-real-time-processing-1": {
+    id: "feature-benefit-real-time-processing-1",
+    type: "text",
+    label: "Real-time Processing Benefit 2",
+    content: {
+      text: "Cloud optimization"
+    },
+    styles: {
+      fontSize: "text-sm",
+      color: "slate-600"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "real-time-processing",
+      benefitIndex: 1,
+      editable: true
+    }
+  },
+  "feature-benefit-real-time-processing-2": {
+    id: "feature-benefit-real-time-processing-2",
+    type: "text",
+    label: "Real-time Processing Benefit 3",
+    content: {
+      text: "Batch processing"
+    },
+    styles: {
+      fontSize: "text-sm",
+      color: "slate-600"
+    },
+    metadata: {
+      parent: "features-section",
+      featureId: "real-time-processing",
+      benefitIndex: 2,
+      editable: true
+    }
+  },
+  // Continue with other features...
   "pricing-section": {
     id: "pricing-section",
     type: "section",

@@ -15,6 +15,7 @@ import {
   Star,
   TrendingUp,
 } from "lucide-react";
+import { EditableWrapper } from "@/components/admin/EditableWrapper";
 
 const Features = () => {
   const [activeTab, setActiveTab] = useState<string>("all");
@@ -203,30 +204,101 @@ const Features = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <div className="inline-flex items-center space-x-3 bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-full px-6 py-3 mb-8 shadow-sm">
-            <Sparkles className="w-4 h-4 text-slate-600" />
-            <span className="text-sm font-medium text-slate-700">
-              Core Features
-            </span>
-            <div className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-full font-medium">
-              {features.length} Available
+          <EditableWrapper
+            id="features-badge"
+            type="text"
+            label="Features Badge"
+            content={{
+              text: "Core Features"
+            }}
+            styles={{
+              fontSize: "text-sm",
+              fontWeight: "font-medium",
+              color: "slate-700"
+            }}
+            metadata={{
+              parent: "features-section",
+              editable: true
+            }}
+          >
+            <div className="inline-flex items-center space-x-3 bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-full px-6 py-3 mb-8 shadow-sm">
+              <Sparkles className="w-4 h-4 text-slate-600" />
+              <span className="text-sm font-medium text-slate-700">
+                Core Features
+              </span>
+              <div className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-full font-medium">
+                {features.length} Available
+              </div>
             </div>
-          </div>
+          </EditableWrapper>
 
           <h2 className="text-5xl md:text-6xl font-bold mb-8 leading-tight">
-            <span className="block text-slate-900 mb-2">
-              Professional-grade tools
-            </span>
-            <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-              for modern healthcare
-            </span>
+            <EditableWrapper
+              id="features-title-part1"
+              type="text"
+              label="Features Title Part 1"
+              content={{
+                text: "Professional-grade tools"
+              }}
+              styles={{
+                fontSize: "text-5xl md:text-6xl",
+                fontWeight: "font-bold",
+                color: "slate-900"
+              }}
+              metadata={{
+                parent: "features-section",
+                editable: true
+              }}
+            >
+              <span className="block text-slate-900 mb-2">
+                Professional-grade tools
+              </span>
+            </EditableWrapper>
+            <EditableWrapper
+              id="features-title-part2"
+              type="text"
+              label="Features Title Part 2"
+              content={{
+                text: "for modern healthcare"
+              }}
+              styles={{
+                fontSize: "text-5xl md:text-6xl",
+                fontWeight: "font-bold",
+                color: "from-blue-600 via-purple-600 to-indigo-600"
+              }}
+              metadata={{
+                parent: "features-section",
+                editable: true
+              }}
+            >
+              <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                for modern healthcare
+              </span>
+            </EditableWrapper>
           </h2>
 
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            Comprehensive suite of advanced features designed to enhance
-            diagnostic accuracy and streamline cardiac care workflows for
-            healthcare professionals.
-          </p>
+          <EditableWrapper
+            id="features-subtitle"
+            type="text"
+            label="Features Subtitle"
+            content={{
+              text: "Comprehensive suite of advanced features designed to enhance diagnostic accuracy and streamline cardiac care workflows for healthcare professionals."
+            }}
+            styles={{
+              fontSize: "text-xl",
+              color: "slate-600"
+            }}
+            metadata={{
+              parent: "features-section",
+              editable: true
+            }}
+          >
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Comprehensive suite of advanced features designed to enhance
+              diagnostic accuracy and streamline cardiac care workflows for
+              healthcare professionals.
+            </p>
+          </EditableWrapper>
         </motion.div>
 
         {/* Clean Category Filter */}
@@ -238,22 +310,41 @@ const Features = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           {categories.map((category) => (
-            <motion.button
+            <EditableWrapper
               key={category.id}
-              onClick={() => setActiveTab(category.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                activeTab === category.id
-                  ? "bg-slate-900 text-white shadow-lg"
-                  : "bg-white/60 backdrop-blur-sm border border-slate-200/50 text-slate-600 hover:bg-white/80 hover:border-slate-300/50"
-              }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              id={`features-category-${category.id}`}
+              type="text"
+              label={`Category: ${category.name}`}
+              content={{
+                text: category.name,
+                count: category.count
+              }}
+              styles={{
+                fontSize: "text-sm",
+                fontWeight: "font-medium"
+              }}
+              metadata={{
+                parent: "features-section",
+                categoryId: category.id,
+                editable: true
+              }}
             >
-              {category.name}
-              <span className="ml-1 text-xs opacity-60">
-                ({category.count})
-              </span>
-            </motion.button>
+              <motion.button
+                onClick={() => setActiveTab(category.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  activeTab === category.id
+                    ? "bg-slate-900 text-white shadow-lg"
+                    : "bg-white/60 backdrop-blur-sm border border-slate-200/50 text-slate-600 hover:bg-white/80 hover:border-slate-300/50"
+                }`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {category.name}
+                <span className="ml-1 text-xs opacity-60">
+                  ({category.count})
+                </span>
+              </motion.button>
+            </EditableWrapper>
           ))}
         </motion.div>
 
@@ -285,58 +376,189 @@ const Features = () => {
                   >
                     <feature.icon className="w-7 h-7 text-white" />
                   </motion.div>
-                  <div className="bg-slate-100/80 backdrop-blur-sm rounded-full px-3 py-1">
-                    <span className="text-xs font-semibold text-slate-700">
-                      {feature.badge}
-                    </span>
-                  </div>
+                  <EditableWrapper
+                    id={`feature-badge-${feature.id}`}
+                    type="text"
+                    label={`${feature.title} Badge`}
+                    content={{
+                      text: feature.badge
+                    }}
+                    styles={{
+                      fontSize: "text-xs",
+                      fontWeight: "font-semibold",
+                      color: "slate-700"
+                    }}
+                    metadata={{
+                      parent: "features-section",
+                      featureId: feature.id,
+                      editable: true
+                    }}
+                  >
+                    <div className="bg-slate-100/80 backdrop-blur-sm rounded-full px-3 py-1">
+                      <span className="text-xs font-semibold text-slate-700">
+                        {feature.badge}
+                      </span>
+                    </div>
+                  </EditableWrapper>
                 </div>
 
-                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-slate-800 transition-colors duration-300">
-                  {feature.title}
-                </h3>
+                <EditableWrapper
+                  id={`feature-title-${feature.id}`}
+                  type="text"
+                  label={`${feature.title} Title`}
+                  content={{
+                    text: feature.title
+                  }}
+                  styles={{
+                    fontSize: "text-xl",
+                    fontWeight: "font-bold",
+                    color: "slate-900"
+                  }}
+                  metadata={{
+                    parent: "features-section",
+                    featureId: feature.id,
+                    editable: true
+                  }}
+                >
+                  <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-slate-800 transition-colors duration-300">
+                    {feature.title}
+                  </h3>
+                </EditableWrapper>
 
-                <p className="text-slate-600 leading-relaxed mb-6 text-sm">
-                  {feature.description}
-                </p>
+                <EditableWrapper
+                  id={`feature-description-${feature.id}`}
+                  type="text"
+                  label={`${feature.title} Description`}
+                  content={{
+                    text: feature.description
+                  }}
+                  styles={{
+                    fontSize: "text-sm",
+                    color: "slate-600"
+                  }}
+                  metadata={{
+                    parent: "features-section",
+                    featureId: feature.id,
+                    editable: true
+                  }}
+                >
+                  <p className="text-slate-600 leading-relaxed mb-6 text-sm">
+                    {feature.description}
+                  </p>
+                </EditableWrapper>
 
                 {/* Static Stats Display */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-2">
                     <div className="flex items-center space-x-1">
                       <Star className="w-4 h-4 text-amber-500 fill-current" />
-                      <span className="text-sm font-semibold text-slate-700">
-                        {feature.rating}
-                      </span>
+                      <EditableWrapper
+                        id={`feature-rating-${feature.id}`}
+                        type="text"
+                        label={`${feature.title} Rating`}
+                        content={{
+                          text: feature.rating.toString()
+                        }}
+                        styles={{
+                          fontSize: "text-sm",
+                          fontWeight: "font-semibold",
+                          color: "slate-700"
+                        }}
+                        metadata={{
+                          parent: "features-section",
+                          featureId: feature.id,
+                          editable: true
+                        }}
+                      >
+                        <span className="text-sm font-semibold text-slate-700">
+                          {feature.rating}
+                        </span>
+                      </EditableWrapper>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm font-semibold text-slate-900">
-                      {feature.stats}
-                    </div>
-                    <div className="text-xs text-slate-500">
-                      {feature.highlight}
-                    </div>
+                    <EditableWrapper
+                      id={`feature-stats-${feature.id}`}
+                      type="text"
+                      label={`${feature.title} Stats`}
+                      content={{
+                        text: feature.stats
+                      }}
+                      styles={{
+                        fontSize: "text-sm",
+                        fontWeight: "font-semibold",
+                        color: "slate-900"
+                      }}
+                      metadata={{
+                        parent: "features-section",
+                        featureId: feature.id,
+                        editable: true
+                      }}
+                    >
+                      <div className="text-sm font-semibold text-slate-900">
+                        {feature.stats}
+                      </div>
+                    </EditableWrapper>
+                    <EditableWrapper
+                      id={`feature-highlight-${feature.id}`}
+                      type="text"
+                      label={`${feature.title} Highlight`}
+                      content={{
+                        text: feature.highlight
+                      }}
+                      styles={{
+                        fontSize: "text-xs",
+                        color: "slate-500"
+                      }}
+                      metadata={{
+                        parent: "features-section",
+                        featureId: feature.id,
+                        editable: true
+                      }}
+                    >
+                      <div className="text-xs text-slate-500">
+                        {feature.highlight}
+                      </div>
+                    </EditableWrapper>
                   </div>
                 </div>
 
                 {/* Benefits List */}
                 <div className="space-y-2">
                   {feature.benefits.map((benefit, benefitIndex) => (
-                    <motion.div
+                    <EditableWrapper
                       key={benefitIndex}
-                      className="flex items-center space-x-2 text-sm text-slate-600"
-                      initial={{ opacity: 0, x: -10 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{
-                        delay: benefitIndex * 0.05,
-                        duration: 0.3,
+                      id={`feature-benefit-${feature.id}-${benefitIndex}`}
+                      type="text"
+                      label={`${feature.title} Benefit ${benefitIndex + 1}`}
+                      content={{
+                        text: benefit
+                      }}
+                      styles={{
+                        fontSize: "text-sm",
+                        color: "slate-600"
+                      }}
+                      metadata={{
+                        parent: "features-section",
+                        featureId: feature.id,
+                        benefitIndex: benefitIndex,
+                        editable: true
                       }}
                     >
-                      <CheckCircle className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
-                      <span>{benefit}</span>
-                    </motion.div>
+                      <motion.div
+                        className="flex items-center space-x-2 text-sm text-slate-600"
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{
+                          delay: benefitIndex * 0.05,
+                          duration: 0.3,
+                        }}
+                      >
+                        <CheckCircle className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
+                        <span>{benefit}</span>
+                      </motion.div>
+                    </EditableWrapper>
                   ))}
                 </div>
               </div>
