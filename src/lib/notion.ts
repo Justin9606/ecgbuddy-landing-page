@@ -11,8 +11,8 @@ export interface NotionPage {
   title: string;
   slug: string;
   content: any;
-  language: "ko" | "en";
-  category: "arpi" | "ecg-buddy" | "research";
+  language: string; // Dynamic from Notion
+  category: string; // Dynamic from Notion
   published: boolean;
   created_time: string;
   last_edited_time: string;
@@ -72,14 +72,10 @@ export async function getNotionPage(pageId: string) {
 export async function getPagesByCategory(
   databaseId: string,
   category: string,
-  language: "ko" | "en" = "en"
+  language: string = "en"
 ) {
   try {
-    // Map our language codes to database values
-    const languageMapping = {
-      ko: "Korean",
-      en: "English",
-    };
+    // Use language directly from Notion - no hardcoded mapping
 
     // Map our category codes to database values
     const categoryMapping = {
@@ -103,7 +99,7 @@ export async function getPagesByCategory(
           {
             property: "Language",
             select: {
-              equals: languageMapping[language],
+              equals: language,
             },
           },
           {
@@ -132,13 +128,10 @@ export async function getPagesByCategory(
 // Get navigation data for header
 export async function getNavigationData(
   databaseId: string,
-  language: "ko" | "en" = "en"
+  language: string = "en"
 ) {
   try {
-    const languageMapping = {
-      ko: "Korean",
-      en: "English",
-    };
+    // Use language directly from Notion - no hardcoded mapping
 
     const response = await notion.databases.query({
       database_id: databaseId,
@@ -159,7 +152,7 @@ export async function getNavigationData(
           {
             property: "Language",
             select: {
-              equals: languageMapping[language],
+              equals: language,
             },
           },
           {
@@ -240,79 +233,346 @@ export function formatNavigationData(pages: any[]) {
 // Convert Notion page properties to our format
 export function formatNotionPage(page: any): NotionPage {
   const properties = page.properties;
-
-  // Map database values back to our format
-  const languageMapping: { [key: string]: "ko" | "en" } = {
-    Korean: "ko",
-    English: "en",
-  };
-
-  const categoryMapping: { [key: string]: "arpi" | "ecg-buddy" | "research" } =
-    {
-      ARPI: "arpi",
-      "ECG Buddy": "ecg-buddy",
-      Research: "research",
-    };
-
   return {
     id: page.id,
     title: properties.Title?.title?.[0]?.plain_text || "",
-    slug: properties.Slug?.rich_text?.[0]?.plain_text || "",
-    content: page,
-    language: languageMapping[properties.Language?.select?.name] || "en",
-    category: categoryMapping[properties.Parent?.select?.name] || "arpi",
+    slug: properties.URL?.rich_text?.[0]?.plain_text || "",
+    content: properties.Content?.rich_text?.[0]?.plain_text || "",
+    language: properties.Language?.select?.name || "", // Dynamic from Notion
+    category: properties.Category?.select?.name || "", // Dynamic from Notion
     published: properties.Published?.checkbox || false,
     created_time: page.created_time,
     last_edited_time: page.last_edited_time,
   };
 }
 
-// ===== INDIVIDUAL PAGES APPROACH =====
-// For when you have separate Notion pages instead of a database
+// ===== DYNAMIC PAGE CONTENT FUNCTIONS =====
 
-// Get page ID from Notion URL
-export function getPageIdFromUrl(url: string): string | null {
-  const match = url.match(
-    /([a-f0-9]{32}|[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/
-  );
-  return match ? match[0].replace(/-/g, "") : null;
+// Get page content by URL slug
+export async function getNotionPageBySlug(
+  databaseId: string,
+  slug: string,
+  language: string = "en"
+) {
+  try {
+    // Use language directly from Notion - no hardcoded mapping
+
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      filter: {
+        and: [
+          {
+            property: "URL",
+            rich_text: {
+              equals: slug.startsWith("/") ? slug : `/${slug}`,
+            },
+          },
+          {
+            property: "Language",
+            select: {
+              equals: language,
+            },
+          },
+          {
+            property: "Published",
+            checkbox: {
+              equals: true,
+            },
+          },
+        ],
+      },
+    });
+
+    if (response.results.length === 0) {
+      return null;
+    }
+
+    const page = response.results[0];
+
+    // Get the page content blocks
+    const blocks = await notion.blocks.children.list({
+      block_id: page.id,
+      page_size: 100,
+    });
+
+    return {
+      page,
+      blocks: blocks.results,
+      hasMore: blocks.has_more,
+    };
+  } catch (error) {
+    console.error("Error fetching page by slug:", error);
+    return null;
+  }
 }
 
-// Predefined page IDs for individual pages approach
-export const NOTION_PAGES = {
-  // ARPI
-  "about-arpi-en": process.env.NOTION_ABOUT_ARPI_EN_ID,
-  "about-arpi-ko": process.env.NOTION_ABOUT_ARPI_KO_ID,
-  blog: process.env.NOTION_BLOG_ID,
-  media: process.env.NOTION_MEDIA_ID,
+// Get all published page slugs for static generation
+export async function getAllPageSlugs(
+  databaseId: string,
+  language: string = "en"
+) {
+  try {
+    // Use language directly from Notion - no hardcoded mapping
 
-  // ECG Buddy
-  "how-to-use-en": process.env.NOTION_HOW_TO_USE_EN_ID,
-  "how-to-use-ko": process.env.NOTION_HOW_TO_USE_KO_ID,
-  "report-interpretation": process.env.NOTION_REPORT_INTERPRETATION_ID,
-  "reliability-form": process.env.NOTION_RELIABILITY_FORM_ID,
-  "faq-en": process.env.NOTION_FAQ_EN_ID,
-  "faq-ko": process.env.NOTION_FAQ_KO_ID,
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      filter: {
+        and: [
+          {
+            property: "Type",
+            select: {
+              equals: "Page",
+            },
+          },
+          {
+            property: "Language",
+            select: {
+              equals: language,
+            },
+          },
+          {
+            property: "Published",
+            checkbox: {
+              equals: true,
+            },
+          },
+        ],
+      },
+    });
 
-  // Research
-  publications: process.env.NOTION_PUBLICATIONS_ID,
-  "conference-talks": process.env.NOTION_CONFERENCE_TALKS_ID,
-  "researcher-network": process.env.NOTION_RESEARCHER_NETWORK_ID,
-  "apply-researcher": process.env.NOTION_APPLY_RESEARCHER_ID,
-};
+    return response.results
+      .map((page: any) => {
+        const url = page.properties.URL?.rich_text?.[0]?.plain_text || "";
+        return url.startsWith("/") ? url.slice(1) : url;
+      })
+      .filter(Boolean);
+  } catch (error) {
+    console.error("Error fetching all page slugs:", error);
+    return [];
+  }
+}
 
-// Get page by category and item (individual pages)
-export function getPageIdByRoute(
-  category: string,
-  item: string,
-  language: "ko" | "en" = "en"
-): string | null {
-  const key = `${item}-${language}`;
-  const fallbackKey = item;
+// Format Notion page content for rendering
+export function formatNotionPageContent(page: any, blocks: any[]) {
+  const properties = page.properties;
 
-  return (
-    NOTION_PAGES[key as keyof typeof NOTION_PAGES] ||
-    NOTION_PAGES[fallbackKey as keyof typeof NOTION_PAGES] ||
-    null
-  );
+  return {
+    id: page.id,
+    title: properties.Title?.title?.[0]?.plain_text || "",
+    slug: properties.URL?.rich_text?.[0]?.plain_text || "",
+    description: properties.Content?.rich_text?.[0]?.plain_text || "",
+    language: properties.Language?.select?.name || "", // Dynamic from Notion
+    published: properties.Published?.checkbox || false,
+    publishDate: properties.Publish_Date?.date?.start || page.created_time,
+    lastEdited: page.last_edited_time,
+    blocks: blocks,
+    metadata: {
+      seoTitle: properties.SEO_Title?.rich_text?.[0]?.plain_text || "",
+      seoDescription:
+        properties.SEO_Description?.rich_text?.[0]?.plain_text || "",
+      ogImage: properties.OG_Image?.files?.[0]?.file?.url || "",
+      author: properties.Author?.rich_text?.[0]?.plain_text || "",
+      category: properties.Category?.select?.name || "",
+      tags: properties.Tags?.multi_select?.map((tag: any) => tag.name) || [],
+    },
+  };
+}
+
+// Get page content with full blocks recursively
+export async function getNotionPageWithBlocks(
+  databaseId: string,
+  slug: string,
+  language: string = "en"
+) {
+  try {
+    const pageData = await getNotionPageBySlug(databaseId, slug, language);
+
+    if (!pageData) {
+      return null;
+    }
+
+    // Get all blocks recursively (including nested blocks)
+    const allBlocks = await getAllBlocksRecursively(pageData.page.id);
+
+    return {
+      ...formatNotionPageContent(pageData.page, allBlocks),
+      rawPage: pageData.page,
+    };
+  } catch (error) {
+    console.error("Error fetching page with blocks:", error);
+    return null;
+  }
+}
+
+// Get all blocks recursively including nested blocks
+async function getAllBlocksRecursively(blockId: string): Promise<any[]> {
+  const blocks = [];
+  let cursor;
+
+  do {
+    const response = await notion.blocks.children.list({
+      block_id: blockId,
+      page_size: 100,
+      start_cursor: cursor,
+    });
+
+    for (const block of response.results) {
+      blocks.push(block);
+
+      // If block has children, get them recursively
+      if ("has_children" in block && block.has_children) {
+        const childBlocks = await getAllBlocksRecursively(block.id);
+        blocks.push(...childBlocks);
+      }
+    }
+
+    cursor = response.next_cursor;
+  } while (cursor);
+
+  return blocks;
+}
+
+// Get all available languages from database
+export async function getAvailableLanguages(databaseId: string) {
+  try {
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      filter: {
+        property: "Published",
+        checkbox: {
+          equals: true,
+        },
+      },
+    });
+
+    // Extract unique languages from the results
+    const languages = new Set<string>();
+
+    response.results.forEach((page: any) => {
+      const languageProperty = page.properties.Language;
+      if (
+        languageProperty &&
+        languageProperty.select &&
+        languageProperty.select.name
+      ) {
+        languages.add(languageProperty.select.name);
+      }
+    });
+
+    // Convert to array - completely dynamic from Notion
+    return Array.from(languages).map((lang) => ({
+      code: lang.toLowerCase(),
+      name: lang,
+    }));
+  } catch (error) {
+    console.error("Error fetching available languages:", error);
+    return []; // No fallback - let Notion determine languages
+  }
+}
+
+// Get interface translations from Notion database
+export async function getInterfaceTranslations(
+  databaseId: string,
+  language: string = "en"
+) {
+  try {
+    // Use language directly from Notion - no hardcoded mapping
+
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      filter: {
+        and: [
+          {
+            property: "Type",
+            select: {
+              equals: "Interface",
+            },
+          },
+          {
+            property: "Language",
+            select: {
+              equals: language,
+            },
+          },
+          {
+            property: "Published",
+            checkbox: {
+              equals: true,
+            },
+          },
+        ],
+      },
+    });
+
+    // Convert Notion results to translation object structure
+    const translations: any = {};
+
+    response.results.forEach((page: any) => {
+      const properties = page.properties;
+      const key = properties.Key?.rich_text?.[0]?.plain_text || "";
+      const value = properties.Value?.rich_text?.[0]?.plain_text || "";
+      const section =
+        properties.Section?.rich_text?.[0]?.plain_text || "general";
+
+      if (key && value) {
+        // Create nested structure based on section and key
+        const keyParts = key.split(".");
+        let current = translations;
+
+        // Navigate to the correct nested level
+        for (let i = 0; i < keyParts.length - 1; i++) {
+          if (!current[keyParts[i]]) {
+            current[keyParts[i]] = {};
+          }
+          current = current[keyParts[i]];
+        }
+
+        // Set the final value
+        current[keyParts[keyParts.length - 1]] = value;
+      }
+    });
+
+    return translations;
+  } catch (error) {
+    console.error("Error fetching interface translations:", error);
+    return {}; // Return empty object as fallback
+  }
+}
+
+// Get content availability by language (for filtering)
+export async function getContentAvailability(databaseId: string) {
+  try {
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      filter: {
+        property: "Published",
+        checkbox: {
+          equals: true,
+        },
+      },
+    });
+
+    const availability: { [key: string]: string[] } = {};
+
+    response.results.forEach((page: any) => {
+      const properties = page.properties;
+      const url = properties.URL?.rich_text?.[0]?.plain_text || "";
+      const language = properties.Language?.select?.name || "";
+      const type = properties.Type?.select?.name || "";
+
+      if (url && language && (type === "Navigation" || type === "Page")) {
+        if (!availability[url]) {
+          availability[url] = [];
+        }
+        if (!availability[url].includes(language)) {
+          availability[url].push(language);
+        }
+      }
+    });
+
+    return availability;
+  } catch (error) {
+    console.error("Error fetching content availability:", error);
+    return {};
+  }
 }

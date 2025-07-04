@@ -29,14 +29,13 @@ import {
   Presentation,
   UserPlus,
 } from "lucide-react";
-import { useLanguage } from "@/lib/constants";
+import { useLanguage } from "@/lib/contexts/LanguageContext";
 import Link from "next/link";
-import enTranslations from "@/lib/constants/languages/en.json";
-import koTranslations from "@/lib/constants/languages/ko.json";
 import { getNavigationData, formatNavigationData } from "@/lib/notion";
 
 const Header = () => {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage, t, availableLanguages, isContentAvailable } =
+    useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -131,18 +130,15 @@ const Header = () => {
   };
 
   const handleLanguageChange = (langCode: string) => {
-    setLanguage(langCode as "ko" | "en"); // Connect to your existing useLanguage hook
+    setLanguage(langCode); // Dynamic language - no type casting needed
     setIsLanguageDropdownOpen(false);
   };
 
-  // Get languages directly from JSON files
-  const languages = [
-    ...koTranslations.header.languages,
-    ...enTranslations.header.languages,
-  ];
-
+  // Get languages from dynamic context
   const selectedLang =
-    languages.find((lang) => lang.code === language) || languages[0];
+    availableLanguages.find((lang) => lang.code === language) ||
+    availableLanguages[0] ||
+    null;
 
   // Map navigation item names to icons
   const iconMap: { [key: string]: any } = {
@@ -662,12 +658,9 @@ const Header = () => {
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
 
                   <div className="relative z-10 flex items-center space-x-2">
-                    {/* <Globe className="w-4 h-4 text-slate-600" /> */}
+                    <Globe className="w-4 h-4 text-slate-600" />
                     <span className="text-sm font-medium text-slate-700">
-                      {selectedLang.flag}
-                    </span>
-                    <span className="text-sm font-medium text-slate-700">
-                      {selectedLang.name}
+                      {selectedLang?.name || "Loading..."}
                     </span>
                     <ChevronDown
                       className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${
@@ -688,7 +681,7 @@ const Header = () => {
                   <div className="w-64 bg-white/90 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-[0_20px_70px_rgba(0,0,0,0.15)] p-2 overflow-hidden">
                     {/* Language Options */}
                     <div className="py-2">
-                      {languages.map((langItem) => (
+                      {availableLanguages.map((langItem) => (
                         <button
                           key={langItem.code}
                           onClick={() => handleLanguageChange(langItem.code)}
@@ -697,13 +690,13 @@ const Header = () => {
                           }`}
                         >
                           <div className="flex items-center space-x-3">
-                            <span className="text-lg">{langItem.flag}</span>
+                            <Globe className="w-4 h-4 text-slate-600" />
                             <div>
                               <div className="text-sm font-medium text-slate-800">
                                 {langItem.name}
                               </div>
                               <div className="text-xs text-slate-500">
-                                {langItem.name}
+                                {langItem.code}
                               </div>
                             </div>
                           </div>
@@ -751,10 +744,9 @@ const Header = () => {
                       className="w-full bg-white/50 backdrop-blur-md border border-white/30 rounded-2xl px-4 py-3 flex items-center justify-between shadow-sm"
                     >
                       <div className="flex items-center space-x-3">
-                        {/* <Globe className="w-4 h-4 text-slate-600" /> */}
-                        <span className="text-lg">{selectedLang.flag}</span>
+                        <Globe className="w-4 h-4 text-slate-600" />
                         <span className="text-sm font-medium text-slate-700">
-                          {selectedLang.name}
+                          {selectedLang?.name || "Loading..."}
                         </span>
                       </div>
                       <ChevronDown
@@ -767,7 +759,7 @@ const Header = () => {
                     {/* Mobile Language Options */}
                     {isLanguageDropdownOpen && (
                       <div className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-lg p-2 z-50">
-                        {languages.map((langItem) => (
+                        {availableLanguages.map((langItem) => (
                           <button
                             key={langItem.code}
                             onClick={() => handleLanguageChange(langItem.code)}
@@ -776,13 +768,13 @@ const Header = () => {
                             }`}
                           >
                             <div className="flex items-center space-x-3">
-                              <span className="text-lg">{langItem.flag}</span>
+                              <Globe className="w-4 h-4 text-slate-600" />
                               <div>
                                 <div className="text-sm font-medium text-slate-800">
                                   {langItem.name}
                                 </div>
                                 <div className="text-xs text-slate-500">
-                                  {langItem.name}
+                                  {langItem.code}
                                 </div>
                               </div>
                             </div>
@@ -885,7 +877,7 @@ const Header = () => {
                   }}
                   className="w-full text-left font-semibold text-slate-900 mb-3 flex items-center p-2 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500/20"
                 >
-                  {t.header.navigation.faq}
+                  {t?.header?.navigation?.faq || "FAQ"}
                   <HelpCircle className="w-4 h-4 ml-2 text-slate-500" />
                 </button>
               </div>
@@ -899,7 +891,7 @@ const Header = () => {
                   }}
                   className="w-full text-left font-semibold text-slate-900 mb-3 flex items-center p-2 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500/20"
                 >
-                  {t.header.navigation.about}
+                  {t?.header?.navigation?.about || "About ARPI"}
                   <Building2 className="w-4 h-4 ml-2 text-slate-500" />
                 </button>
               </div>

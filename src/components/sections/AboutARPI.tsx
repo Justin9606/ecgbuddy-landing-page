@@ -1094,8 +1094,11 @@ const AboutARPI = () => {
                             onError={(e) => {
                               // Fallback to emoji if image fails
                               e.currentTarget.style.display = "none";
-                              e.currentTarget.nextElementSibling.style.display =
-                                "block";
+                              const nextElement = e.currentTarget
+                                .nextElementSibling as HTMLElement;
+                              if (nextElement) {
+                                nextElement.style.display = "block";
+                              }
                             }}
                           />
                           <div className="text-2xl hidden">

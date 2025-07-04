@@ -59,4 +59,4 @@ export const BRAND_COLORS = {
 
 // Language and internationalization
 export { LanguageProvider, useLanguage } from "@/lib/contexts/LanguageContext";
-export type { Language, Translations } from "@/lib/contexts/LanguageContext";
+export type { Language, LanguageOption } from "@/lib/contexts/LanguageContext";
