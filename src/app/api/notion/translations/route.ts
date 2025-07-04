@@ -7,7 +7,7 @@ const NOTION_DATABASE_ID =
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const language = (searchParams.get("lang") as "ko" | "en") || "en";
+    const language = searchParams.get("lang") || "English";
 
     const translations = await getInterfaceTranslations(
       NOTION_DATABASE_ID,
