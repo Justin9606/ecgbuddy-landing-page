@@ -33,6 +33,7 @@ import { useLanguage } from "@/lib/constants";
 import Link from "next/link";
 import enTranslations from "@/lib/constants/languages/en.json";
 import koTranslations from "@/lib/constants/languages/ko.json";
+import { getNavigationData, formatNavigationData } from "@/lib/notion";
 
 const Header = () => {
   const { language, setLanguage, t } = useLanguage();
@@ -44,6 +45,10 @@ const Header = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const languageDropdownRef = useRef<HTMLDivElement>(null);
 
+  // Navigation data from Notion
+  const [navigationData, setNavigationData] = useState<any>(null);
+  const [isNavigationLoading, setIsNavigationLoading] = useState(true);
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -51,6 +56,39 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Fetch navigation data from Notion
+  useEffect(() => {
+    const fetchNavigationData = async () => {
+      try {
+        setIsNavigationLoading(true);
+        const response = await fetch(
+          `/api/notion/navigation?lang=${language}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.navigation) {
+            setNavigationData(data);
+          }
+        } else {
+          console.error("Failed to fetch navigation data");
+        }
+      } catch (error) {
+        console.error("Error fetching navigation data:", error);
+      } finally {
+        setIsNavigationLoading(false);
+      }
+    };
+
+    fetchNavigationData();
+  }, [language]);
 
   // Handle click outside to close dropdowns
   useEffect(() => {
@@ -106,7 +144,156 @@ const Header = () => {
   const selectedLang =
     languages.find((lang) => lang.code === language) || languages[0];
 
-  const megaMenuItems = {
+  // Map navigation item names to icons
+  const iconMap: { [key: string]: any } = {
+    "회사 소개": Building2,
+    "About ARPI": Building2,
+    블로그: FileText,
+    Blog: FileText,
+    미디어: Camera,
+    Media: Camera,
+    사용방법: BookOpen,
+    "How to Use": BookOpen,
+    "분석보고서 해석방법": BarChart3,
+    "Report Interpretation": BarChart3,
+    "지침 신뢰도 양식": CheckCircle,
+    "Reliability Form": CheckCircle,
+    FAQ: HelpCircle,
+    논문: GraduationCap,
+    Publications: GraduationCap,
+    학회발표: Presentation,
+    "Conference Talks": Presentation,
+    "연구자 네트워크": Users,
+    "Researcher Network": Users,
+    "연구자 신청": UserPlus,
+    "Apply as Researcher": UserPlus,
+  };
+
+  // Map navigation item names to gradients
+  const gradientMap: { [key: string]: string } = {
+    "회사 소개": "from-blue-500 to-indigo-600",
+    "About ARPI": "from-blue-500 to-indigo-600",
+    블로그: "from-emerald-500 to-green-600",
+    Blog: "from-emerald-500 to-green-600",
+    미디어: "from-purple-500 to-violet-600",
+    Media: "from-purple-500 to-violet-600",
+    사용방법: "from-red-500 to-pink-600",
+    "How to Use": "from-red-500 to-pink-600",
+    "분석보고서 해석방법": "from-amber-500 to-orange-500",
+    "Report Interpretation": "from-amber-500 to-orange-500",
+    "지침 신뢰도 양식": "from-teal-500 to-cyan-600",
+    "Reliability Form": "from-teal-500 to-cyan-600",
+    FAQ: "from-slate-500 to-slate-600",
+    논문: "from-indigo-500 to-blue-600",
+    Publications: "from-indigo-500 to-blue-600",
+    학회발표: "from-violet-500 to-purple-600",
+    "Conference Talks": "from-violet-500 to-purple-600",
+    "연구자 네트워크": "from-emerald-500 to-teal-600",
+    "Researcher Network": "from-emerald-500 to-teal-600",
+    "연구자 신청": "from-rose-500 to-pink-600",
+    "Apply as Researcher": "from-rose-500 to-pink-600",
+  };
+
+  // Create dynamic mega menu items from Notion data
+  const createMegaMenuItems = () => {
+    // If navigation data is loading or not available, return fallback
+    if (isNavigationLoading || !navigationData) {
+      return fallbackMegaMenuItems;
+    }
+
+    // Check if navigation data is empty (no items in any category)
+    const hasAnyItems =
+      navigationData.navigation &&
+      (navigationData.navigation.dropdownItems.ARPI.length > 0 ||
+        navigationData.navigation.dropdownItems["ECG Buddy"].length > 0 ||
+        navigationData.navigation.dropdownItems.Research.length > 0);
+
+    // If no items found, use fallback
+    if (!hasAnyItems) {
+      return fallbackMegaMenuItems;
+    }
+
+    const items: any = {};
+
+    // Create items for each main category
+    ["ARPI", "ECG Buddy", "Research"].forEach((category) => {
+      const categoryItems =
+        navigationData.navigation.dropdownItems[category] || [];
+
+      // If category has no items, use fallback for that category
+      if (categoryItems.length === 0) {
+        items[category] =
+          fallbackMegaMenuItems[category as keyof typeof fallbackMegaMenuItems];
+        return;
+      }
+
+      items[category] = {
+        sections: [
+          {
+            title: category,
+            items: categoryItems.map((item: any) => ({
+              name: item.title,
+              href: item.url || "#",
+              description: item.description || "",
+              icon: iconMap[item.title] || Building2,
+              isScroll: item.url?.startsWith("#") || false,
+              gradient: gradientMap[item.title] || "from-gray-500 to-gray-600",
+            })),
+          },
+        ],
+        cta: {
+          title:
+            category === "ARPI"
+              ? language === "ko"
+                ? "ARPI에 대해 더 알아보기"
+                : "Learn More About ARPI"
+              : category === "ECG Buddy"
+              ? language === "ko"
+                ? "ECG Buddy 시작하기"
+                : "Get Started with ECG Buddy"
+              : language === "ko"
+              ? "연구에 참여하세요"
+              : "Join Our Research",
+          description:
+            category === "ARPI"
+              ? language === "ko"
+                ? "의료 AI 혁신을 주도하는 ARPI"
+                : "Leading medical AI innovation"
+              : category === "ECG Buddy"
+              ? language === "ko"
+                ? "AI 기반 ECG 분석 솔루션"
+                : "AI-powered ECG analysis solution"
+              : language === "ko"
+              ? "의료 AI 연구의 최전선에서"
+              : "At the forefront of medical AI research",
+          button:
+            category === "ARPI"
+              ? language === "ko"
+                ? "회사 소개 보기"
+                : "View Company Info"
+              : category === "ECG Buddy"
+              ? language === "ko"
+                ? "제품 알아보기"
+                : "Explore Product"
+              : language === "ko"
+              ? "연구 참여하기"
+              : "Get Involved",
+          link:
+            category === "ARPI"
+              ? "#about-arpi-section"
+              : category === "ECG Buddy"
+              ? "#features-section"
+              : "/apply-researcher",
+          isScroll: category !== "Research",
+        },
+      };
+    });
+
+    return items;
+  };
+
+  // Fallback navigation for when Notion data is not available
+  const fallbackMegaMenuItems = {
     ARPI: {
       sections: [
         {
@@ -296,6 +483,9 @@ const Header = () => {
       },
     },
   };
+
+  // Get the current mega menu items (dynamic or fallback)
+  const megaMenuItems = createMegaMenuItems();
 
   return (
     <>
@@ -608,55 +798,57 @@ const Header = () => {
               </div>
 
               {/* Mobile Navigation */}
-              {Object.entries(megaMenuItems).map(([key, menu], index) => (
-                <div
-                  key={key}
-                  className={`${
-                    index > 0 ? "mt-6 pt-6 border-t border-slate-100" : ""
-                  }`}
-                >
-                  <div className="font-semibold text-slate-900 mb-3 flex items-center">
-                    {key}
-                    <ChevronDown className="w-4 h-4 ml-2 text-slate-500" />
-                  </div>
-                  {menu.sections.map((section, sectionIndex) => (
-                    <div key={sectionIndex} className="mb-4">
-                      <div className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
-                        {section.title}
-                      </div>
-                      <div className="space-y-1">
-                        {section.items.map((item, itemIndex) => (
-                          <a
-                            key={itemIndex}
-                            href={item.href}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="flex items-center space-x-3 p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500/20"
-                          >
-                            <div
-                              className={`w-8 h-8 bg-gradient-to-br ${item.gradient} rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm`}
-                            >
-                              <item.icon className="w-4 h-4 text-white" />
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-sm flex items-center">
-                                {item.name}
-                                {"badge" in item && item.badge ? (
-                                  <span className="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
-                                    {String(item.badge)}
-                                  </span>
-                                ) : null}
-                              </div>
-                              <div className="text-xs text-slate-500 mt-0.5">
-                                {item.description}
-                              </div>
-                            </div>
-                          </a>
-                        ))}
-                      </div>
+              {Object.entries(megaMenuItems).map(
+                ([key, menu]: [string, any], index: number) => (
+                  <div
+                    key={key}
+                    className={`${
+                      index > 0 ? "mt-6 pt-6 border-t border-slate-100" : ""
+                    }`}
+                  >
+                    <div className="font-semibold text-slate-900 mb-3 flex items-center">
+                      {key}
+                      <ChevronDown className="w-4 h-4 ml-2 text-slate-500" />
                     </div>
-                  ))}
-                </div>
-              ))}
+                    {menu.sections.map((section: any, sectionIndex: number) => (
+                      <div key={sectionIndex} className="mb-4">
+                        <div className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
+                          {section.title}
+                        </div>
+                        <div className="space-y-1">
+                          {section.items.map((item: any, itemIndex: number) => (
+                            <a
+                              key={itemIndex}
+                              href={item.href}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              className="flex items-center space-x-3 p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500/20"
+                            >
+                              <div
+                                className={`w-8 h-8 bg-gradient-to-br ${item.gradient} rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm`}
+                              >
+                                <item.icon className="w-4 h-4 text-white" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="font-medium text-sm flex items-center">
+                                  {item.name}
+                                  {"badge" in item && item.badge ? (
+                                    <span className="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                                      {String(item.badge)}
+                                    </span>
+                                  ) : null}
+                                </div>
+                                <div className="text-xs text-slate-500 mt-0.5">
+                                  {item.description}
+                                </div>
+                              </div>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              )}
 
               {/* Mobile Careers */}
               <div className="mt-6 pt-6 border-t border-slate-100">

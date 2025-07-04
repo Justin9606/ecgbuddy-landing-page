@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import {
   Heart,
   Mail,
@@ -39,9 +40,9 @@ const Footer = () => {
           href: "#features",
           description: "Complete feature set",
         },
-        { 
-          name: "Pricing", 
-          href: "#pricing", 
+        {
+          name: "Pricing",
+          href: "#pricing",
           description: "Flexible plans",
           onClick: () => scrollToSection("pricing-section"),
         },
@@ -103,7 +104,12 @@ const Footer = () => {
           description: "Our mission",
           onClick: () => scrollToSection("about-arpi-section"),
         },
-        { name: "Careers", href: "#careers", description: "Join our team" },
+        {
+          name: "Careers",
+          href: "/careers",
+          description: "Join our team",
+          isRoute: true,
+        },
         { name: "Press Kit", href: "#press", description: "Media resources" },
         {
           name: "Blog",
@@ -213,6 +219,23 @@ const Footer = () => {
                           </div>
                         </div>
                       </button>
+                    ) : link.isRoute ? (
+                      <Link
+                        href={link.href}
+                        className="group flex items-start justify-between text-slate-400 hover:text-red-400 transition-all duration-300"
+                      >
+                        <div>
+                          <div className="font-medium mb-1 flex items-center">
+                            {link.name}
+                            {link.external && (
+                              <ArrowUpRight className="w-3 h-3 ml-1 opacity-50" />
+                            )}
+                          </div>
+                          <div className="text-xs text-slate-500 group-hover:text-slate-400 transition-colors duration-300">
+                            {link.description}
+                          </div>
+                        </div>
+                      </Link>
                     ) : (
                       <a
                         href={link.href}
